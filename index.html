@@ -324,9 +324,13 @@ footer {
       <a href="#produkte">Produkte</a>
     </nav>
 
-    <button class="cart-button" onclick="openCart()">
-      🛒 Warenkorb <span id="cartCount">0</span>
-    </button>
+  <a
+  class="cart-button"
+  href="cart.html"
+  style="text-decoration:none;"
+>
+  🛒 Warenkorb <span id="cartCount">0</span>
+</a>
   </div>
 </header>
 
@@ -752,17 +756,6 @@ function updateCartCount() {
 
 document.getElementById("cartCount")
     .textContent = count;
-
-
-<a
-  class="cart-button"
-  href="cart.html"
-  style="text-decoration:none;"
->
-  🛒 Warenkorb <span id="cartCount">0</span>
-</a>
-
-
 
 loadProducts();
 updateCartCount();
