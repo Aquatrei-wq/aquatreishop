@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaTreishop – Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    header {
+      background: #0f172a;
+      color: white;
+      padding: 18px;
+    }
+
+    header h1 {
+      margin: 0 0 5px;
+      font-size: 22px;
+    }
+
+    header p {
+      margin: 0;
+      color: #cbd5e1;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 11px;
+      margin-top: 6px;
+      margin-bottom: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 8px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .primary {
+      background: #0ea5e9;
+      color: white;
+    }
+
+    .danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .success {
+      background: #16a34a;
+      color: white;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      background: #e0f2fe;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .product {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+
+    .product strong {
+      font-size: 18px;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🐠 AquaTreishop – Admin</h1>
+  <p>Privater Verwaltungsbereich</p>
+</header>
+
+<main>
+
+  <!-- LOGIN -->
+  <section id="loginBox" class="card">
+    <h2>Admin Login</h2>
+
+    <div id="loginMessage" class="message hidden"></div>
+
+    <label>E-Mail</label>
+    <input id="email" type="email" autocomplete="username">
+
+    <label>Passwort</label>
+    <input id="password" type="password" autocomplete="current-password">
+
+    <button class="primary" onclick="login()">Einloggen</button>
+  </section>
+
+
+  <!-- ADMIN -->
+  <section id="adminBox" class="hidden">
+
+    <div class="card">
+      <div class="topbar">
+        <div>
+          <h2>Admin-Bereich</h2>
+          <div id="userInfo" class="muted"></div>
+        </div>
+
+        <button class="secondary" onclick="logout()">Ausloggen</button>
+      </div>
+    </div>
+
+
+    <!-- PRODUKT -->
+    <section class="card">
+      <h2>Produkt verwalten</h2>
+
+      <div id="productMessage" class="message hidden"></div>
+
+      <input type="hidden" id="productId">
+
+      <label>Produktname</label>
+      <input id="productName" placeholder="z. B. Guppy">
+
+      <label>Preis</label>
+      <input id="productPrice" type="number" step="0.01" placeholder="z. B. 4.99">
+
+      <label>Beschreibung</label>
+      <textarea id="productDescription"></textarea>
+
+      <label>Platzierung</label>
+      <input id="productPlacement" placeholder="z. B. Gesellschaftsbecken">
+
+      <label>Anforderungen</label>
+      <textarea id="productRequirements"></textarea>
+
+      <label>Verfügbarkeit</label>
+      <input id="productAvailability" placeholder="z. B. Bald verfügbar">
+
+      <label>Bild-URL</label>
+      <input id="productImage" placeholder="https://...">
+
+      <label>Kategorie</label>
+      <select id="productCategory">
+        <option value="">Keine Kategorie</option>
+      </select>
+
+      <label>Unterkategorie</label>
+      <select id="productSubcategory">
+        <option value="">Keine Unterkategorie</option>
+      </select>
+
+      <button class="primary" onclick="saveProduct()">
+        Produkt speichern
+      </button>
+
+      <button class="secondary" onclick="clearForm()">
+        Formular leeren
+      </button>
+    </section>
+
+
+    <!-- PRODUKTE -->
+    <section class="card">
+      <h2>Produkte</h2>
+      <div id="products">Lade Produkte...</div>
+    </section>
+
+
+    <!-- KATEGORIEN -->
+    <section class="card">
+      <h2>Kategorien</h2>
+
+      <input id="newCategory" placeholder="Neue Kategorie">
+
+      <button class="success" onclick="addCategory()">
+        Kategorie hinzufügen
+      </button>
+
+      <div id="categories"></div>
+    </section>
+
+
+    <!-- UNTERKATEGORIEN -->
+    <section class="card">
+      <h2>Unterkategorien</h2>
+
+      <input id="newSubcategory" placeholder="Neue Unterkategorie">
+
+      <select id="subcategoryCategory">
+        <option value="">Kategorie auswählen</option>
+      </select>
+
+      <button class="success" onclick="addSubcategory()">
+        Unterkategorie hinzufügen
+      </button>
+
+      <div id="subcategories"></div>
+    </section>
+
+  </section>
+
+</main>
+
+
+<script>
+  // =====================================================
+  // DEINE SUPABASE-DATEN
+  // =====================================================
+
+  const SUPABASE_URL = "https://hzrqwgrszfpyqeibszno.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
+
+
+  // =====================================================
+  // HILFSFUNKTION
+  // =====================================================
+
+  async function supabaseFetch(path, options = {}) {
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/" + path,
+      {
+        ...options,
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY,
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      }
+    );
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || "Supabase Fehler");
+    }
+
+    if (response.status === 204) {
+      return null;
+    }
+
+    return response.json();
+  }
+
+
+  // =====================================================
+  // LOGIN MIT SUPABASE AUTH
+  // =====================================================
+
+  async function login() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    showLoginMessage("Anmeldung läuft...", false);
+
+    try {
+      const response = await fetch(
+        SUPABASE_URL + "/auth/v1/token?grant_type=password",
+        {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error_description || data.msg || "Login fehlgeschlagen");
+      }
+
+      localStorage.setItem("aquatreishop_access_token", data.access_token);
+      localStorage.setItem("aquatreishop_refresh_token", data.refresh_token);
+      localStorage.setItem("aquatreishop_user", JSON.stringify(data.user));
+
+      await checkAdmin();
+    } catch (error) {
+      showLoginMessage(error.message, true);
+    }
+  }
+
+
+  // =====================================================
+  // ADMIN PRÜFEN
+  // =====================================================
+
+  async function checkAdmin() {
+    const token = localStorage.getItem("aquatreishop_access_token");
+
+    if (!token) {
+      showLogin();
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/admins?select=user_id",
+        {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + token
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Admin-Prüfung fehlgeschlagen");
+      }
+
+      const admins = await response.json();
+      const user = JSON.parse(
+        localStorage.getItem("aquatreishop_user") || "{}"
+      );
+
+      const isAdmin = admins.some(
+        admin => admin.user_id === user.id
+      );
+
+      if (!isAdmin) {
+        logout();
+        showLoginMessage(
+          "Dieser Benutzer hat keine Admin-Berechtigung.",
+          true
+        );
+        return;
+      }
+
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("adminBox").classList.remove("hidden");
+
+      document.getElementById("userInfo").textContent =
+        "Angemeldet als: " + (user.email || "");
+
+      await loadEverything();
+
+    } catch (error) {
+      logout();
+      showLoginMessage(
+        "Admin-Zugriff konnte nicht geprüft werden.",
+        true
+      );
+    }
+  }
+
+
+  // =====================================================
+  // LOGOUT
+  // =====================================================
+
+  function logout() {
+    localStorage.removeItem("aquatreishop_access_token");
+    localStorage.removeItem("aquatreishop_refresh_token");
+    localStorage.removeItem("aquatreishop_user");
+
+    document.getElementById("adminBox").classList.add("hidden");
+    document.getElementById("loginBox").classList.remove("hidden");
+  }
+
+
+  function showLogin() {
+    document.getElementById("adminBox").classList.add("hidden");
+    document.getElementById("loginBox").classList.remove("hidden");
+  }
+
+
+  function showLoginMessage(message, error = false) {
+    const box = document.getElementById("loginMessage");
+
+    box.textContent = message;
+    box.classList.remove("hidden");
+    box.classList.toggle("error", error);
+  }
+
+
+  function showProductMessage(message, error = false) {
+    const box = document.getElementById("productMessage");
+
+    box.textContent = message;
+    box.classList.remove("hidden");
+    box.classList.toggle("error", error);
+  }
+
+
+  // =====================================================
+  // DATEN LADEN
+  // =====================================================
+
+  async function loadEverything() {
+    await loadCategories();
+    await loadSubcategories();
+    await loadProducts();
+  }
+
+
+  // =====================================================
+  // KATEGORIEN
+  // =====================================================
+
+  async function loadCategories() {
+    const categories = await supabaseFetch(
+      "categories?select=*&order=name.asc"
+    );
+
+    const select = document.getElementById("productCategory");
+    const subSelect = document.getElementById("subcategoryCategory");
+
+    select.innerHTML = '<option value="">Keine Kategorie</option>';
+    subSelect.innerHTML =
+      '<option value="">Kategorie auswählen</option>';
+
+    categories.forEach(category => {
+      select.innerHTML +=
+        `<option value="${category.id}">
+          ${escapeHtml(category.name)}
+        </option>`;
+
+      subSelect.innerHTML +=
+        `<option value="${category.id}">
+          ${escapeHtml(category.name)}
+        </option>`;
+    });
+
+    const container = document.getElementById("categories");
+
+    container.innerHTML = categories.map(category => `
+      <div class="product">
+        <strong>${escapeHtml(category.name)}</strong>
+        <br><br>
+        <button class="danger"
+          onclick="deleteCategory('${category.id}')">
+          Löschen
+        </button>
+      </div>
+    `).join("");
+  }
+
+
+  async function addCategory() {
+    const name = document
+      .getElementById("newCategory")
+      .value
+      .trim();
+
+    if (!name) return;
+
+    try {
+      await supabaseFetch("categories", {
+        method: "POST",
+        headers: {
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({ name })
+      });
+
+      document.getElementById("newCategory").value = "";
+
+      await loadCategories();
+    } catch (error) {
+      alert("Kategorie konnte nicht gespeichert werden.");
+    }
+  }
+
+
+  async function deleteCategory(id) {
+    if (!confirm("Kategorie wirklich löschen?")) return;
+
+    try {
+      await supabaseFetch(
+        "categories?id=eq." + encodeURIComponent(id),
+        {
+          method: "DELETE",
+          headers: {
+            "Prefer": "return=minimal"
+          }
+        }
+      );
+
+      await loadCategories();
+      await loadProducts();
+
+    } catch (error) {
+      alert("Kategorie konnte nicht gelöscht werden.");
+    }
+  }
+
+
+  // =====================================================
+  // UNTERKATEGORIEN
+  // =====================================================
+
+  async function loadSubcategories() {
+    const subcategories = await supabaseFetch(
+      "subcategories?select=*&order=name.asc"
+    );
+
+    const categories = await supabaseFetch(
+      "categories?select=id,name"
+    );
+
+    const container =
+      document.getElementById("subcategories");
+
+    container.innerHTML = subcategories.map(sub => {
+
+      const category = categories.find(
+        c => c.id === sub.category_id
+      );
+
+      return `
+        <div class="product">
+          <strong>${escapeHtml(sub.name)}</strong>
+          <div class="muted">
+            Kategorie:
+            ${category ? escapeHtml(category.name) : "Keine"}
+          </div>
+
+          <br>
+
+          <button class="danger"
+            onclick="deleteSubcategory('${sub.id}')">
+            Löschen
+          </button>
+        </div>
+      `;
+    }).join("");
+  }
+
+
+  async function addSubcategory() {
+    const name = document
+      .getElementById("newSubcategory")
+      .value
+      .trim();
+
+    const category_id =
+      document.getElementById("subcategoryCategory").value;
+
+    if (!name || !category_id) {
+      alert("Bitte Name und Kategorie auswählen.");
+      return;
+    }
+
+    try {
+      await supabaseFetch("subcategories", {
+        method: "POST",
+        headers: {
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({
+          name,
+          category_id
+        })
+      });
+
+      document.getElementById("newSubcategory").value = "";
+
+      await loadSubcategories();
+
+    } catch (error) {
+      alert("Unterkategorie konnte nicht gespeichert werden.");
+    }
+  }
+
+
+  async function deleteSubcategory(id) {
+    if (!confirm("Unterkategorie wirklich löschen?")) return;
+
+    try {
+      await supabaseFetch(
+        "subcategories?id=eq." + encodeURIComponent(id),
+        {
+          method: "DELETE",
+          headers: {
+            "Prefer": "return=minimal"
+          }
+        }
+      );
+
+      await loadSubcategories();
+
+    } catch (error) {
+      alert("Unterkategorie konnte nicht gelöscht werden.");
+    }
+  }
+
+
+  // =====================================================
+  // PRODUKTE
+  // =====================================================
+
+  async function loadProducts() {
+    const products = await supabaseFetch(
+      "products?select=*&order=name.asc"
+    );
+
+    const container =
+      document.getElementById("products");
+
+    if (!products.length) {
+      container.innerHTML =
+        '<p class="muted">Noch keine Produkte vorhanden.</p>';
+      return;
+    }
+
+    container.innerHTML = products.map(product => `
+      <div class="product">
+
+        <strong>
+          ${escapeHtml(product.name || "")}
+        </strong>
+
+        <div>
+          Preis:
+          ${product.price != null
+            ? Number(product.price).toFixed(2) + " €"
+            : "–"}
+        </div>
+
+        <div class="muted">
+          ${escapeHtml(product.availability || "")}
+        </div>
+
+        <br>
+
+        <button class="primary"
+          onclick='editProduct(${JSON.stringify(product)})'>
+          Bearbeiten
+        </button>
+
+        <button class="danger"
+          onclick="deleteProduct('${product.id}')">
+          Löschen
+        </button>
+
+      </div>
+    `).join("");
+  }
+
+
+  // =====================================================
+  // PRODUKT SPEICHERN
+  // =====================================================
+
+  async function saveProduct() {
+
+    const id =
+      document.getElementById("productId").value;
+
+    const product = {
+      name: document.getElementById("productName").value.trim(),
+
+      price:
+        document.getElementById("productPrice").value
+          ? Number(document.getElementById("productPrice").value)
+          : null,
+
+      description:
+        document.getElementById("productDescription").value.trim(),
+
+      placement:
+        document.getElementById("productPlacement").value.trim(),
+
+      requirements:
+        document.getElementById("productRequirements").value.trim(),
+
+      availability:
+        document.getElementById("productAvailability").value.trim(),
+
+      image_url:
+        document.getElementById("productImage").value.trim(),
+
+      category_id:
+        document.getElementById("productCategory").value || null,
+
+      subcategory_id:
+        document.getElementById("productSubcategory").value || null
+    };
+
+    if (!product.name) {
+      showProductMessage(
+        "Bitte einen Produktnamen eingeben.",
+        true
+      );
+      return;
+    }
+
+    try {
+
+      if (id) {
+
+        await supabaseFetch(
+          "products?id=eq." + encodeURIComponent(id),
+          {
+            method: "PATCH",
+            headers: {
+              "Prefer": "return=minimal"
+            },
+            body: JSON.stringify(product)
+          }
+        );
+
+        showProductMessage("Produkt wurde aktualisiert.");
+
+      } else {
+
+        await supabaseFetch(
+          "products",
+          {
+            method: "POST",
+            headers: {
+              "Prefer": "return=minimal"
+            },
+            body: JSON.stringify(product)
+          }
+        );
+
+        showProductMessage("Produkt wurde hinzugefügt.");
+      }
+
+      clearForm();
+      await loadProducts();
+
+    } catch (error) {
+      console.error(error);
+
+      showProductMessage(
+        "Produkt konnte nicht gespeichert werden.",
+        true
+      );
+    }
+  }
+
+
+  // =====================================================
+  // PRODUKT BEARBEITEN
+  // =====================================================
+
+  function editProduct(product) {
+
+    document.getElementById("productId").value =
+      product.id || "";
+
+    document.getElementById("productName").value =
+      product.name || "";
+
+    document.getElementById("productPrice").value =
+      product.price ?? "";
+
+    document.getElementById("productDescription").value =
+      product.description || "";
+
+    document.getElementById("productPlacement").value =
+      product.placement || "";
+
+    document.getElementById("productRequirements").value =
+      product.requirements || "";
+
+    document.getElementById("productAvailability").value =
+      product.availability || "";
+
+    document.getElementById("productImage").value =
+      product.image_url || "";
+
+    document.getElementById("productCategory").value =
+      product.category_id || "";
+
+    document.getElementById("productSubcategory").value =
+      product.subcategory_id || "";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  // =====================================================
+  // PRODUKT LÖSCHEN
+  // =====================================================
+
+  async function deleteProduct(id) {
+
+    if (!confirm("Produkt wirklich löschen?")) return;
+
+    try {
+
+      await supabaseFetch(
+        "products?id=eq." + encodeURIComponent(id),
+        {
+          method: "DELETE",
+          headers: {
+            "Prefer": "return=minimal"
+          }
+        }
+      );
+
+      await loadProducts();
+
+    } catch (error) {
+      alert("Produkt konnte nicht gelöscht werden.");
+    }
+  }
+
+
+  // =====================================================
+  // FORMULAR LEEREN
+  // =====================================================
+
+  function clearForm() {
+
+    document.getElementById("productId").value = "";
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice").value = "";
+    document.getElementById("productDescription").value = "";
+    document.getElementById("productPlacement").value = "";
+    document.getElementById("productRequirements").value = "";
+    document.getElementById("productAvailability").value = "";
+    document.getElementById("productImage").value = "";
+    document.getElementById("productCategory").value = "";
+    document.getElementById("productSubcategory").value = "";
+  }
+
+
+  // =====================================================
+  // HTML SICHER MACHEN
+  // =====================================================
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  // =====================================================
+  // START
+  // =====================================================
+
+  checkAdmin();
+
+</script>
+
+</body>
+</html>
