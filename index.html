@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaTreishop – Aquarium Demo-Shop</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f8f8;
+      color: #173b3f;
+    }
+
+    header {
+      background: #087f8c;
+      color: white;
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .demo {
+      background: #fff3cd;
+      color: #664d03;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px 16px 50px;
+    }
+
+    .search {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cbdada;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      color: #087f8c;
+    }
+
+    .category {
+      margin-bottom: 30px;
+    }
+
+    .category-title {
+      padding: 12px 15px;
+      border-radius: 10px;
+      color: white;
+      background: #087f8c;
+      margin-bottom: 15px;
+    }
+
+    .subcategory {
+      margin-bottom: 22px;
+    }
+
+    .subcategory h3 {
+      margin: 0 0 12px;
+      color: #2e7d32;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: #e8eeee;
+    }
+
+    .product-content {
+      padding: 15px;
+    }
+
+    .product h4 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .price {
+      font-weight: bold;
+      color: #087f8c;
+      margin-bottom: 10px;
+    }
+
+    .info {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #486064;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 9px;
+      border-radius: 7px;
+      background: #eee;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: #173b3f;
+      color: white;
+      font-size: 13px;
+    }
+
+    .empty {
+      padding: 30px;
+      text-align: center;
+      color: #667;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>AquaTreishop</h1>
+    <p>Dein Aquarium- und Aquaristik-Katalog</p>
+  </header>
+
+  <div class="demo">
+    DEMO-SHOP – Kein Verkauf · Keine Bestellung · Bald verfügbar
+  </div>
+
+  <main class="container">
+
+    <input
+      id="search"
+      class="search"
+      type="search"
+      placeholder="Produkte suchen..."
+    >
+
+    <div id="shop">
+      <div class="empty">Produkte werden geladen...</div>
+    </div>
+
+  </main>
+
+  <footer>
+    AquaTreishop · Demo-Version · Kein Verkauf
+  </footer>
+
+  <script>
+    /*
+      SUPABASE EINSTELLUNGEN
+
+      Hier später deine beiden Werte einsetzen:
+
+      1. Project URL
+      2. Publishable Key
+
+      NICHT den service_role Key verwenden.
+    */
+
+    const SUPABASE_URL = "https://hzrqwgrszfpyqeibszno.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
+
+    async function loadShop() {
+      const shop = document.getElementById("shop");
+
+      if (
+        SUPABASE_URL.includes("DEINE_") ||
+        SUPABASE_KEY.includes("DEIN_")
+      ) {
+        shop.innerHTML = `
+          <div class="empty">
+            <h2>Willkommen bei AquaTreishop</h2>
+            <p>
+              Die Verbindung zur Produktdatenbank wird noch eingerichtet.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          SUPABASE_URL +
+          "/rest/v1/categories?select=*&order=sort_order.asc",
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: "Bearer " + SUPABASE_KEY
+            }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Datenbankfehler");
+        }
+
+        const categories = await response.json();
+
+        const subResponse = await fetch(
+          SUPABASE_URL +
+          "/rest/v1/subcategories?select=*&order=sort_order.asc",
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: "Bearer " + SUPABASE_KEY
+            }
+          }
+        );
+
+        const subcategories = await subResponse.json();
+
+        const productResponse = await fetch(
+          SUPABASE_URL +
+          "/rest/v1/products?select=*&order=sort_order.asc",
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: "Bearer " + SUPABASE_KEY
+            }
+          }
+        );
+
+        const products = await productResponse.json();
+
+        renderShop(categories, subcategories, products);
+
+      } catch (error) {
+        console.error(error);
+
+        shop.innerHTML = `
+          <div class="empty">
+            <h2>Produkte konnten nicht geladen werden.</h2>
+            <p>Die Datenbankverbindung wird noch eingerichtet.</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderShop(categories, subcategories, products) {
+      const shop = document.getElementById("shop");
+
+      if (!categories.length) {
+        shop.innerHTML = `
+          <div class="empty">
+            <h2>Noch keine Produkte vorhanden</h2>
+            <p>Die Kategorien werden später über den Admin-Bereich gepflegt.</p>
+          </div>
+        `;
+        return;
+      }
+
+      shop.innerHTML = categories.map(category => {
+
+        const categorySubs = subcategories.filter(
+          sub => sub.category_id === category.id
+        );
+
+        return `
+          <section class="category">
+            <h2
+              class="category-title"
+              style="background:${escapeHtml(category.color)}"
+            >
+              ${escapeHtml(category.name)}
+            </h2>
+
+            ${categorySubs.map(sub => {
+
+              const subProducts = products.filter(
+                product => product.subcategory_id === sub.id
+              );
+
+              return `
+                <div class="subcategory">
+                  <h3>${escapeHtml(sub.name)}</h3>
+
+                  <div class="products">
+                    ${
+                      subProducts.length
+                      ? subProducts.map(product => `
+                        <article class="product">
+
+                          ${
+                            product.image_url
+                            ? `<img
+                                src="${escapeHtml(product.image_url)}"
+                                alt="${escapeHtml(product.name)}"
+                              >`
+                            : `<div style="
+                                height:180px;
+                                background:#e8eeee;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                color:#777;
+                              ">
+                                Kein Bild
+                              </div>`
+                          }
+
+                          <div class="product-content">
+
+                            <h4>${escapeHtml(product.name)}</h4>
+
+                            ${
+                              product.price
+                              ? `<div class="price">
+                                  ${escapeHtml(product.price)}
+                                </div>`
+                              : ""
+                            }
+
+                            ${
+                              product.description
+                              ? `<div class="info">
+                                  ${escapeHtml(product.description)}
+                                </div>`
+                              : ""
+                            }
+
+                            ${
+                              product.placement
+                              ? `<div class="info">
+                                  <strong>Platzierung:</strong>
+                                  ${escapeHtml(product.placement)}
+                                </div>`
+                              : ""
+                            }
+
+                            ${
+                              product.requirements
+                              ? `<div class="info">
+                                  <strong>Anforderungen:</strong>
+                                  ${escapeHtml(product.requirements)}
+                                </div>`
+                              : ""
+                            }
+
+                            <div class="status">
+                              ${
+                                product.available
+                                ? "Bald verfügbar"
+                                : "Derzeit nicht verfügbar"
+                              }
+                            </div>
+
+                          </div>
+                        </article>
+                      `).join("")
+                      : `<div class="empty">
+                          Noch keine Produkte in dieser Unterkategorie.
+                        </div>`
+                    }
+                  </div>
+                </div>
+              `;
+
+            }).join("")}
+          </section>
+        `;
+
+      }).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    document.getElementById("search").addEventListener("input", function () {
+      const searchText = this.value.toLowerCase();
+
+      document.querySelectorAll(".product").forEach(product => {
+        product.style.display =
+          product.innerText.toLowerCase().includes(searchText)
+          ? ""
+          : "none";
+      });
+    });
+
+    loadShop();
+  </script>
+
+</body>
+</html>
