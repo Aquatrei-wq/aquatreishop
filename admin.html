@@ -298,7 +298,9 @@
         ...options,
         headers: {
           "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY,
+          "Authorization": "Bearer "+ (
+  localStorage.getItem("aquatreishop_access_token") || SUPABASE_KEY
+),
           "Content-Type": "application/json",
           ...(options.headers || {})
         }
