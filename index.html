@@ -750,68 +750,18 @@ function updateCartCount() {
     .textContent = count;
 }
 
+document.getElementById("cartCount")
+    .textContent = count;
 
-function openCart() {
 
-  if (!cart.length) {
+<a
+  class="cart-button"
+  href="cart.html"
+  style="text-decoration:none;"
+>
+  🛒 Warenkorb <span id="cartCount">0</span>
+</a>
 
-    alert("Dein Warenkorb ist noch leer.");
-
-    return;
-  }
-
-  let subtotal =
-    cart.reduce(
-      (sum, item) =>
-        sum +
-        (item.price_cents / 100) *
-        item.quantity,
-      0
-    );
-
-  const shipping =
-    subtotal >= 70
-      ? 0
-      : 6.99;
-
-  const total =
-    subtotal + shipping;
-
-  let text =
-    "Warenkorb\n\n";
-
-  cart.forEach(item => {
-
-    text +=
-      item.quantity +
-      " × " +
-      item.name +
-      " – " +
-      formatPrice(
-        item.price_cents / 100
-      ) +
-      "\n";
-
-  });
-
-  text +=
-    "\nZwischensumme: " +
-    formatPrice(subtotal);
-
-  text +=
-    "\nVersand: " +
-    (
-      shipping === 0
-        ? "kostenlos"
-        : formatPrice(shipping)
-    );
-
-  text +=
-    "\nGesamt: " +
-    formatPrice(total);
-
-  alert(text);
-}
 
 
 loadProducts();
