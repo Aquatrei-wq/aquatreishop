@@ -539,7 +539,7 @@
 
       await loadCategories();
     } catch (error) {
-      alert("Kategorie konnte nicht gespeichert werden.");
+      alert("Kategorie konnte nicht gespeichert werden:\n\n" + error.message);");
     }
   }
 
