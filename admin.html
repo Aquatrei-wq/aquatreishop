@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>AquaTreishop – Admin</title>
 
   <style>
@@ -12,96 +13,162 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      color: #0f172a;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f7f9;
+      color: #17242b;
     }
 
-    header {
-      background: #0f172a;
-      color: white;
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .page {
+      width: min(1200px, 100%);
+      margin: auto;
       padding: 18px;
     }
 
-    header h1 {
-      margin: 0 0 5px;
-      font-size: 22px;
+    .header {
+      background: #0f2530;
+      color: white;
+      padding: 18px;
+      border-radius: 18px;
+      margin-bottom: 18px;
     }
 
-    header p {
-      margin: 0;
-      color: #cbd5e1;
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
-    main {
-      max-width: 1100px;
-      margin: 20px auto;
-      padding: 0 15px;
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .muted {
+      color: #71818a;
+      font-size: 14px;
+    }
+
+    .header .muted {
+      color: #b9c8ce;
     }
 
     .card {
       background: white;
-      border-radius: 14px;
+      border-radius: 18px;
       padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+      margin-bottom: 18px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.06);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
     }
 
     h2 {
-      margin-top: 0;
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 14px 0 6px;
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      padding: 11px;
-      margin-top: 6px;
-      margin-bottom: 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 15px;
+      padding: 12px 13px;
+      border: 1px solid #d7e0e4;
+      border-radius: 10px;
+      background: white;
+      color: #17242b;
     }
 
     textarea {
-      min-height: 100px;
+      min-height: 110px;
       resize: vertical;
     }
 
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 8px;
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #1687a5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
     }
 
     button {
       border: 0;
-      border-radius: 8px;
-      padding: 11px 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-right: 6px;
-      margin-bottom: 6px;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-weight: 700;
     }
 
     .primary {
-      background: #0ea5e9;
+      background: #0f718d;
+      color: white;
+    }
+
+    .primary:hover {
+      opacity: .9;
+    }
+
+    .secondary {
+      background: #e8eef1;
+      color: #263840;
+    }
+
+    .success {
+      background: #16804b;
       color: white;
     }
 
     .danger {
-      background: #dc2626;
+      background: #b82e38;
       color: white;
     }
 
-    .secondary {
-      background: #e2e8f0;
-      color: #0f172a;
+    .warning {
+      background: #d68b16;
+      color: white;
     }
 
-    .success {
-      background: #16a34a;
-      color: white;
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
     }
 
     .hidden {
@@ -110,805 +177,874 @@
 
     .message {
       padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      background: #e0f2fe;
-    }
-
-    .error {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .product {
-      border: 1px solid #e2e8f0;
       border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
+      background: #e9f5f8;
+      color: #15566a;
     }
 
-    .product strong {
+    .message.error {
+      background: #fdebed;
+      color: #982732;
+    }
+
+    .message.success-message {
+      background: #e9f7ef;
+      color: #16663d;
+    }
+
+    .login-wrap {
+      max-width: 460px;
+      margin: 60px auto;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .login-logo strong {
+      font-size: 30px;
+    }
+
+    .product-list,
+    .order-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .product-item,
+    .order-item {
+      border: 1px solid #e0e7ea;
+      border-radius: 14px;
+      padding: 15px;
+      background: #fbfdfe;
+    }
+
+    .product-top,
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .product-name,
+    .order-number {
+      font-weight: 800;
       font-size: 18px;
     }
 
-    .muted {
-      color: #64748b;
-      font-size: 14px;
+    .product-image {
+      width: 75px;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #edf2f4;
     }
 
-    .topbar {
+    .product-info {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 7px;
+    }
+
+    .status-sale {
+      background: #dff5e8;
+      color: #146b3c;
+    }
+
+    .status-catalog {
+      background: #e9eef1;
+      color: #51626b;
+    }
+
+    .status-soon {
+      background: #fff0d8;
+      color: #956014;
+    }
+
+    .status-out {
+      background: #fde2e5;
+      color: #9b2732;
+    }
+
+    .price {
+      font-weight: 800;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .small {
+      font-size: 13px;
+    }
+
+    .order-items {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f1f5f7;
+    }
+
+    .order-line {
       display: flex;
       justify-content: space-between;
       gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
+      padding: 5px 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: white;
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.05);
+    }
+
+    .stat-number {
+      font-size: 25px;
+      font-weight: 800;
+      margin-top: 5px;
+    }
+
+    .empty {
+      padding: 25px;
+      text-align: center;
+      color: #71818a;
+      background: #f6f9fa;
+      border-radius: 12px;
+    }
+
+    .divider {
+      border: 0;
+      border-top: 1px solid #e4eaed;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 750px) {
+      .page {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 15px;
+        border-radius: 14px;
+      }
+
+      .grid,
+      .grid-3,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .product-top,
+      .order-top {
+        flex-direction: column;
+      }
+
+      .button-row button {
+        width: 100%;
+      }
+
+      .price {
+        align-self: flex-start;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>🐠 AquaTreishop – Admin</h1>
-  <p>Privater Verwaltungsbereich</p>
-</header>
+<div id="loginScreen" class="login-wrap">
 
-<main>
+  <div class="login-logo">
+    <strong>AquaTreishop</strong>
+    <div class="muted">Administrationsbereich</div>
+  </div>
 
-  <!-- LOGIN -->
-  <section id="loginBox" class="card">
+  <div class="card">
+
     <h2>Admin Login</h2>
 
     <div id="loginMessage" class="message hidden"></div>
 
-    <label>E-Mail</label>
-    <input id="email" type="email" autocomplete="username">
+    <label for="loginEmail">E-Mail</label>
+    <input
+      id="loginEmail"
+      type="email"
+      autocomplete="username"
+      placeholder="admin@beispiel.de"
+    >
 
-    <label>Passwort</label>
-    <input id="password" type="password" autocomplete="current-password">
+    <label for="loginPassword">Passwort</label>
+    <input
+      id="loginPassword"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Passwort"
+    >
 
-    <button class="primary" onclick="login()">Einloggen</button>
-  </section>
+    <div class="button-row">
+      <button class="primary" onclick="login()">
+        Einloggen
+      </button>
+    </div>
+
+  </div>
+
+</div>
 
 
-  <!-- ADMIN -->
-  <section id="adminBox" class="hidden">
+<div id="adminScreen" class="hidden">
 
-    <div class="card">
-      <div class="topbar">
+  <div class="page">
+
+    <header class="header">
+
+      <div class="header-row">
+
         <div>
-          <h2>Admin-Bereich</h2>
-          <div id="userInfo" class="muted"></div>
+          <div class="logo">AquaTreishop</div>
+          <div class="muted">
+            Shopverwaltung
+          </div>
         </div>
 
-        <button class="secondary" onclick="logout()">Ausloggen</button>
+        <div class="button-row" style="margin-top:0;">
+          <button class="secondary" onclick="loadEverything()">
+            ↻ Aktualisieren
+          </button>
+
+          <button class="danger" onclick="logout()">
+            Ausloggen
+          </button>
+        </div>
+
       </div>
+
+    </header>
+
+
+    <!-- DASHBOARD -->
+
+    <div class="stats">
+
+      <div class="stat">
+        <div class="muted">Produkte</div>
+        <div id="statProducts" class="stat-number">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="muted">Zum Verkauf</div>
+        <div id="statSale" class="stat-number">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="muted">Bestellungen</div>
+        <div id="statOrders" class="stat-number">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="muted">Offene Bestellungen</div>
+        <div id="statOpenOrders" class="stat-number">0</div>
+      </div>
+
     </div>
 
 
     <!-- PRODUKT -->
+
     <section class="card">
-      <h2>Produkt verwalten</h2>
+
+      <h2 id="productFormTitle">
+        Produkt hinzufügen
+      </h2>
 
       <div id="productMessage" class="message hidden"></div>
 
       <input type="hidden" id="productId">
 
-      <label>Produktname</label>
-      <input id="productName" placeholder="z. B. Guppy">
+      <div class="grid">
 
-      <label>Preis</label>
-      <input id="productPrice" type="number" step="0.01" placeholder="z. B. 4.99">
+        <div>
+          <label for="productName">
+            Produktname
+          </label>
 
-      <label>Beschreibung</label>
-      <textarea id="productDescription"></textarea>
+          <input
+            id="productName"
+            placeholder="z. B. Anubias nana"
+          >
+        </div>
 
-      <label>Platzierung</label>
-      <input id="productPlacement" placeholder="z. B. Gesellschaftsbecken">
 
-      <label>Anforderungen</label>
-      <textarea id="productRequirements"></textarea>
+        <div>
+          <label for="productPrice">
+            Preis in €
+          </label>
 
-      <label>Verfügbarkeit</label>
-      <input id="productAvailability" placeholder="z. B. Bald verfügbar">
+          <input
+            id="productPrice"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="4.99"
+          >
+        </div>
 
-      <label>Bild-URL</label>
-      <input id="productImage" placeholder="https://...">
 
-      <label>Kategorie</label>
-      <select id="productCategory">
-        <option value="">Keine Kategorie</option>
-      </select>
+        <div>
+          <label for="productStatus">
+            Verkaufsstatus
+          </label>
 
-      <label>Unterkategorie</label>
-      <select id="productSubcategory">
-        <option value="">Keine Unterkategorie</option>
-      </select>
+          <select id="productStatus">
+            <option value="catalog">
+              👁️ Nur Katalog
+            </option>
 
-      <button class="primary" onclick="saveProduct()">
-        Produkt speichern
-      </button>
+            <option value="sale">
+              🟢 Zum Verkauf
+            </option>
 
-      <button class="secondary" onclick="clearForm()">
-        Formular leeren
-      </button>
+            <option value="soon">
+              🟠 Bald verfügbar
+            </option>
+
+            <option value="out">
+              🔴 Ausverkauft
+            </option>
+          </select>
+        </div>
+
+
+        <div>
+          <label for="productStock">
+            Bestand
+          </label>
+
+          <input
+            id="productStock"
+            type="number"
+            min="0"
+            step="1"
+            value="0"
+          >
+        </div>
+
+
+        <div>
+          <label for="productCategory">
+            Kategorie
+          </label>
+
+          <select id="productCategory">
+            <option value="">
+              Keine Kategorie
+            </option>
+          </select>
+        </div>
+
+
+        <div>
+          <label for="productSubcategory">
+            Unterkategorie
+          </label>
+
+          <select id="productSubcategory">
+            <option value="">
+              Keine Unterkategorie
+            </option>
+          </select>
+        </div>
+
+
+        <div>
+          <label for="productSlug">
+            URL-Name / Slug
+          </label>
+
+          <input
+            id="productSlug"
+            placeholder="anubias-nana"
+          >
+        </div>
+
+
+        <div>
+          <label for="productPlacement">
+            Platzierung
+          </label>
+
+          <input
+            id="productPlacement"
+            placeholder="z. B. Vordergrund"
+          >
+        </div>
+
+
+        <div class="full">
+
+          <label for="productShortDescription">
+            Kurzbeschreibung
+          </label>
+
+          <input
+            id="productShortDescription"
+            placeholder="Kurzer Text für die Produktübersicht"
+          >
+
+        </div>
+
+
+        <div class="full">
+
+          <label for="productDescription">
+            Beschreibung
+          </label>
+
+          <textarea
+            id="productDescription"
+            placeholder="Ausführliche Produktbeschreibung"
+          ></textarea>
+
+        </div>
+
+
+        <div class="full">
+
+          <label for="productRequirements">
+            Anforderungen
+          </label>
+
+          <textarea
+            id="productRequirements"
+            placeholder="Licht, Temperatur, Wasserwerte usw."
+          ></textarea>
+
+        </div>
+
+
+        <div>
+          <label for="productImage">
+            Bild-URL
+          </label>
+
+          <input
+            id="productImage"
+            placeholder="https://..."
+          >
+        </div>
+
+
+        <div>
+          <label for="productAvailability">
+            Zusätzliche Verfügbarkeitsinfo
+          </label>
+
+          <input
+            id="productAvailability"
+            placeholder="z. B. Versand ab Montag"
+          >
+        </div>
+
+
+        <div>
+          <label for="productSortOrder">
+            Sortierung
+          </label>
+
+          <input
+            id="productSortOrder"
+            type="number"
+            step="1"
+            value="0"
+          >
+        </div>
+
+
+        <div>
+          <label>
+            Produkt aktiv
+          </label>
+
+          <select id="productActive">
+            <option value="true">
+              Ja – öffentlich anzeigen
+            </option>
+
+            <option value="false">
+              Nein – ausblenden
+            </option>
+          </select>
+        </div>
+
+      </div>
+
+
+      <div class="button-row">
+
+        <button
+          class="primary"
+          onclick="saveProduct()"
+        >
+          💾 Produkt speichern
+        </button>
+
+        <button
+          class="secondary"
+          onclick="clearProductForm()"
+        >
+          Neues Produkt
+        </button>
+
+      </div>
+
     </section>
 
 
     <!-- PRODUKTE -->
+
     <section class="card">
+
       <h2>Produkte</h2>
-      <div id="products">Lade Produkte...</div>
+
+      <div id="productList">
+        Lade Produkte...
+      </div>
+
     </section>
 
 
     <!-- KATEGORIEN -->
+
     <section class="card">
+
       <h2>Kategorien</h2>
 
-      <input id="newCategory" placeholder="Neue Kategorie">
+      <div class="grid">
 
-      <button class="success" onclick="addCategory()">
-        Kategorie hinzufügen
-      </button>
+        <div>
 
-      <div id="categories"></div>
+          <label for="newCategory">
+            Neue Kategorie
+          </label>
+
+          <input
+            id="newCategory"
+            placeholder="z. B. Pflanzen"
+          >
+
+        </div>
+
+      </div>
+
+      <div class="button-row">
+
+        <button
+          class="success"
+          onclick="addCategory()"
+        >
+          + Kategorie hinzufügen
+        </button>
+
+      </div>
+
+      <hr class="divider">
+
+      <div id="categoryList">
+        Lade Kategorien...
+      </div>
+
     </section>
 
 
     <!-- UNTERKATEGORIEN -->
+
     <section class="card">
+
       <h2>Unterkategorien</h2>
 
-      <input id="newSubcategory" placeholder="Neue Unterkategorie">
+      <div class="grid">
 
-      <select id="subcategoryCategory">
-        <option value="">Kategorie auswählen</option>
-      </select>
+        <div>
 
-      <button class="success" onclick="addSubcategory()">
-        Unterkategorie hinzufügen
-      </button>
+          <label for="newSubcategory">
+            Neue Unterkategorie
+          </label>
 
-      <div id="subcategories"></div>
+          <input
+            id="newSubcategory"
+            placeholder="z. B. Aufsitzerpflanzen"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="subcategoryCategory">
+            Hauptkategorie
+          </label>
+
+          <select id="subcategoryCategory">
+
+            <option value="">
+              Kategorie auswählen
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+      <div class="button-row">
+
+        <button
+          class="success"
+          onclick="addSubcategory()"
+        >
+          + Unterkategorie hinzufügen
+        </button>
+
+      </div>
+
+      <hr class="divider">
+
+      <div id="subcategoryList">
+        Lade Unterkategorien...
+      </div>
+
     </section>
 
-  </section>
 
-</main>
+    <!-- SHOP EINSTELLUNGEN -->
+
+    <section class="card">
+
+      <h2>Shop-Einstellungen</h2>
+
+      <div id="settingsMessage" class="message hidden"></div>
+
+      <div class="grid">
+
+        <div>
+
+          <label for="shopName">
+            Shopname
+          </label>
+
+          <input id="shopName">
+
+        </div>
+
+
+        <div>
+
+          <label for="currency">
+            Währung
+          </label>
+
+          <input
+            id="currency"
+            value="EUR"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="freeShipping">
+            Kostenloser Versand ab €
+          </label>
+
+          <input
+            id="freeShipping"
+            type="number"
+            min="0"
+            step="0.01"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="shippingCost">
+            Versandkosten unterhalb der Grenze €
+          </label>
+
+          <input
+            id="shippingCost"
+            type="number"
+            min="0"
+            step="0.01"
+          >
+
+        </div>
+
+      </div>
+
+      <div class="button-row">
+
+        <button
+          class="primary"
+          onclick="saveSettings()"
+        >
+          ⚙️ Einstellungen speichern
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- BESTELLUNGEN -->
+
+    <section class="card">
+
+      <h2>Bestellungen</h2>
+
+      <div id="orderList">
+        Lade Bestellungen...
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
 
 
 <script>
-  // =====================================================
-  // DEINE SUPABASE-DATEN
-  // =====================================================
 
-  const SUPABASE_URL = "https://hzrqwgrszfpyqeibszno.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
+  /* =====================================================
+     SUPABASE
+  ===================================================== */
+
+  const SUPABASE_URL =
+    "https://hzrqwgrszfpyqeibszno.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
 
 
-  // =====================================================
-  // HILFSFUNKTION
-  // =====================================================
+  /* =====================================================
+     HILFSFUNKTIONEN
+  ===================================================== */
 
-  async function supabaseFetch(path, options = {}) {
+  function getToken() {
+    return localStorage.getItem(
+      "aquatreishop_access_token"
+    );
+  }
+
+
+  function authHeaders() {
+
+    const token = getToken();
+
+    return {
+      "apikey": SUPABASE_KEY,
+      "Authorization": "Bearer " + (
+        token || SUPABASE_KEY
+      ),
+      "Content-Type": "application/json"
+    };
+  }
+
+
+  async function api(path, options = {}) {
+
     const response = await fetch(
       SUPABASE_URL + "/rest/v1/" + path,
       {
         ...options,
         headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer "+ (
-  localStorage.getItem("aquatreishop_access_token") || SUPABASE_KEY
-),
-          "Content-Type": "application/json",
+          ...authHeaders(),
           ...(options.headers || {})
         }
       }
     );
 
+    const text = await response.text();
+
+    let data = null;
+
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
+    }
+
     if (!response.ok) {
-      const text = await response.text();
-      throw new Error(text || "Supabase Fehler");
-    }
 
-    if (response.status === 204) {
-      return null;
-    }
+      let message =
+        "Supabase-Fehler " + response.status;
 
-    return response.json();
-  }
-
-
-  // =====================================================
-  // LOGIN MIT SUPABASE AUTH
-  // =====================================================
-
-  async function login() {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    showLoginMessage("Anmeldung läuft...", false);
-
-    try {
-      const response = await fetch(
-        SUPABASE_URL + "/auth/v1/token?grant_type=password",
-        {
-          method: "POST",
-          headers: {
-            "apikey": SUPABASE_KEY,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email,
-            password
-          })
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error_description || data.msg || "Login fehlgeschlagen");
+      if (data && data.message) {
+        message = data.message;
+      } else if (data && data.error_description) {
+        message = data.error_description;
+      } else if (data && data.error) {
+        message = data.error;
       }
 
-      localStorage.setItem("aquatreishop_access_token", data.access_token);
-      localStorage.setItem("aquatreishop_refresh_token", data.refresh_token);
-      localStorage.setItem("aquatreishop_user", JSON.stringify(data.user));
-
-      await checkAdmin();
-    } catch (error) {
-      showLoginMessage(error.message, true);
+      throw new Error(message);
     }
+
+    return data;
   }
 
 
-  // =====================================================
-  // ADMIN PRÜFEN
-  // =====================================================
+  function euroToCents(value) {
 
-  async function checkAdmin() {
-    const token = localStorage.getItem("aquatreishop_access_token");
+    const number = Number(
+      String(value)
+        .replace(",", ".")
+    );
 
-    if (!token) {
-      showLogin();
-      return;
+    if (!Number.isFinite(number)) {
+      return 0;
     }
 
-    try {
-      const response = await fetch(
-        SUPABASE_URL + "/rest/v1/admins?select=user_id",
-        {
-          headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": "Bearer " + token
-          }
-        }
-      );
+    return Math.round(number * 100);
+  }
 
-      if (!response.ok) {
-        throw new Error("Admin-Prüfung fehlgeschlagen");
+
+  function centsToEuro(cents) {
+
+    return (
+      Number(cents || 0) / 100
+    ).toLocaleString(
+      "de-DE",
+      {
+        style: "currency",
+        currency: "EUR"
       }
-
-      const admins = await response.json();
-      const user = JSON.parse(
-        localStorage.getItem("aquatreishop_user") || "{}"
-      );
-
-      const isAdmin = admins.some(
-        admin => admin.user_id === user.id
-      );
-
-      if (!isAdmin) {
-        logout();
-        showLoginMessage(
-          "Dieser Benutzer hat keine Admin-Berechtigung.",
-          true
-        );
-        return;
-      }
-
-      document.getElementById("loginBox").classList.add("hidden");
-      document.getElementById("adminBox").classList.remove("hidden");
-
-      document.getElementById("userInfo").textContent =
-        "Angemeldet als: " + (user.email || "");
-
-      await loadEverything();
-
-    } catch (error) {
-      logout();
-      showLoginMessage(
-        "Admin-Zugriff konnte nicht geprüft werden.",
-        true
-      );
-    }
-  }
-
-
-  // =====================================================
-  // LOGOUT
-  // =====================================================
-
-  function logout() {
-    localStorage.removeItem("aquatreishop_access_token");
-    localStorage.removeItem("aquatreishop_refresh_token");
-    localStorage.removeItem("aquatreishop_user");
-
-    document.getElementById("adminBox").classList.add("hidden");
-    document.getElementById("loginBox").classList.remove("hidden");
-  }
-
-
-  function showLogin() {
-    document.getElementById("adminBox").classList.add("hidden");
-    document.getElementById("loginBox").classList.remove("hidden");
-  }
-
-
-  function showLoginMessage(message, error = false) {
-    const box = document.getElementById("loginMessage");
-
-    box.textContent = message;
-    box.classList.remove("hidden");
-    box.classList.toggle("error", error);
-  }
-
-
-  function showProductMessage(message, error = false) {
-    const box = document.getElementById("productMessage");
-
-    box.textContent = message;
-    box.classList.remove("hidden");
-    box.classList.toggle("error", error);
-  }
-
-
-  // =====================================================
-  // DATEN LADEN
-  // =====================================================
-
-  async function loadEverything() {
-    await loadCategories();
-    await loadSubcategories();
-    await loadProducts();
-  }
-
-
-  // =====================================================
-  // KATEGORIEN
-  // =====================================================
-
-  async function loadCategories() {
-    const categories = await supabaseFetch(
-      "categories?select=*&order=name.asc"
     );
-
-    const select = document.getElementById("productCategory");
-    const subSelect = document.getElementById("subcategoryCategory");
-
-    select.innerHTML = '<option value="">Keine Kategorie</option>';
-    subSelect.innerHTML =
-      '<option value="">Kategorie auswählen</option>';
-
-    categories.forEach(category => {
-      select.innerHTML +=
-        `<option value="${category.id}">
-          ${escapeHtml(category.name)}
-        </option>`;
-
-      subSelect.innerHTML +=
-        `<option value="${category.id}">
-          ${escapeHtml(category.name)}
-        </option>`;
-    });
-
-    const container = document.getElementById("categories");
-
-    container.innerHTML = categories.map(category => `
-      <div class="product">
-        <strong>${escapeHtml(category.name)}</strong>
-        <br><br>
-        <button class="danger"
-          onclick="deleteCategory('${category.id}')">
-          Löschen
-        </button>
-      </div>
-    `).join("");
   }
 
-
-  async function addCategory() {
-    const name = document
-      .getElementById("newCategory")
-      .value
-      .trim();
-
-    if (!name) return;
-
-    try {
-      await supabaseFetch("categories", {
-        method: "POST",
-        headers: {
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify({ name })
-      });
-
-      document.getElementById("newCategory").value = "";
-
-      await loadCategories();
-    } catch (error) {
-      alert("Kategorie konnte nicht gespeichert werden:\n\n" + error.message);");
-    }
-  }
-
-
-  async function deleteCategory(id) {
-    if (!confirm("Kategorie wirklich löschen?")) return;
-
-    try {
-      await supabaseFetch(
-        "categories?id=eq." + encodeURIComponent(id),
-        {
-          method: "DELETE",
-          headers: {
-            "Prefer": "return=minimal"
-          }
-        }
-      );
-
-      await loadCategories();
-      await loadProducts();
-
-    } catch (error) {
-      alert("Kategorie konnte nicht gelöscht werden.");
-    }
-  }
-
-
-  // =====================================================
-  // UNTERKATEGORIEN
-  // =====================================================
-
-  async function loadSubcategories() {
-    const subcategories = await supabaseFetch(
-      "subcategories?select=*&order=name.asc"
-    );
-
-    const categories = await supabaseFetch(
-      "categories?select=id,name"
-    );
-
-    const container =
-      document.getElementById("subcategories");
-
-    container.innerHTML = subcategories.map(sub => {
-
-      const category = categories.find(
-        c => c.id === sub.category_id
-      );
-
-      return `
-        <div class="product">
-          <strong>${escapeHtml(sub.name)}</strong>
-          <div class="muted">
-            Kategorie:
-            ${category ? escapeHtml(category.name) : "Keine"}
-          </div>
-
-          <br>
-
-          <button class="danger"
-            onclick="deleteSubcategory('${sub.id}')">
-            Löschen
-          </button>
-        </div>
-      `;
-    }).join("");
-  }
-
-
-  async function addSubcategory() {
-    const name = document
-      .getElementById("newSubcategory")
-      .value
-      .trim();
-
-    const category_id =
-      document.getElementById("subcategoryCategory").value;
-
-    if (!name || !category_id) {
-      alert("Bitte Name und Kategorie auswählen.");
-      return;
-    }
-
-    try {
-      await supabaseFetch("subcategories", {
-        method: "POST",
-        headers: {
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify({
-          name,
-          category_id
-        })
-      });
-
-      document.getElementById("newSubcategory").value = "";
-
-      await loadSubcategories();
-
-    } catch (error) {
-      alert("Unterkategorie konnte nicht gespeichert werden.");
-    }
-  }
-
-
-  async function deleteSubcategory(id) {
-    if (!confirm("Unterkategorie wirklich löschen?")) return;
-
-    try {
-      await supabaseFetch(
-        "subcategories?id=eq." + encodeURIComponent(id),
-        {
-          method: "DELETE",
-          headers: {
-            "Prefer": "return=minimal"
-          }
-        }
-      );
-
-      await loadSubcategories();
-
-    } catch (error) {
-      alert("Unterkategorie konnte nicht gelöscht werden.");
-    }
-  }
-
-
-  // =====================================================
-  // PRODUKTE
-  // =====================================================
-
-  async function loadProducts() {
-    const products = await supabaseFetch(
-      "products?select=*&order=name.asc"
-    );
-
-    const container =
-      document.getElementById("products");
-
-    if (!products.length) {
-      container.innerHTML =
-        '<p class="muted">Noch keine Produkte vorhanden.</p>';
-      return;
-    }
-
-    container.innerHTML = products.map(product => `
-      <div class="product">
-
-        <strong>
-          ${escapeHtml(product.name || "")}
-        </strong>
-
-        <div>
-          Preis:
-          ${product.price != null
-            ? Number(product.price).toFixed(2) + " €"
-            : "–"}
-        </div>
-
-        <div class="muted">
-          ${escapeHtml(product.availability || "")}
-        </div>
-
-        <br>
-
-        <button class="primary"
-          onclick='editProduct(${JSON.stringify(product)})'>
-          Bearbeiten
-        </button>
-
-        <button class="danger"
-          onclick="deleteProduct('${product.id}')">
-          Löschen
-        </button>
-
-      </div>
-    `).join("");
-  }
-
-
-  // =====================================================
-  // PRODUKT SPEICHERN
-  // =====================================================
-
-  async function saveProduct() {
-
-    const id =
-      document.getElementById("productId").value;
-
-    const product = {
-      name: document.getElementById("productName").value.trim(),
-
-      price:
-        document.getElementById("productPrice").value
-          ? Number(document.getElementById("productPrice").value)
-          : null,
-
-      description:
-        document.getElementById("productDescription").value.trim(),
-
-      placement:
-        document.getElementById("productPlacement").value.trim(),
-
-      requirements:
-        document.getElementById("productRequirements").value.trim(),
-
-      availability:
-        document.getElementById("productAvailability").value.trim(),
-
-      image_url:
-        document.getElementById("productImage").value.trim(),
-
-      category_id:
-        document.getElementById("productCategory").value || null,
-
-      subcategory_id:
-        document.getElementById("productSubcategory").value || null
-    };
-
-    if (!product.name) {
-      showProductMessage(
-        "Bitte einen Produktnamen eingeben.",
-        true
-      );
-      return;
-    }
-
-    try {
-
-      if (id) {
-
-        await supabaseFetch(
-          "products?id=eq." + encodeURIComponent(id),
-          {
-            method: "PATCH",
-            headers: {
-              "Prefer": "return=minimal"
-            },
-            body: JSON.stringify(product)
-          }
-        );
-
-        showProductMessage("Produkt wurde aktualisiert.");
-
-      } else {
-
-        await supabaseFetch(
-          "products",
-          {
-            method: "POST",
-            headers: {
-              "Prefer": "return=minimal"
-            },
-            body: JSON.stringify(product)
-          }
-        );
-
-        showProductMessage("Produkt wurde hinzugefügt.");
-      }
-
-      clearForm();
-      await loadProducts();
-
-    } catch (error) {
-      console.error(error);
-
-      showProductMessage(
-        "Produkt konnte nicht gespeichert werden.",
-        true
-      );
-    }
-  }
-
-
-  // =====================================================
-  // PRODUKT BEARBEITEN
-  // =====================================================
-
-  function editProduct(product) {
-
-    document.getElementById("productId").value =
-      product.id || "";
-
-    document.getElementById("productName").value =
-      product.name || "";
-
-    document.getElementById("productPrice").value =
-      product.price ?? "";
-
-    document.getElementById("productDescription").value =
-      product.description || "";
-
-    document.getElementById("productPlacement").value =
-      product.placement || "";
-
-    document.getElementById("productRequirements").value =
-      product.requirements || "";
-
-    document.getElementById("productAvailability").value =
-      product.availability || "";
-
-    document.getElementById("productImage").value =
-      product.image_url || "";
-
-    document.getElementById("productCategory").value =
-      product.category_id || "";
-
-    document.getElementById("productSubcategory").value =
-      product.subcategory_id || "";
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  }
-
-
-  // =====================================================
-  // PRODUKT LÖSCHEN
-  // =====================================================
-
-  async function deleteProduct(id) {
-
-    if (!confirm("Produkt wirklich löschen?")) return;
-
-    try {
-
-      await supabaseFetch(
-        "products?id=eq." + encodeURIComponent(id),
-        {
-          method: "DELETE",
-          headers: {
-            "Prefer": "return=minimal"
-          }
-        }
-      );
-
-      await loadProducts();
-
-    } catch (error) {
-      alert("Produkt konnte nicht gelöscht werden.");
-    }
-  }
-
-
-  // =====================================================
-  // FORMULAR LEEREN
-  // =====================================================
-
-  function clearForm() {
-
-    document.getElementById("productId").value = "";
-    document.getElementById("productName").value = "";
-    document.getElementById("productPrice").value = "";
-    document.getElementById("productDescription").value = "";
-    document.getElementById("productPlacement").value = "";
-    document.getElementById("productRequirements").value = "";
-    document.getElementById("productAvailability").value = "";
-    document.getElementById("productImage").value = "";
-    document.getElementById("productCategory").value = "";
-    document.getElementById("productSubcategory").value = "";
-  }
-
-
-  // =====================================================
-  // HTML SICHER MACHEN
-  // =====================================================
 
   function escapeHtml(value) {
+
     return String(value ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -918,12 +1054,1996 @@
   }
 
 
-  // =====================================================
-  // START
-  // =====================================================
+  function showMessage(
+    elementId,
+    message,
+    error = false
+  ) {
+
+    const element =
+      document.getElementById(elementId);
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    element.classList.remove(
+      "hidden",
+      "success-message",
+      "error"
+    );
+
+    element.classList.add(
+      error
+        ? "error"
+        : "success-message"
+    );
+  }
+
+
+  function hideMessage(elementId) {
+
+    const element =
+      document.getElementById(elementId);
+
+    if (element) {
+      element.classList.add("hidden");
+    }
+  }
+
+
+  /* =====================================================
+     LOGIN
+  ===================================================== */
+
+  async function login() {
+
+    const email =
+      document.getElementById("loginEmail")
+        .value
+        .trim();
+
+    const password =
+      document.getElementById("loginPassword")
+        .value;
+
+    if (!email || !password) {
+
+      showMessage(
+        "loginMessage",
+        "Bitte E-Mail und Passwort eingeben.",
+        true
+      );
+
+      return;
+    }
+
+    showMessage(
+      "loginMessage",
+      "Anmeldung läuft..."
+    );
+
+    try {
+
+      const response = await fetch(
+        SUPABASE_URL +
+        "/auth/v1/token?grant_type=password",
+        {
+          method: "POST",
+
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error_description ||
+          data.msg ||
+          "Anmeldung fehlgeschlagen."
+        );
+      }
+
+      localStorage.setItem(
+        "aquatreishop_access_token",
+        data.access_token
+      );
+
+      localStorage.setItem(
+        "aquatreishop_refresh_token",
+        data.refresh_token || ""
+      );
+
+      localStorage.setItem(
+        "aquatreishop_user",
+        JSON.stringify(data.user || {})
+      );
+
+      await checkAdmin();
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "loginMessage",
+        error.message ||
+        "Anmeldung fehlgeschlagen.",
+        true
+      );
+    }
+  }
+
+
+  async function checkAdmin() {
+
+    const token = getToken();
+
+    if (!token) {
+
+      showLoginScreen();
+
+      return;
+    }
+
+    try {
+
+      const user = JSON.parse(
+        localStorage.getItem(
+          "aquatreishop_user"
+        ) || "{}"
+      );
+
+      if (!user.id) {
+        throw new Error(
+          "Benutzer konnte nicht gelesen werden."
+        );
+      }
+
+      const admins = await api(
+        "admins?select=user_id"
+      );
+
+      const isAdmin =
+        Array.isArray(admins) &&
+        admins.some(
+          admin =>
+            String(admin.user_id) ===
+            String(user.id)
+        );
+
+      if (!isAdmin) {
+
+        logout(false);
+
+        showMessage(
+          "loginMessage",
+          "Dieser Benutzer hat keine Admin-Berechtigung.",
+          true
+        );
+
+        return;
+      }
+
+      showAdminScreen();
+
+      await loadEverything();
+
+    } catch (error) {
+
+      console.error(error);
+
+      logout(false);
+
+      showMessage(
+        "loginMessage",
+        "Admin-Zugriff konnte nicht geprüft werden: " +
+        error.message,
+        true
+      );
+    }
+  }
+
+
+  function showLoginScreen() {
+
+    document
+      .getElementById("loginScreen")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("adminScreen")
+      .classList.add("hidden");
+  }
+
+
+  function showAdminScreen() {
+
+    document
+      .getElementById("loginScreen")
+      .classList.add("hidden");
+
+    document
+      .getElementById("adminScreen")
+      .classList.remove("hidden");
+  }
+
+
+  function logout(showScreen = true) {
+
+    localStorage.removeItem(
+      "aquatreishop_access_token"
+    );
+
+    localStorage.removeItem(
+      "aquatreishop_refresh_token"
+    );
+
+    localStorage.removeItem(
+      "aquatreishop_user"
+    );
+
+    if (showScreen) {
+      showLoginScreen();
+    }
+  }
+
+
+  /* =====================================================
+     PRODUKTE
+  ===================================================== */
+
+  let allProducts = [];
+  let allCategories = [];
+  let allSubcategories = [];
+
+
+  async function loadProducts() {
+
+    allProducts = await api(
+      "products?select=*&order=sort_order.asc,created_at.desc"
+    );
+
+    renderProducts();
+    updateStats();
+  }
+
+
+  function renderProducts() {
+
+    const container =
+      document.getElementById(
+        "productList"
+      );
+
+    if (!allProducts.length) {
+
+      container.innerHTML =
+        '<div class="empty">Noch keine Produkte vorhanden.</div>';
+
+      return;
+    }
+
+    container.innerHTML =
+      '<div class="product-list">' +
+      allProducts.map(
+        product => {
+
+          const status =
+            product.sale_status || "catalog";
+
+          const statusText = {
+
+            sale:
+              "🟢 Zum Verkauf",
+
+            catalog:
+              "👁️ Nur Katalog",
+
+            soon:
+              "🟠 Bald verfügbar",
+
+            out:
+              "🔴 Ausverkauft"
+
+          }[status] || "👁️ Nur Katalog";
+
+
+          const statusClass = {
+
+            sale:
+              "status-sale",
+
+            catalog:
+              "status-catalog",
+
+            soon:
+              "status-soon",
+
+            out:
+              "status-out"
+
+          }[status] || "status-catalog";
+
+
+          const price =
+            product.price_cents != null
+              ? centsToEuro(
+                  product.price_cents
+                )
+              : escapeHtml(
+                  product.price || "0"
+                );
+
+
+          const category =
+            allCategories.find(
+              category =>
+                String(category.id) ===
+                String(product.category_id)
+            );
+
+
+          return `
+            <div class="product-item">
+
+              <div class="product-top">
+
+                <div class="product-info">
+
+                  ${
+                    product.image_url
+                      ? `
+                        <img
+                          class="product-image"
+                          src="${escapeHtml(product.image_url)}"
+                          alt=""
+                        >
+                      `
+                      : `
+                        <div class="product-image"></div>
+                      `
+                  }
+
+                  <div>
+
+                    <div class="product-name">
+                      ${escapeHtml(product.name)}
+                    </div>
+
+                    <div class="muted">
+                      ${
+                        category
+                          ? escapeHtml(category.name)
+                          : "Keine Kategorie"
+                      }
+                    </div>
+
+                    <span class="status ${statusClass}">
+                      ${statusText}
+                    </span>
+
+                  </div>
+
+                </div>
+
+                <div class="price">
+                  ${price}
+                </div>
+
+              </div>
+
+              <div
+                class="small muted"
+                style="margin-top:12px;"
+              >
+                Bestand:
+                <strong>
+                  ${Number(product.stock || 0)}
+                </strong>
+                &nbsp; · &nbsp;
+                ${
+                  product.active
+                    ? "öffentlich sichtbar"
+                    : "ausgeblendet"
+                }
+              </div>
+
+              <div class="button-row">
+
+                <button
+                  class="primary"
+                  onclick="editProduct(${product.id})"
+                >
+                  Bearbeiten
+                </button>
+
+                <button
+                  class="danger"
+                  onclick="deleteProduct(${product.id})"
+                >
+                  Löschen
+                </button>
+
+              </div>
+
+            </div>
+          `;
+        }
+      ).join("") +
+      "</div>";
+  }
+
+
+  function editProduct(id) {
+
+    const product =
+      allProducts.find(
+        item =>
+          Number(item.id) === Number(id)
+      );
+
+    if (!product) return;
+
+
+    document.getElementById(
+      "productFormTitle"
+    ).textContent =
+      "Produkt bearbeiten";
+
+
+    document.getElementById(
+      "productId"
+    ).value =
+      product.id || "";
+
+
+    document.getElementById(
+      "productName"
+    ).value =
+      product.name || "";
+
+
+    const price =
+      product.price_cents != null
+        ? Number(product.price_cents) / 100
+        : parseOldPrice(product.price);
+
+
+    document.getElementById(
+      "productPrice"
+    ).value =
+      price || "";
+
+
+    document.getElementById(
+      "productStatus"
+    ).value =
+      product.sale_status || "catalog";
+
+
+    document.getElementById(
+      "productStock"
+    ).value =
+      Number(product.stock || 0);
+
+
+    document.getElementById(
+      "productCategory"
+    ).value =
+      product.category_id || "";
+
+
+    updateSubcategoryOptions(
+      product.category_id
+    );
+
+
+    document.getElementById(
+      "productSubcategory"
+    ).value =
+      product.subcategory_id || "";
+
+
+    document.getElementById(
+      "productSlug"
+    ).value =
+      product.slug || "";
+
+
+    document.getElementById(
+      "productPlacement"
+    ).value =
+      product.placement || "";
+
+
+    document.getElementById(
+      "productShortDescription"
+    ).value =
+      product.short_description || "";
+
+
+    document.getElementById(
+      "productDescription"
+    ).value =
+      product.description || "";
+
+
+    document.getElementById(
+      "productRequirements"
+    ).value =
+      product.requirements || "";
+
+
+    document.getElementById(
+      "productImage"
+    ).value =
+      product.image_url || "";
+
+
+    document.getElementById(
+      "productAvailability"
+    ).value =
+      product.availability || "";
+
+
+    document.getElementById(
+      "productSortOrder"
+    ).value =
+      Number(product.sort_order || 0);
+
+
+    document.getElementById(
+      "productActive"
+    ).value =
+      product.active === false
+        ? "false"
+        : "true";
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  function parseOldPrice(value) {
+
+    if (!value) return 0;
+
+    const number =
+      Number(
+        String(value)
+          .replace("€", "")
+          .replace(",", ".")
+          .trim()
+      );
+
+    return Number.isFinite(number)
+      ? number
+      : 0;
+  }
+
+
+  function clearProductForm() {
+
+    document.getElementById(
+      "productFormTitle"
+    ).textContent =
+      "Produkt hinzufügen";
+
+
+    document.getElementById(
+      "productId"
+    ).value = "";
+
+
+    document.getElementById(
+      "productName"
+    ).value = "";
+
+
+    document.getElementById(
+      "productPrice"
+    ).value = "";
+
+
+    document.getElementById(
+      "productStatus"
+    ).value = "catalog";
+
+
+    document.getElementById(
+      "productStock"
+    ).value = "0";
+
+
+    document.getElementById(
+      "productCategory"
+    ).value = "";
+
+
+    updateSubcategoryOptions("");
+
+
+    document.getElementById(
+      "productSlug"
+    ).value = "";
+
+
+    document.getElementById(
+      "productPlacement"
+    ).value = "";
+
+
+    document.getElementById(
+      "productShortDescription"
+    ).value = "";
+
+
+    document.getElementById(
+      "productDescription"
+    ).value = "";
+
+
+    document.getElementById(
+      "productRequirements"
+    ).value = "";
+
+
+    document.getElementById(
+      "productImage"
+    ).value = "";
+
+
+    document.getElementById(
+      "productAvailability"
+    ).value = "";
+
+
+    document.getElementById(
+      "productSortOrder"
+    ).value = "0";
+
+
+    document.getElementById(
+      "productActive"
+    ).value = "true";
+
+
+    hideMessage("productMessage");
+  }
+
+
+  async function saveProduct() {
+
+    const id =
+      document.getElementById(
+        "productId"
+      ).value;
+
+
+    const name =
+      document.getElementById(
+        "productName"
+      ).value.trim();
+
+
+    if (!name) {
+
+      showMessage(
+        "productMessage",
+        "Bitte einen Produktnamen eingeben.",
+        true
+      );
+
+      return;
+    }
+
+
+    const price =
+      document.getElementById(
+        "productPrice"
+      ).value;
+
+
+    const priceCents =
+      euroToCents(price);
+
+
+    const payload = {
+
+      name,
+
+      price_cents:
+        priceCents,
+
+      price:
+        Number(priceCents / 100)
+          .toFixed(2)
+          .replace(".", ","),
+
+      sale_status:
+        document.getElementById(
+          "productStatus"
+        ).value,
+
+      stock:
+        Math.max(
+          0,
+          parseInt(
+            document.getElementById(
+              "productStock"
+            ).value || "0",
+            10
+          )
+        ),
+
+      category_id:
+        toNullableNumber(
+          document.getElementById(
+            "productCategory"
+          ).value
+        ),
+
+      subcategory_id:
+        toNullableNumber(
+          document.getElementById(
+            "productSubcategory"
+          ).value
+        ),
+
+      slug:
+        document.getElementById(
+          "productSlug"
+        ).value.trim() || null,
+
+      placement:
+        document.getElementById(
+          "productPlacement"
+        ).value.trim() || null,
+
+      short_description:
+        document.getElementById(
+          "productShortDescription"
+        ).value.trim() || null,
+
+      description:
+        document.getElementById(
+          "productDescription"
+        ).value.trim() || null,
+
+      requirements:
+        document.getElementById(
+          "productRequirements"
+        ).value.trim() || null,
+
+      image_url:
+        document.getElementById(
+          "productImage"
+        ).value.trim() || null,
+
+      availability:
+        document.getElementById(
+          "productAvailability"
+        ).value.trim() || null,
+
+      sort_order:
+        parseInt(
+          document.getElementById(
+            "productSortOrder"
+          ).value || "0",
+          10
+        ),
+
+      active:
+        document.getElementById(
+          "productActive"
+        ).value === "true",
+
+      updated_at:
+        new Date().toISOString()
+    };
+
+
+    try {
+
+      if (id) {
+
+        await api(
+          "products?id=eq." +
+          encodeURIComponent(id),
+          {
+            method: "PATCH",
+
+            headers: {
+              "Prefer": "return=minimal"
+            },
+
+            body:
+              JSON.stringify(payload)
+          }
+        );
+
+        showMessage(
+          "productMessage",
+          "Produkt wurde aktualisiert."
+        );
+
+      } else {
+
+        await api(
+          "products",
+          {
+            method: "POST",
+
+            headers: {
+              "Prefer": "return=minimal"
+            },
+
+            body:
+              JSON.stringify(payload)
+          }
+        );
+
+        showMessage(
+          "productMessage",
+          "Produkt wurde angelegt."
+        );
+      }
+
+
+      clearProductForm();
+
+      await loadProducts();
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "productMessage",
+        "Produkt konnte nicht gespeichert werden: " +
+        error.message,
+        true
+      );
+    }
+  }
+
+
+  async function deleteProduct(id) {
+
+    const product =
+      allProducts.find(
+        item =>
+          Number(item.id) === Number(id)
+      );
+
+    if (!product) return;
+
+
+    if (
+      !confirm(
+        'Produkt "' +
+        product.name +
+        '" wirklich löschen?'
+      )
+    ) {
+      return;
+    }
+
+
+    try {
+
+      await api(
+        "products?id=eq." +
+        encodeURIComponent(id),
+        {
+          method: "DELETE"
+        }
+      );
+
+      await loadProducts();
+
+    } catch (error) {
+
+      alert(
+        "Produkt konnte nicht gelöscht werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  /* =====================================================
+     KATEGORIEN
+  ===================================================== */
+
+  async function loadCategories() {
+
+    allCategories =
+      await api(
+        "categories?select=*&order=sort_order.asc,name.asc"
+      );
+
+
+    renderCategories();
+    fillCategorySelects();
+  }
+
+
+  function renderCategories() {
+
+    const container =
+      document.getElementById(
+        "categoryList"
+      );
+
+
+    if (!allCategories.length) {
+
+      container.innerHTML =
+        '<div class="empty">Noch keine Kategorien vorhanden.</div>';
+
+      return;
+    }
+
+
+    container.innerHTML =
+      allCategories.map(
+        category => `
+
+          <div
+            class="product-item"
+            style="margin-bottom:10px;"
+          >
+
+            <div class="product-top">
+
+              <div>
+                <strong>
+                  ${escapeHtml(category.name)}
+                </strong>
+
+                <div class="muted small">
+                  ID: ${category.id}
+                </div>
+              </div>
+
+              <button
+                class="danger"
+                onclick="deleteCategory(${category.id})"
+              >
+                Löschen
+              </button>
+
+            </div>
+
+          </div>
+
+        `
+      ).join("");
+  }
+
+
+  function fillCategorySelects() {
+
+    const productSelect =
+      document.getElementById(
+        "productCategory"
+      );
+
+    const subcategorySelect =
+      document.getElementById(
+        "subcategoryCategory"
+      );
+
+
+    const currentProduct =
+      productSelect.value;
+
+
+    productSelect.innerHTML =
+      '<option value="">Keine Kategorie</option>' +
+      allCategories.map(
+        category =>
+          `<option value="${category.id}">
+            ${escapeHtml(category.name)}
+          </option>`
+      ).join("");
+
+
+    subcategorySelect.innerHTML =
+      '<option value="">Kategorie auswählen</option>' +
+      allCategories.map(
+        category =>
+          `<option value="${category.id}">
+            ${escapeHtml(category.name)}
+          </option>`
+      ).join("");
+
+
+    productSelect.value =
+      currentProduct;
+  }
+
+
+  async function addCategory() {
+
+    const input =
+      document.getElementById(
+        "newCategory"
+      );
+
+
+    const name =
+      input.value.trim();
+
+
+    if (!name) return;
+
+
+    try {
+
+      await api(
+        "categories",
+        {
+          method: "POST",
+
+          headers: {
+            "Prefer": "return=minimal"
+          },
+
+          body:
+            JSON.stringify({
+              name
+            })
+        }
+      );
+
+
+      input.value = "";
+
+      await loadCategories();
+
+    } catch (error) {
+
+      alert(
+        "Kategorie konnte nicht angelegt werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  async function deleteCategory(id) {
+
+    if (
+      !confirm(
+        "Kategorie wirklich löschen?"
+      )
+    ) {
+      return;
+    }
+
+
+    try {
+
+      await api(
+        "categories?id=eq." +
+        encodeURIComponent(id),
+        {
+          method: "DELETE"
+        }
+      );
+
+
+      await loadCategories();
+
+    } catch (error) {
+
+      alert(
+        "Kategorie konnte nicht gelöscht werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  /* =====================================================
+     UNTERKATEGORIEN
+  ===================================================== */
+
+  async function loadSubcategories() {
+
+    allSubcategories =
+      await api(
+        "subcategories?select=*&order=name.asc"
+      );
+
+
+    renderSubcategories();
+    updateSubcategoryOptions(
+      document.getElementById(
+        "productCategory"
+      ).value
+    );
+  }
+
+
+  function renderSubcategories() {
+
+    const container =
+      document.getElementById(
+        "subcategoryList"
+      );
+
+
+    if (!allSubcategories.length) {
+
+      container.innerHTML =
+        '<div class="empty">Noch keine Unterkategorien vorhanden.</div>';
+
+      return;
+    }
+
+
+    container.innerHTML =
+      allSubcategories.map(
+        subcategory => {
+
+          const category =
+            allCategories.find(
+              item =>
+                String(item.id) ===
+                String(
+                  subcategory.category_id
+                )
+            );
+
+
+          return `
+
+            <div
+              class="product-item"
+              style="margin-bottom:10px;"
+            >
+
+              <div class="product-top">
+
+                <div>
+
+                  <strong>
+                    ${escapeHtml(subcategory.name)}
+                  </strong>
+
+                  <div class="muted small">
+                    ${
+                      category
+                        ? escapeHtml(category.name)
+                        : "Keine Kategorie"
+                    }
+                  </div>
+
+                </div>
+
+                <button
+                  class="danger"
+                  onclick="deleteSubcategory(${subcategory.id})"
+                >
+                  Löschen
+                </button>
+
+              </div>
+
+            </div>
+
+          `;
+        }
+      ).join("");
+  }
+
+
+  function updateSubcategoryOptions(
+    categoryId
+  ) {
+
+    const select =
+      document.getElementById(
+        "productSubcategory"
+      );
+
+
+    const current =
+      select.value;
+
+
+    const filtered =
+      allSubcategories.filter(
+        subcategory =>
+          String(
+            subcategory.category_id
+          ) === String(categoryId)
+      );
+
+
+    select.innerHTML =
+      '<option value="">Keine Unterkategorie</option>' +
+      filtered.map(
+        subcategory =>
+          `<option value="${subcategory.id}">
+            ${escapeHtml(subcategory.name)}
+          </option>`
+      ).join("");
+
+
+    if (
+      filtered.some(
+        item =>
+          String(item.id) ===
+          String(current)
+      )
+    ) {
+      select.value = current;
+    }
+  }
+
+
+  async function addSubcategory() {
+
+    const name =
+      document.getElementById(
+        "newSubcategory"
+      ).value.trim();
+
+
+    const categoryId =
+      document.getElementById(
+        "subcategoryCategory"
+      ).value;
+
+
+    if (!name || !categoryId) {
+
+      alert(
+        "Bitte Name und Kategorie auswählen."
+      );
+
+      return;
+    }
+
+
+    try {
+
+      await api(
+        "subcategories",
+        {
+          method: "POST",
+
+          headers: {
+            "Prefer": "return=minimal"
+          },
+
+          body:
+            JSON.stringify({
+              name,
+              category_id:
+                Number(categoryId)
+            })
+        }
+      );
+
+
+      document.getElementById(
+        "newSubcategory"
+      ).value = "";
+
+
+      await loadSubcategories();
+
+    } catch (error) {
+
+      alert(
+        "Unterkategorie konnte nicht angelegt werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  async function deleteSubcategory(id) {
+
+    if (
+      !confirm(
+        "Unterkategorie wirklich löschen?"
+      )
+    ) {
+      return;
+    }
+
+
+    try {
+
+      await api(
+        "subcategories?id=eq." +
+        encodeURIComponent(id),
+        {
+          method: "DELETE"
+        }
+      );
+
+
+      await loadSubcategories();
+
+    } catch (error) {
+
+      alert(
+        "Unterkategorie konnte nicht gelöscht werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  /* =====================================================
+     SHOP-EINSTELLUNGEN
+  ===================================================== */
+
+  let shopSettings = null;
+
+
+  async function loadSettings() {
+
+    const settings =
+      await api(
+        "shop_settings?select=*&limit=1"
+      );
+
+
+    shopSettings =
+      settings && settings.length
+        ? settings[0]
+        : null;
+
+
+    if (!shopSettings) return;
+
+
+    document.getElementById(
+      "shopName"
+    ).value =
+      shopSettings.shop_name || "";
+
+
+    document.getElementById(
+      "currency"
+    ).value =
+      shopSettings.currency || "EUR";
+
+
+    document.getElementById(
+      "freeShipping"
+    ).value =
+      Number(
+        shopSettings.free_shipping_threshold_cents ||
+        0
+      ) / 100;
+
+
+    document.getElementById(
+      "shippingCost"
+    ).value =
+      Number(
+        shopSettings.shipping_cost_cents ||
+        0
+      ) / 100;
+  }
+
+
+  async function saveSettings() {
+
+    if (!shopSettings) {
+
+      showMessage(
+        "settingsMessage",
+        "Keine Shop-Einstellungen gefunden.",
+        true
+      );
+
+      return;
+    }
+
+
+    const id =
+      shopSettings.id;
+
+
+    const payload = {
+
+      shop_name:
+        document.getElementById(
+          "shopName"
+        ).value.trim() ||
+        "AquaTreishop",
+
+      currency:
+        document.getElementById(
+          "currency"
+        ).value.trim() ||
+        "EUR",
+
+      free_shipping_threshold_cents:
+        euroToCents(
+          document.getElementById(
+            "freeShipping"
+          ).value
+        ),
+
+      shipping_cost_cents:
+        euroToCents(
+          document.getElementById(
+            "shippingCost"
+          ).value
+        ),
+
+      updated_at:
+        new Date().toISOString()
+    };
+
+
+    try {
+
+      await api(
+        "shop_settings?id=eq." +
+        encodeURIComponent(id),
+        {
+          method: "PATCH",
+
+          headers: {
+            "Prefer": "return=minimal"
+          },
+
+          body:
+            JSON.stringify(payload)
+        }
+      );
+
+
+      showMessage(
+        "settingsMessage",
+        "Shop-Einstellungen gespeichert."
+      );
+
+
+      await loadSettings();
+
+    } catch (error) {
+
+      showMessage(
+        "settingsMessage",
+        "Einstellungen konnten nicht gespeichert werden: " +
+        error.message,
+        true
+      );
+    }
+  }
+
+
+  /* =====================================================
+     BESTELLUNGEN
+  ===================================================== */
+
+  let allOrders = [];
+
+
+  async function loadOrders() {
+
+    allOrders =
+      await api(
+        "orders?select=*&order=created_at.desc"
+      );
+
+
+    renderOrders();
+    updateStats();
+  }
+
+
+  function renderOrders() {
+
+    const container =
+      document.getElementById(
+        "orderList"
+      );
+
+
+    if (!allOrders.length) {
+
+      container.innerHTML =
+        '<div class="empty">Noch keine Bestellungen vorhanden.</div>';
+
+      return;
+    }
+
+
+    container.innerHTML =
+      '<div class="order-list">' +
+      allOrders.map(
+        order => `
+
+          <div class="order-item">
+
+            <div class="order-top">
+
+              <div>
+
+                <div class="order-number">
+                  Bestellung
+                  ${escapeHtml(order.order_number)}
+                </div>
+
+                <div class="muted">
+                  ${formatDate(order.created_at)}
+                </div>
+
+              </div>
+
+              <div class="price">
+                ${centsToEuro(order.total_cents)}
+              </div>
+
+            </div>
+
+
+            <div
+              class="small"
+              style="margin-top:12px;"
+            >
+
+              <strong>
+                Kunde:
+              </strong>
+
+              ${escapeHtml(order.customer_name)}
+
+              <br>
+
+              ${escapeHtml(order.customer_email)}
+
+              <br>
+
+              ${escapeHtml(order.street)}
+              ${escapeHtml(order.house_number)},
+              ${escapeHtml(order.postal_code)}
+              ${escapeHtml(order.city)}
+
+            </div>
+
+
+            <div
+              class="grid"
+              style="margin-top:12px;"
+            >
+
+              <div>
+
+                <label>
+                  Zahlungsstatus
+                </label>
+
+                <select
+                  onchange="updateOrderField(
+                    '${escapeHtml(order.id)}',
+                    'payment_status',
+                    this.value
+                  )"
+                >
+
+                  ${option(
+                    "pending",
+                    "Ausstehend",
+                    order.payment_status
+                  )}
+
+                  ${option(
+                    "paid",
+                    "Bezahlt",
+                    order.payment_status
+                  )}
+
+                  ${option(
+                    "failed",
+                    "Fehlgeschlagen",
+                    order.payment_status
+                  )}
+
+                  ${option(
+                    "refunded",
+                    "Erstattet",
+                    order.payment_status
+                  )}
+
+                </select>
+
+              </div>
+
+
+              <div>
+
+                <label>
+                  Bestellstatus
+                </label>
+
+                <select
+                  onchange="updateOrderField(
+                    '${escapeHtml(order.id)}',
+                    'order_status',
+                    this.value
+                  )"
+                >
+
+                  ${option(
+                    "new",
+                    "Neu",
+                    order.order_status
+                  )}
+
+                  ${option(
+                    "processing",
+                    "In Bearbeitung",
+                    order.order_status
+                  )}
+
+                  ${option(
+                    "shipped",
+                    "Versendet",
+                    order.order_status
+                  )}
+
+                  ${option(
+                    "completed",
+                    "Abgeschlossen",
+                    order.order_status
+                  )}
+
+                  ${option(
+                    "cancelled",
+                    "Storniert",
+                    order.order_status
+                  )}
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <div class="order-items">
+
+              <strong>
+                Artikel
+              </strong>
+
+              <div
+                id="items-${escapeHtml(order.id)}"
+              >
+                Artikel werden geladen...
+              </div>
+
+            </div>
+
+          </div>
+
+        `
+      ).join("") +
+      "</div>";
+
+
+    loadAllOrderItems();
+  }
+
+
+  function option(
+    value,
+    label,
+    current
+  ) {
+
+    return `
+      <option
+        value="${value}"
+        ${String(value) === String(current)
+          ? "selected"
+          : ""}
+      >
+        ${label}
+      </option>
+    `;
+  }
+
+
+  async function loadAllOrderItems() {
+
+    try {
+
+      const items =
+        await api(
+          "order_items?select=*&order=id.asc"
+        );
+
+
+      for (const order of allOrders) {
+
+        const container =
+          document.getElementById(
+            "items-" + order.id
+          );
+
+
+        if (!container) continue;
+
+
+        const orderItems =
+          items.filter(
+            item =>
+              String(item.order_id) ===
+              String(order.id)
+          );
+
+
+        if (!orderItems.length) {
+
+          container.innerHTML =
+            '<div class="muted">Keine Artikelinformationen vorhanden.</div>';
+
+          continue;
+        }
+
+
+        container.innerHTML =
+          orderItems.map(
+            item => `
+
+              <div class="order-line">
+
+                <span>
+                  ${escapeHtml(item.product_name)}
+                  × ${Number(item.quantity || 0)}
+                </span>
+
+                <strong>
+                  ${centsToEuro(item.total_cents)}
+                </strong>
+
+              </div>
+
+            `
+          ).join("");
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Order items:",
+        error
+      );
+    }
+  }
+
+
+  async function updateOrderField(
+    orderId,
+    field,
+    value
+  ) {
+
+    const allowedFields = [
+      "payment_status",
+      "order_status"
+    ];
+
+
+    if (!allowedFields.includes(field)) {
+      return;
+    }
+
+
+    try {
+
+      const payload = {};
+
+      payload[field] = value;
+
+      payload.updated_at =
+        new Date().toISOString();
+
+
+      await api(
+        "orders?id=eq." +
+        encodeURIComponent(orderId),
+        {
+          method: "PATCH",
+
+          headers: {
+            "Prefer": "return=minimal"
+          },
+
+          body:
+            JSON.stringify(payload)
+        }
+      );
+
+
+      await loadOrders();
+
+    } catch (error) {
+
+      alert(
+        "Bestellung konnte nicht aktualisiert werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  /* =====================================================
+     STATISTIK
+  ===================================================== */
+
+  function updateStats() {
+
+    document.getElementById(
+      "statProducts"
+    ).textContent =
+      allProducts.length;
+
+
+    document.getElementById(
+      "statSale"
+    ).textContent =
+      allProducts.filter(
+        product =>
+          product.sale_status === "sale" &&
+          Number(product.stock || 0) > 0
+      ).length;
+
+
+    document.getElementById(
+      "statOrders"
+    ).textContent =
+      allOrders.length;
+
+
+    document.getElementById(
+      "statOpenOrders"
+    ).textContent =
+      allOrders.filter(
+        order =>
+          ![
+            "completed",
+            "cancelled"
+          ].includes(
+            order.order_status
+          )
+      ).length;
+  }
+
+
+  /* =====================================================
+     ALLES LADEN
+  ===================================================== */
+
+  async function loadEverything() {
+
+    try {
+
+      await Promise.all([
+        loadCategories(),
+        loadSubcategories(),
+        loadProducts(),
+        loadSettings(),
+        loadOrders()
+      ]);
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Daten konnten nicht vollständig geladen werden:\n\n" +
+        error.message
+      );
+    }
+  }
+
+
+  /* =====================================================
+     HILFSFUNKTIONEN
+  ===================================================== */
+
+  function toNullableNumber(value) {
+
+    if (
+      value === "" ||
+      value === null ||
+      value === undefined
+    ) {
+      return null;
+    }
+
+    const number =
+      Number(value);
+
+    return Number.isFinite(number)
+      ? number
+      : null;
+  }
+
+
+  function formatDate(value) {
+
+    if (!value) return "";
+
+    return new Date(value)
+      .toLocaleString(
+        "de-DE",
+        {
+          dateStyle: "medium",
+          timeStyle: "short"
+        }
+      );
+  }
+
+
+  /* =====================================================
+     START
+  ===================================================== */
+
+  document
+    .getElementById("productCategory")
+    .addEventListener(
+      "change",
+      function () {
+
+        updateSubcategoryOptions(
+          this.value
+        );
+
+      }
+    );
+
+
+  document
+    .getElementById("loginPassword")
+    .addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key === "Enter"
+        ) {
+          login();
+        }
+
+      }
+    );
+
 
   checkAdmin();
-console.log("AquaTreishop Admin JavaScript läuft");
+
 </script>
 
 </body>
