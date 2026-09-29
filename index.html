@@ -1,424 +1,823 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AquaTreishop – Aquarium Demo-Shop</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaTreishop – Dein Aquarium-Fachhandel</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f3f8f8;
-      color: #173b3f;
-    }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7f8;
+  color: #172126;
+}
 
-    header {
-      background: #087f8c;
-      color: white;
-      padding: 24px 16px;
-      text-align: center;
-    }
+header {
+  background: #071f26;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-    header h1 {
-      margin: 0 0 8px;
-      font-size: 30px;
-    }
+.header-inner {
+  max-width: 1200px;
+  margin: auto;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
 
-    header p {
-      margin: 0;
-      font-size: 15px;
-    }
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: .3px;
+}
 
-    .demo {
-      background: #fff3cd;
-      color: #664d03;
-      padding: 12px;
-      text-align: center;
-      font-weight: bold;
-    }
+.logo span {
+  color: #4ed7c0;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 20px 16px 50px;
-    }
+nav {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
 
-    .search {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #cbdada;
-      border-radius: 10px;
-      font-size: 16px;
-      margin-bottom: 25px;
-    }
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
 
-    h2 {
-      margin-top: 30px;
-      color: #087f8c;
-    }
+.cart-button {
+  background: #4ed7c0;
+  color: #062128;
+  border: 0;
+  border-radius: 12px;
+  padding: 11px 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-    .category {
-      margin-bottom: 30px;
-    }
+.hero {
+  background:
+    linear-gradient(90deg, rgba(3,27,34,.94), rgba(3,27,34,.48)),
+    linear-gradient(135deg, #0c4651, #09252d);
+  color: white;
+}
 
-    .category-title {
-      padding: 12px 15px;
-      border-radius: 10px;
-      color: white;
-      background: #087f8c;
-      margin-bottom: 15px;
-    }
+.hero-inner {
+  max-width: 1200px;
+  margin: auto;
+  padding: 75px 20px;
+}
 
-    .subcategory {
-      margin-bottom: 22px;
-    }
+.hero h1 {
+  max-width: 700px;
+  font-size: clamp(38px, 7vw, 70px);
+  line-height: 1;
+  margin: 0 0 20px;
+}
 
-    .subcategory h3 {
-      margin: 0 0 12px;
-      color: #2e7d32;
-    }
+.hero p {
+  max-width: 650px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #d4e6e8;
+}
 
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-    }
+.hero-button {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: #4ed7c0;
+  color: #062128;
+  font-weight: 800;
+  text-decoration: none;
+}
 
-    .product {
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 3px 12px rgba(0,0,0,.08);
-    }
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 50px 20px;
+}
 
-    .product img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      background: #e8eeee;
-    }
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  margin-bottom: 24px;
+}
 
-    .product-content {
-      padding: 15px;
-    }
+.section-title h2 {
+  margin: 0;
+  font-size: 30px;
+}
 
-    .product h4 {
-      margin: 0 0 8px;
-      font-size: 18px;
-    }
+.section-title p {
+  margin: 6px 0 0;
+  color: #6d7b80;
+}
 
-    .price {
-      font-weight: bold;
-      color: #087f8c;
-      margin-bottom: 10px;
-    }
+.search {
+  width: 100%;
+  padding: 15px 17px;
+  border: 1px solid #d6dfe1;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
 
-    .info {
-      font-size: 14px;
-      line-height: 1.5;
-      color: #486064;
-    }
+.categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
 
-    .status {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 6px 9px;
-      border-radius: 7px;
-      background: #eee;
-      font-size: 12px;
-      font-weight: bold;
-    }
+.category {
+  background: white;
+  border-radius: 18px;
+  padding: 25px 18px;
+  border: 1px solid #e1e8e9;
+  cursor: pointer;
+  transition: .2s;
+}
 
-    footer {
-      text-align: center;
-      padding: 25px;
-      background: #173b3f;
-      color: white;
-      font-size: 13px;
-    }
+.category:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.08);
+}
 
-    .empty {
-      padding: 30px;
-      text-align: center;
-      color: #667;
-    }
-  </style>
+.category-icon {
+  font-size: 35px;
+  margin-bottom: 12px;
+}
+
+.category strong {
+  display: block;
+  font-size: 17px;
+}
+
+.category small {
+  color: #77858a;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.product {
+  background: white;
+  border: 1px solid #e1e8e9;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-image {
+  height: 210px;
+  background: #e8f0f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-placeholder {
+  font-size: 55px;
+}
+
+.product-body {
+  padding: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+}
+
+.product-name {
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.product-description {
+  color: #718085;
+  font-size: 14px;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.product-price {
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.status {
+  display: inline-block;
+  width: fit-content;
+  border-radius: 30px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-catalog {
+  background: #edf0f1;
+  color: #59676b;
+}
+
+.status-sale {
+  background: #dff7ef;
+  color: #08775d;
+}
+
+.status-soon {
+  background: #fff0d5;
+  color: #946000;
+}
+
+.status-out {
+  background: #fde2e2;
+  color: #a42c2c;
+}
+
+.add {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px;
+  background: #082a32;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.add:disabled {
+  background: #ccd4d6;
+  cursor: not-allowed;
+}
+
+.empty {
+  padding: 40px;
+  text-align: center;
+  color: #718085;
+}
+
+footer {
+  margin-top: 40px;
+  background: #071f26;
+  color: #bcd0d3;
+  padding: 35px 20px;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: auto;
+}
+
+@media (max-width: 700px) {
+  nav {
+    display: none;
+  }
+
+  .hero-inner {
+    padding: 55px 20px;
+  }
+
+  .container {
+    padding: 35px 15px;
+  }
+
+  .section-title {
+    display: block;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <h1>AquaTreishop</h1>
-    <p>Dein Aquarium- und Aquaristik-Katalog</p>
-  </header>
+<header>
+  <div class="header-inner">
+    <div class="logo">Aqua<span>Treishop</span></div>
 
-  <div class="demo">
-    DEMO-SHOP – Kein Verkauf · Keine Bestellung · Bald verfügbar
+    <nav>
+      <a href="#kategorien">Kategorien</a>
+      <a href="#produkte">Produkte</a>
+    </nav>
+
+    <button class="cart-button" onclick="openCart()">
+      🛒 Warenkorb <span id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1>Deine Unterwasserwelt beginnt hier.</h1>
+    <p>
+      Aquaristik, Pflanzen, Tiere und Zubehör –
+      übersichtlich ausgewählt und mit Liebe zum Aquarium.
+    </p>
+
+    <a class="hero-button" href="#produkte">
+      Sortiment entdecken
+    </a>
+  </div>
+</section>
+
+<main>
+
+<section class="container" id="kategorien">
+
+  <div class="section-title">
+    <div>
+      <h2>Kategorien</h2>
+      <p>Entdecke unser komplettes Sortiment.</p>
+    </div>
   </div>
 
-  <main class="container">
+  <div class="categories">
 
-    <input
-      id="search"
-      class="search"
-      type="search"
-      placeholder="Produkte suchen..."
-    >
-
-    <div id="shop">
-      <div class="empty">Produkte werden geladen...</div>
+    <div class="category" onclick="filterCategory('Pflanzen')">
+      <div class="category-icon">🌿</div>
+      <strong>Pflanzen</strong>
+      <small>Aquarienpflanzen</small>
     </div>
 
-  </main>
+    <div class="category" onclick="filterCategory('Fische')">
+      <div class="category-icon">🐟</div>
+      <strong>Fische</strong>
+      <small>Süßwasserfische</small>
+    </div>
 
-  <footer>
-    AquaTreishop · Demo-Version · Kein Verkauf
-  </footer>
+    <div class="category" onclick="filterCategory('Garnelen')">
+      <div class="category-icon">🦐</div>
+      <strong>Garnelen</strong>
+      <small>Zwerggarnelen</small>
+    </div>
 
-  <script>
-    /*
-      SUPABASE EINSTELLUNGEN
+    <div class="category" onclick="filterCategory('Schnecken')">
+      <div class="category-icon">🐌</div>
+      <strong>Schnecken</strong>
+      <small>Für dein Aquarium</small>
+    </div>
 
-      Hier später deine beiden Werte einsetzen:
+    <div class="category" onclick="filterCategory('Futter')">
+      <div class="category-icon">🍽️</div>
+      <strong>Futter</strong>
+      <small>Für deine Tiere</small>
+    </div>
 
-      1. Project URL
-      2. Publishable Key
+    <div class="category" onclick="filterCategory('Dünger')">
+      <div class="category-icon">💧</div>
+      <strong>Dünger</strong>
+      <small>Für kräftige Pflanzen</small>
+    </div>
 
-      NICHT den service_role Key verwenden.
-    */
+    <div class="category" onclick="filterCategory('Zubehör')">
+      <div class="category-icon">🧰</div>
+      <strong>Zubehör</strong>
+      <small>Alles fürs Aquarium</small>
+    </div>
 
-    const SUPABASE_URL = "https://hzrqwgrszfpyqeibszno.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
+  </div>
 
-    async function loadShop() {
-      const shop = document.getElementById("shop");
+</section>
 
-      if (
-        SUPABASE_URL.includes("DEINE_") ||
-        SUPABASE_KEY.includes("DEIN_")
-      ) {
-        shop.innerHTML = `
-          <div class="empty">
-            <h2>Willkommen bei AquaTreishop</h2>
-            <p>
-              Die Verbindung zur Produktdatenbank wird noch eingerichtet.
-            </p>
-          </div>
-        `;
-        return;
-      }
+<section class="container" id="produkte">
 
-      try {
-        const response = await fetch(
-          SUPABASE_URL +
-          "/rest/v1/categories?select=*&order=sort_order.asc",
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: "Bearer " + SUPABASE_KEY
-            }
-          }
-        );
+  <div class="section-title">
+    <div>
+      <h2>Unser Sortiment</h2>
+      <p>Alle verfügbaren Katalogartikel auf einen Blick.</p>
+    </div>
+  </div>
 
-        if (!response.ok) {
-          throw new Error("Datenbankfehler");
+  <input
+    class="search"
+    id="search"
+    type="search"
+    placeholder="🔎 Produkte suchen..."
+    oninput="renderProducts()"
+  >
+
+  <div class="products" id="products">
+    <div class="empty">Produkte werden geladen...</div>
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <strong>AquaTreishop</strong>
+    <p>Dein Aquarium. Deine Unterwasserwelt.</p>
+  </div>
+</footer>
+
+<script>
+
+const SUPABASE_URL =
+  "https://hzrqwgrszfpyqeibszno.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
+
+let products = [];
+let selectedCategory = null;
+
+let cart =
+  JSON.parse(localStorage.getItem("aquatreishop_cart") || "[]");
+
+
+async function loadProducts() {
+
+  try {
+
+    const response = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/products?select=*&active=eq.true&order=sort_order.asc",
+      {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY
         }
-
-        const categories = await response.json();
-
-        const subResponse = await fetch(
-          SUPABASE_URL +
-          "/rest/v1/subcategories?select=*&order=sort_order.asc",
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: "Bearer " + SUPABASE_KEY
-            }
-          }
-        );
-
-        const subcategories = await subResponse.json();
-
-        const productResponse = await fetch(
-          SUPABASE_URL +
-          "/rest/v1/products?select=*&order=sort_order.asc",
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: "Bearer " + SUPABASE_KEY
-            }
-          }
-        );
-
-        const products = await productResponse.json();
-
-        renderShop(categories, subcategories, products);
-
-      } catch (error) {
-        console.error(error);
-
-        shop.innerHTML = `
-          <div class="empty">
-            <h2>Produkte konnten nicht geladen werden.</h2>
-            <p>Die Datenbankverbindung wird noch eingerichtet.</p>
-          </div>
-        `;
       }
+    );
+
+    if (!response.ok) {
+      throw new Error("Produkte konnten nicht geladen werden.");
     }
 
-    function renderShop(categories, subcategories, products) {
-      const shop = document.getElementById("shop");
+    products = await response.json();
 
-      if (!categories.length) {
-        shop.innerHTML = `
-          <div class="empty">
-            <h2>Noch keine Produkte vorhanden</h2>
-            <p>Die Kategorien werden später über den Admin-Bereich gepflegt.</p>
-          </div>
-        `;
-        return;
-      }
+    renderProducts();
 
-      shop.innerHTML = categories.map(category => {
+  } catch (error) {
 
-        const categorySubs = subcategories.filter(
-          sub => sub.category_id === category.id
+    console.error(error);
+
+    document.getElementById("products").innerHTML =
+      '<div class="empty">Die Produkte konnten momentan nicht geladen werden.</div>';
+  }
+}
+
+
+function getProductPrice(product) {
+
+  if (product.price_cents !== null &&
+      product.price_cents !== undefined) {
+
+    return Number(product.price_cents) / 100;
+  }
+
+  const price =
+    String(product.price || "")
+      .replace(",", ".");
+
+  return Number(price) || 0;
+}
+
+
+function formatPrice(value) {
+
+  return new Intl.NumberFormat(
+    "de-DE",
+    {
+      style: "currency",
+      currency: "EUR"
+    }
+  ).format(value);
+}
+
+
+function getStatus(product) {
+
+  const status =
+    product.sale_status || "catalog";
+
+  if (status === "sale") {
+    return {
+      text: "🟢 Zum Verkauf",
+      className: "status-sale"
+    };
+  }
+
+  if (status === "soon") {
+    return {
+      text: "🟠 Bald verfügbar",
+      className: "status-soon"
+    };
+  }
+
+  if (status === "out") {
+    return {
+      text: "🔴 Ausverkauft",
+      className: "status-out"
+    };
+  }
+
+  return {
+    text: "👁️ Nur Katalog",
+    className: "status-catalog"
+  };
+}
+
+
+function renderProducts() {
+
+  const container =
+    document.getElementById("products");
+
+  const search =
+    document.getElementById("search")
+      .value
+      .toLowerCase()
+      .trim();
+
+  let list = [...products];
+
+  if (selectedCategory) {
+
+    list = list.filter(product => {
+
+      return String(product.category_name || "")
+        .toLowerCase()
+        .includes(
+          selectedCategory.toLowerCase()
         );
+    });
+  }
 
-        return `
-          <section class="category">
-            <h2
-              class="category-title"
-              style="background:${escapeHtml(category.color)}"
+  if (search) {
+
+    list = list.filter(product => {
+
+      const text =
+        (
+          product.name +
+          " " +
+          (product.description || "") +
+          " " +
+          (product.short_description || "")
+        ).toLowerCase();
+
+      return text.includes(search);
+    });
+  }
+
+  if (!list.length) {
+
+    container.innerHTML =
+      '<div class="empty">Keine passenden Produkte gefunden.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    list.map(product => {
+
+      const status =
+        getStatus(product);
+
+      const price =
+        getProductPrice(product);
+
+      const canBuy =
+        product.sale_status === "sale" &&
+        Number(product.stock || 0) > 0;
+
+      const image =
+        product.image_url
+          ? `<img src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}">`
+          : `<div class="product-placeholder">🌿</div>`;
+
+      return `
+        <article class="product">
+
+          <div class="product-image">
+            ${image}
+          </div>
+
+          <div class="product-body">
+
+            <div class="product-name">
+              ${escapeHtml(product.name)}
+            </div>
+
+            <span class="status ${status.className}">
+              ${status.text}
+            </span>
+
+            <div class="product-description">
+              ${escapeHtml(
+                product.short_description ||
+                product.description ||
+                "Aquaristik-Produkt"
+              )}
+            </div>
+
+            <div class="product-price">
+              ${formatPrice(price)}
+            </div>
+
+            <button
+              class="add"
+              ${canBuy ? "" : "disabled"}
+              onclick="addToCart(${product.id})"
             >
-              ${escapeHtml(category.name)}
-            </h2>
+              ${canBuy ? "In den Warenkorb" : status.text}
+            </button>
 
-            ${categorySubs.map(sub => {
+          </div>
 
-              const subProducts = products.filter(
-                product => product.subcategory_id === sub.id
-              );
+        </article>
+      `;
 
-              return `
-                <div class="subcategory">
-                  <h3>${escapeHtml(sub.name)}</h3>
+    }).join("");
+}
 
-                  <div class="products">
-                    ${
-                      subProducts.length
-                      ? subProducts.map(product => `
-                        <article class="product">
 
-                          ${
-                            product.image_url
-                            ? `<img
-                                src="${escapeHtml(product.image_url)}"
-                                alt="${escapeHtml(product.name)}"
-                              >`
-                            : `<div style="
-                                height:180px;
-                                background:#e8eeee;
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                color:#777;
-                              ">
-                                Kein Bild
-                              </div>`
-                          }
+function escapeHtml(value) {
 
-                          <div class="product-content">
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-                            <h4>${escapeHtml(product.name)}</h4>
 
-                            ${
-                              product.price
-                              ? `<div class="price">
-                                  ${escapeHtml(product.price)}
-                                </div>`
-                              : ""
-                            }
+function filterCategory(category) {
 
-                            ${
-                              product.description
-                              ? `<div class="info">
-                                  ${escapeHtml(product.description)}
-                                </div>`
-                              : ""
-                            }
+  selectedCategory =
+    selectedCategory === category
+      ? null
+      : category;
 
-                            ${
-                              product.placement
-                              ? `<div class="info">
-                                  <strong>Platzierung:</strong>
-                                  ${escapeHtml(product.placement)}
-                                </div>`
-                              : ""
-                            }
-
-                            ${
-                              product.requirements
-                              ? `<div class="info">
-                                  <strong>Anforderungen:</strong>
-                                  ${escapeHtml(product.requirements)}
-                                </div>`
-                              : ""
-                            }
-
-                            <div class="status">
-                              ${
-                                product.available
-                                ? "Bald verfügbar"
-                                : "Derzeit nicht verfügbar"
-                              }
-                            </div>
-
-                          </div>
-                        </article>
-                      `).join("")
-                      : `<div class="empty">
-                          Noch keine Produkte in dieser Unterkategorie.
-                        </div>`
-                    }
-                  </div>
-                </div>
-              `;
-
-            }).join("")}
-          </section>
-        `;
-
-      }).join("");
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    document.getElementById("search").addEventListener("input", function () {
-      const searchText = this.value.toLowerCase();
-
-      document.querySelectorAll(".product").forEach(product => {
-        product.style.display =
-          product.innerText.toLowerCase().includes(searchText)
-          ? ""
-          : "none";
-      });
+  document
+    .getElementById("produkte")
+    .scrollIntoView({
+      behavior: "smooth"
     });
 
-    loadShop();
-  </script>
+  renderProducts();
+}
+
+
+function addToCart(productId) {
+
+  const product =
+    products.find(
+      item => Number(item.id) === Number(productId)
+    );
+
+  if (!product) return;
+
+  const existing =
+    cart.find(
+      item => Number(item.id) === Number(productId)
+    );
+
+  if (existing) {
+
+    existing.quantity++;
+
+  } else {
+
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price_cents:
+        Math.round(getProductPrice(product) * 100),
+      image_url: product.image_url || "",
+      quantity: 1
+    });
+
+  }
+
+  saveCart();
+
+  updateCartCount();
+
+  alert(
+    product.name +
+    " wurde in den Warenkorb gelegt."
+  );
+}
+
+
+function saveCart() {
+
+  localStorage.setItem(
+    "aquatreishop_cart",
+    JSON.stringify(cart)
+  );
+}
+
+
+function updateCartCount() {
+
+  const count =
+    cart.reduce(
+      (sum, item) =>
+        sum + Number(item.quantity),
+      0
+    );
+
+  document.getElementById("cartCount")
+    .textContent = count;
+}
+
+
+function openCart() {
+
+  if (!cart.length) {
+
+    alert("Dein Warenkorb ist noch leer.");
+
+    return;
+  }
+
+  let subtotal =
+    cart.reduce(
+      (sum, item) =>
+        sum +
+        (item.price_cents / 100) *
+        item.quantity,
+      0
+    );
+
+  const shipping =
+    subtotal >= 70
+      ? 0
+      : 6.99;
+
+  const total =
+    subtotal + shipping;
+
+  let text =
+    "Warenkorb\n\n";
+
+  cart.forEach(item => {
+
+    text +=
+      item.quantity +
+      " × " +
+      item.name +
+      " – " +
+      formatPrice(
+        item.price_cents / 100
+      ) +
+      "\n";
+
+  });
+
+  text +=
+    "\nZwischensumme: " +
+    formatPrice(subtotal);
+
+  text +=
+    "\nVersand: " +
+    (
+      shipping === 0
+        ? "kostenlos"
+        : formatPrice(shipping)
+    );
+
+  text +=
+    "\nGesamt: " +
+    formatPrice(total);
+
+  alert(text);
+}
+
+
+loadProducts();
+updateCartCount();
+
+</script>
 
 </body>
 </html>
