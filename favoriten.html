@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaTreishop – Favoriten</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f7f8;color:#172126}
+header{background:#071f26;color:white}.header-inner{max-width:1200px;margin:auto;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-size:24px;font-weight:800;color:white;text-decoration:none}.logo span{color:#4ed7c0}
+.actions{display:flex;gap:8px}.link,.cart{padding:10px 12px;border-radius:11px;text-decoration:none;font-weight:700}.link{color:white;background:rgba(255,255,255,.08)}.cart{background:#4ed7c0;color:#062128}
+main{max-width:1200px;margin:auto;padding:30px 15px}.title{margin-bottom:22px}.title h1{margin:0 0 6px}.title p{margin:0;color:#718085}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+.card{background:white;border:1px solid #e1e8e9;border-radius:18px;overflow:hidden;cursor:pointer}.image{height:220px;background:#e8f0f1}.image img{width:100%;height:100%;object-fit:cover}.body{padding:17px}.name{font-size:18px;font-weight:750}.price{font-size:21px;font-weight:800;margin:12px 0}.remove{width:100%;border:0;border-radius:10px;padding:11px;background:#f2e5e5;color:#9a3030;font-weight:700;cursor:pointer}.empty{background:white;border-radius:18px;padding:50px 20px;text-align:center;color:#718085}
+@media(max-width:600px){.logo{font-size:21px}.link,.cart{font-size:13px;padding:9px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.image{height:170px}.body{padding:12px}.name{font-size:16px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a class="logo" href="index.html">Aqua<span>Treishop</span></a>
+<div class="actions"><a class="link" href="pflanzen.html">Pflanzen</a><a class="cart" href="cart.html">🛒 Warenkorb</a></div>
+</div></header>
+<main>
+<div class="title"><h1>♡ Meine Favoriten</h1><p>Hier findest du deine gespeicherten Produkte.</p></div>
+<div id="content" class="empty">Favoriten werden geladen...</div>
+</main>
+<script>
+const SUPABASE_URL="https://hzrqwgrszfpyqeibszno.supabase.co";
+const SUPABASE_KEY="sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
+let favorites=JSON.parse(localStorage.getItem("aquatreishop_favorites")||"[]").map(Number);
+function headers(){return {"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY};}
+function escapeHtml(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+function price(p){if(p.price_cents!==null&&p.price_cents!==undefined)return Number(p.price_cents)/100;return Number(String(p.price||"").replace(",","."))||0;}
+function formatPrice(v){return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"}).format(v);}
+async function loadFavorites(){
+  const content=document.getElementById("content");
+  if(!favorites.length){content.innerHTML='<div class="empty"><h2>Noch keine Favoriten</h2><p>Tippe bei einem Produkt auf ♡, um es hier zu speichern.</p><p><a href="pflanzen.html">Zu den Pflanzen</a></p></div>';return;}
+  try{
+    const response=await fetch(SUPABASE_URL+"/rest/v1/products?select=*&active=eq.true&order=sort_order.asc",{headers:headers()});
+    if(!response.ok) throw new Error();
+    const all=await response.json();
+    const products=all.filter(p=>favorites.includes(Number(p.id)));
+    if(!products.length){content.innerHTML='<div class="empty">Deine gespeicherten Produkte sind momentan nicht verfügbar.</div>';return;}
+    content.className="grid";
+    content.innerHTML=products.map(p=>`
+      <article class="card" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">
+        <div class="image">${p.image_url?`<img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}">`:"🌿"}</div>
+        <div class="body">
+          <div class="name">${escapeHtml(p.name)}</div>
+          <div class="price">${formatPrice(price(p))}</div>
+          <button class="remove" type="button" onclick="removeFavorite(event,${p.id})">Aus Favoriten entfernen</button>
+        </div>
+      </article>
+    `).join("");
+  }catch(e){content.innerHTML='<div class="empty">Die Favoriten konnten momentan nicht geladen werden.</div>';}
+}
+function removeFavorite(event,id){
+  event.preventDefault();event.stopPropagation();
+  favorites=favorites.filter(x=>x!==Number(id));
+  localStorage.setItem("aquatreishop_favorites",JSON.stringify(favorites));
+  loadFavorites();
+}
+loadFavorites();
+</script>
+</body>
+</html>
