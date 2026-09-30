@@ -652,15 +652,39 @@
         </div>
 
 
-        <div>
-          <label for="productImage">
-            Bild-URL
+        <div class="full">
+          <label for="productImageFile">
+            Produktbild
           </label>
 
           <input
-            id="productImage"
-            placeholder="https://..."
+            id="productImageFile"
+            type="file"
+            accept="image/*"
+            onchange="previewProductImage(event)"
           >
+
+          <div
+            id="productImagePreview"
+            style="margin-top:10px;display:none;"
+          >
+            <img
+              id="productImagePreviewImg"
+              src=""
+              alt="Produktbild Vorschau"
+              style="max-width:220px;max-height:180px;border-radius:12px;object-fit:cover;border:1px solid #d8e1e3;"
+            >
+          </div>
+
+          <input
+            id="productImage"
+            placeholder="Bild-URL (optional)"
+            style="margin-top:10px;"
+          >
+
+          <small style="display:block;margin-top:7px;color:#718085;">
+            Bild direkt vom Handy auswählen. Die URL wird beim Speichern automatisch eingetragen.
+          </small>
         </div>
 
 
@@ -1672,6 +1696,31 @@
     ).value =
       product.image_url || "";
 
+    document.getElementById(
+      "productImageFile"
+    ).value = "";
+
+    const existingPreview =
+      document.getElementById(
+        "productImagePreview"
+      );
+
+    const existingPreviewImg =
+      document.getElementById(
+        "productImagePreviewImg"
+      );
+
+    if (product.image_url) {
+      existingPreviewImg.src =
+        product.image_url;
+      existingPreview.style.display =
+        "block";
+    } else {
+      existingPreviewImg.src = "";
+      existingPreview.style.display =
+        "none";
+    }
+
 
     document.getElementById(
       "productAvailability"
@@ -1794,6 +1843,18 @@
       "productImage"
     ).value = "";
 
+    document.getElementById(
+      "productImageFile"
+    ).value = "";
+
+    document.getElementById(
+      "productImagePreviewImg"
+    ).src = "";
+
+    document.getElementById(
+      "productImagePreview"
+    ).style.display = "none";
+
 
     document.getElementById(
       "productAvailability"
@@ -1814,12 +1875,180 @@
   }
 
 
+  function previewProductImage(event) {
+
+    const file =
+      event.target.files &&
+      event.target.files[0];
+
+    const preview =
+      document.getElementById(
+        "productImagePreview"
+      );
+
+    const image =
+      document.getElementById(
+        "productImagePreviewImg"
+      );
+
+    if (!file) {
+      preview.style.display = "none";
+      image.src = "";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      showMessage(
+        "productMessage",
+        "Bitte eine Bilddatei auswählen.",
+        true
+      );
+
+      event.target.value = "";
+      preview.style.display = "none";
+      image.src = "";
+      return;
+    }
+
+    const reader =
+      new FileReader();
+
+    reader.onload = function() {
+      image.src = reader.result;
+      preview.style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+
+  function createImageFileName(file) {
+
+    const extension =
+      (file.name.split(".").pop() || "jpg")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+
+    const safeExtension =
+      extension || "jpg";
+
+    const base =
+      (
+        document.getElementById(
+          "productSlug"
+        ).value.trim() ||
+        document.getElementById(
+          "productName"
+        ).value.trim() ||
+        "produkt"
+      )
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\\u0300-\\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 60) || "produkt";
+
+    return (
+      base +
+      "-" +
+      Date.now() +
+      "." +
+      safeExtension
+    );
+  }
+
+
+  async function uploadProductImage(file) {
+
+    const token =
+      getToken();
+
+    if (!token) {
+      throw new Error(
+        "Bitte zuerst als Admin anmelden."
+      );
+    }
+
+    const fileName =
+      createImageFileName(file);
+
+    const response =
+      await fetch(
+        SUPABASE_URL +
+        "/storage/v1/object/product-images/" +
+        encodeURIComponent(fileName),
+        {
+          method: "POST",
+
+          headers: {
+            "apikey":
+              SUPABASE_KEY,
+
+            "Authorization":
+              "Bearer " + token,
+
+            "Content-Type":
+              file.type || "application/octet-stream",
+
+            "x-upsert":
+              "true",
+
+            "cache-control":
+              "3600"
+          },
+
+          body: file
+        }
+      );
+
+    if (!response.ok) {
+
+      const text =
+        await response.text();
+
+      let message = text;
+
+      try {
+        const data =
+          JSON.parse(text);
+
+        message =
+          data.message ||
+          data.error ||
+          text;
+      } catch {}
+
+      throw new Error(
+        "Bild konnte nicht hochgeladen werden: " +
+        message
+      );
+    }
+
+    return (
+      SUPABASE_URL +
+      "/storage/v1/object/public/product-images/" +
+      encodeURIComponent(fileName)
+    );
+  }
+
+
   async function saveProduct() {
 
     const id =
       document.getElementById(
         "productId"
       ).value;
+
+
+    const imageFileInput =
+      document.getElementById(
+        "productImageFile"
+      );
+
+    const imageFile =
+      imageFileInput.files &&
+      imageFileInput.files[0];
 
 
     const name =
@@ -1848,6 +2077,26 @@
 
     const priceCents =
       euroToCents(price);
+
+
+    let imageUrl =
+      document.getElementById(
+        "productImage"
+      ).value.trim() || null;
+
+
+    if (imageFile) {
+
+      showMessage(
+        "productMessage",
+        "Produktbild wird hochgeladen..."
+      );
+
+      imageUrl =
+        await uploadProductImage(
+          imageFile
+        );
+    }
 
 
     const payload = {
@@ -1925,9 +2174,7 @@
         ).value.trim() || null,
 
       image_url:
-        document.getElementById(
-          "productImage"
-        ).value.trim() || null,
+        imageUrl,
 
       availability:
         document.getElementById(
