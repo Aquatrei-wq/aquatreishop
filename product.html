@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaTreishop – Produkt</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f7f8;color:#172126}
+header{background:#071f26;color:white}
+.header-inner{max-width:1200px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{font-size:24px;font-weight:800;color:white;text-decoration:none}
+.logo span{color:#4ed7c0}
+.cart-button,.back{padding:10px 14px;border-radius:11px;text-decoration:none;font-weight:700}
+.cart-button{background:#4ed7c0;color:#062128}
+.back{color:#bfeee7}
+main{max-width:1100px;margin:auto;padding:40px 20px}
+.product{display:grid;grid-template-columns:1.05fr .95fr;gap:35px;background:white;border:1px solid #e1e8e9;border-radius:22px;overflow:hidden}
+.image-wrap{min-height:500px;background:#e8f0f1;display:flex;align-items:center;justify-content:center}
+.image-wrap img{width:100%;height:100%;min-height:500px;object-fit:cover}
+.placeholder{font-size:90px}
+.details{padding:35px}
+.category{font-size:13px;font-weight:700;color:#08775d;text-transform:uppercase;letter-spacing:.05em}
+h1{font-size:clamp(30px,5vw,48px);margin:10px 0 15px}
+.description{color:#66777c;line-height:1.7;font-size:16px}
+.price{font-size:30px;font-weight:800;margin:25px 0 10px}
+.status{display:inline-block;border-radius:30px;padding:7px 12px;font-size:13px;font-weight:700;margin-bottom:15px}
+.sale{background:#dff7ef;color:#08775d}.soon{background:#fff0d5;color:#946000}.out{background:#fde2e2;color:#a42c2c}.catalog{background:#edf0f1;color:#59676b}
+.meta{margin:20px 0;padding:15px;background:#f5f7f8;border-radius:12px;line-height:1.7;color:#52666b}
+.add{width:100%;border:0;border-radius:12px;padding:15px;background:#082a32;color:white;font-size:16px;font-weight:800;cursor:pointer}
+.add:disabled{background:#ccd4d6;cursor:not-allowed}
+.message{margin-top:12px;color:#08775d;font-weight:700;min-height:20px}
+.loading,.error{text-align:center;padding:70px 20px;background:white;border-radius:18px}
+@media(max-width:750px){
+  main{padding:20px 15px}
+  .product{grid-template-columns:1fr}
+  .image-wrap,.image-wrap img{min-height:320px}
+  .details{padding:25px 20px}
+  .back{display:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">Aqua<span>Treishop</span></a>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a class="back" href="pflanzen.html">← Pflanzen</a>
+      <a class="cart-button" href="cart.html">🛒 Warenkorb <span id="cartCount">0</span></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="content" class="loading">Produkt wird geladen...</div>
+</main>
+
+<script>
+const SUPABASE_URL="https://hzrqwgrszfpyqeibszno.supabase.co";
+const SUPABASE_KEY="sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
+
+let product=null;
+let cart=JSON.parse(localStorage.getItem("aquatreishop_cart")||"[]");
+
+function headers(){
+  return {
+    "apikey":SUPABASE_KEY,
+    "Authorization":"Bearer "+SUPABASE_KEY
+  };
+}
+
+function escapeHtml(value){
+  return String(value||"")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function price(p){
+  if(p.price_cents!==null && p.price_cents!==undefined) return Number(p.price_cents)/100;
+  return Number(String(p.price||"").replace(",","."))||0;
+}
+
+function formatPrice(v){
+  return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"}).format(v);
+}
+
+function status(p){
+  if(p.sale_status==="sale") return {text:"🟢 Zum Verkauf",cls:"sale"};
+  if(p.sale_status==="soon") return {text:"🟠 Bald verfügbar",cls:"soon"};
+  if(p.sale_status==="out") return {text:"🔴 Ausverkauft",cls:"out"};
+  return {text:"👁️ Nur Katalog",cls:"catalog"};
+}
+
+function updateCartCount(){
+  const n=cart.reduce((sum,item)=>sum+Number(item.quantity||0),0);
+  document.getElementById("cartCount").textContent=n;
+}
+
+async function loadProduct(){
+  const id=new URLSearchParams(location.search).get("id");
+  if(!id){
+    showError("Kein Produkt ausgewählt.");
+    return;
+  }
+
+  try{
+    const response=await fetch(
+      SUPABASE_URL+
+      "/rest/v1/products?select=*&id=eq."+encodeURIComponent(id)+"&active=eq.true&limit=1",
+      {headers:headers()}
+    );
+
+    if(!response.ok) throw new Error("Produkt konnte nicht geladen werden.");
+
+    const rows=await response.json();
+    if(!rows.length){
+      showError("Dieses Produkt wurde nicht gefunden.");
+      return;
+    }
+
+    product=rows[0];
+    renderProduct();
+  }catch(error){
+    console.error(error);
+    showError("Das Produkt konnte momentan nicht geladen werden.");
+  }
+}
+
+function showError(text){
+  document.getElementById("content").innerHTML=
+    '<div class="error"><h2>'+escapeHtml(text)+'</h2><p><a href="pflanzen.html">← Zurück zu den Pflanzen</a></p></div>';
+}
+
+function renderProduct(){
+  const s=status(product);
+  const p=price(product);
+  const canBuy=product.sale_status==="sale" && Number(product.stock||0)>0;
+
+  const image=product.image_url
+    ? '<img src="'+escapeHtml(product.image_url)+'" alt="'+escapeHtml(product.name)+'">'
+    : '<div class="placeholder">🌿</div>';
+
+  document.title="AquaTreishop – "+product.name;
+
+  document.getElementById("content").innerHTML=`
+    <article class="product">
+      <div class="image-wrap">${image}</div>
+      <div class="details">
+        <div class="category">Aquarienpflanze</div>
+        <h1>${escapeHtml(product.name)}</h1>
+        <span class="status ${s.cls}">${s.text}</span>
+
+        <div class="description">
+          ${escapeHtml(product.description || product.short_description || "Aquarienpflanze")}
+        </div>
+
+        <div class="price">${formatPrice(p)}</div>
+
+        <div class="meta">
+          ${product.placement ? "<strong>Platzierung:</strong> "+escapeHtml(product.placement)+"<br>" : ""}
+          ${product.requirements ? "<strong>Anforderungen:</strong> "+escapeHtml(product.requirements)+"<br>" : ""}
+          <strong>Verfügbarkeit:</strong> ${Number(product.stock||0)} Stück
+        </div>
+
+        <button class="add" ${canBuy?"":"disabled"} onclick="addToCart()">
+          ${canBuy?"In den Warenkorb":s.text}
+        </button>
+        <div class="message" id="message"></div>
+      </div>
+    </article>
+  `;
+}
+
+function addToCart(){
+  if(!product) return;
+
+  const existing=cart.find(item=>Number(item.id)===Number(product.id));
+
+  if(existing){
+    existing.quantity++;
+  }else{
+    cart.push({
+      id:product.id,
+      name:product.name,
+      price_cents:Math.round(price(product)*100),
+      image_url:product.image_url||"",
+      quantity:1
+    });
+  }
+
+  localStorage.setItem("aquatreishop_cart",JSON.stringify(cart));
+  updateCartCount();
+
+  document.getElementById("message").textContent=
+    product.name+" wurde in den Warenkorb gelegt.";
+}
+
+updateCartCount();
+loadProduct();
+</script>
+</body>
+</html>
