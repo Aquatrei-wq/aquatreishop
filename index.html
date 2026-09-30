@@ -281,6 +281,22 @@ nav a {
   color: #718085;
 }
 
+.category-active {
+  border-color: #4ed7c0;
+  box-shadow: 0 0 0 2px rgba(78,215,192,.18);
+}
+
+.category-reset {
+  display: none;
+  margin: 0 0 20px;
+  border: 0;
+  background: transparent;
+  color: #08775d;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
 footer {
   margin-top: 40px;
   background: #071f26;
@@ -324,19 +340,20 @@ footer {
       <a href="#produkte">Produkte</a>
     </nav>
 
-  <a
-  class="cart-button"
-  href="cart.html"
-  style="text-decoration:none;"
->
-  🛒 Warenkorb <span id="cartCount">0</span>
-</a>
+    <a
+      class="cart-button"
+      href="cart.html"
+      style="text-decoration:none;"
+    >
+      🛒 Warenkorb <span id="cartCount">0</span>
+    </a>
   </div>
 </header>
 
 <section class="hero">
   <div class="hero-inner">
     <h1>Deine Unterwasserwelt beginnt hier.</h1>
+
     <p>
       Aquaristik, Pflanzen, Tiere und Zubehör –
       übersichtlich ausgewählt und mit Liebe zum Aquarium.
@@ -361,43 +378,71 @@ footer {
 
   <div class="categories">
 
-    <div class="category" onclick="filterCategory('Pflanzen')">
+    <div
+      class="category"
+      data-category="Pflanzen"
+      onclick="filterCategory('Pflanzen')"
+    >
       <div class="category-icon">🌿</div>
       <strong>Pflanzen</strong>
       <small>Aquarienpflanzen</small>
     </div>
 
-    <div class="category" onclick="filterCategory('Fische')">
+    <div
+      class="category"
+      data-category="Fische"
+      onclick="filterCategory('Fische')"
+    >
       <div class="category-icon">🐟</div>
       <strong>Fische</strong>
       <small>Süßwasserfische</small>
     </div>
 
-    <div class="category" onclick="filterCategory('Garnelen')">
+    <div
+      class="category"
+      data-category="Garnelen"
+      onclick="filterCategory('Garnelen')"
+    >
       <div class="category-icon">🦐</div>
       <strong>Garnelen</strong>
       <small>Zwerggarnelen</small>
     </div>
 
-    <div class="category" onclick="filterCategory('Schnecken')">
+    <div
+      class="category"
+      data-category="Schnecken"
+      onclick="filterCategory('Schnecken')"
+    >
       <div class="category-icon">🐌</div>
       <strong>Schnecken</strong>
       <small>Für dein Aquarium</small>
     </div>
 
-    <div class="category" onclick="filterCategory('Futter')">
+    <div
+      class="category"
+      data-category="Futter"
+      onclick="filterCategory('Futter')"
+    >
       <div class="category-icon">🍽️</div>
       <strong>Futter</strong>
       <small>Für deine Tiere</small>
     </div>
 
-    <div class="category" onclick="filterCategory('Dünger')">
+    <div
+      class="category"
+      data-category="Dünger"
+      onclick="filterCategory('Dünger')"
+    >
       <div class="category-icon">💧</div>
       <strong>Dünger</strong>
       <small>Für kräftige Pflanzen</small>
     </div>
 
-    <div class="category" onclick="filterCategory('Zubehör')">
+    <div
+      class="category"
+      data-category="Zubehör"
+      onclick="filterCategory('Zubehör')"
+    >
       <div class="category-icon">🧰</div>
       <strong>Zubehör</strong>
       <small>Alles fürs Aquarium</small>
@@ -411,10 +456,21 @@ footer {
 
   <div class="section-title">
     <div>
-      <h2>Unser Sortiment</h2>
-      <p>Alle verfügbaren Katalogartikel auf einen Blick.</p>
+      <h2 id="productTitle">Unser Sortiment</h2>
+
+      <p id="productSubtitle">
+        Alle verfügbaren Katalogartikel auf einen Blick.
+      </p>
     </div>
   </div>
+
+  <button
+    id="resetCategory"
+    class="category-reset"
+    onclick="clearCategory()"
+  >
+    ← Alle Kategorien anzeigen
+  </button>
 
   <input
     class="search"
@@ -425,7 +481,9 @@ footer {
   >
 
   <div class="products" id="products">
-    <div class="empty">Produkte werden geladen...</div>
+    <div class="empty">
+      Produkte werden geladen...
+    </div>
   </div>
 
 </section>
@@ -448,32 +506,84 @@ const SUPABASE_KEY =
   "sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
 
 let products = [];
+let categories = [];
 let selectedCategory = null;
 
 let cart =
-  JSON.parse(localStorage.getItem("aquatreishop_cart") || "[]");
+  JSON.parse(
+    localStorage.getItem("aquatreishop_cart") || "[]"
+  );
 
 
-async function loadProducts() {
+async function loadShopData() {
 
   try {
 
-    const response = await fetch(
-      SUPABASE_URL +
-      "/rest/v1/products?select=*&active=eq.true&order=sort_order.asc",
-      {
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY
-        }
-      }
-    );
+    const [
+      productsResponse,
+      categoriesResponse
+    ] = await Promise.all([
 
-    if (!response.ok) {
-      throw new Error("Produkte konnten nicht geladen werden.");
+      fetch(
+        SUPABASE_URL +
+        "/rest/v1/products?select=*&active=eq.true&order=sort_order.asc",
+        {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY
+          }
+        }
+      ),
+
+      fetch(
+        SUPABASE_URL +
+        "/rest/v1/categories?select=id,name&order=name.asc",
+        {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY
+          }
+        }
+      )
+
+    ]);
+
+    if (!productsResponse.ok) {
+      throw new Error(
+        "Produkte konnten nicht geladen werden."
+      );
     }
 
-    products = await response.json();
+    if (!categoriesResponse.ok) {
+      throw new Error(
+        "Kategorien konnten nicht geladen werden."
+      );
+    }
+
+    products =
+      await productsResponse.json();
+
+    categories =
+      await categoriesResponse.json();
+
+    const categoryMap =
+      new Map(
+        categories.map(
+          category => [
+            Number(category.id),
+            category.name
+          ]
+        )
+      );
+
+    products =
+      products.map(product => ({
+        ...product,
+        category_name:
+          categoryMap.get(
+            Number(product.category_id)
+          ) || ""
+      }));
 
     renderProducts();
 
@@ -489,8 +599,10 @@ async function loadProducts() {
 
 function getProductPrice(product) {
 
-  if (product.price_cents !== null &&
-      product.price_cents !== undefined) {
+  if (
+    product.price_cents !== null &&
+    product.price_cents !== undefined
+  ) {
 
     return Number(product.price_cents) / 100;
   }
@@ -521,24 +633,30 @@ function getStatus(product) {
     product.sale_status || "catalog";
 
   if (status === "sale") {
+
     return {
       text: "🟢 Zum Verkauf",
       className: "status-sale"
     };
+
   }
 
   if (status === "soon") {
+
     return {
       text: "🟠 Bald verfügbar",
       className: "status-soon"
     };
+
   }
 
   if (status === "out") {
+
     return {
       text: "🔴 Ausverkauft",
       className: "status-out"
     };
+
   }
 
   return {
@@ -559,35 +677,36 @@ function renderProducts() {
       .toLowerCase()
       .trim();
 
-  let list = [...products];
+  let list =
+    [...products];
 
   if (selectedCategory) {
 
-    list = list.filter(product => {
-
-      return String(product.category_name || "")
-        .toLowerCase()
-        .includes(
-          selectedCategory.toLowerCase()
-        );
-    });
+    list =
+      list.filter(product =>
+        String(product.category_name || "")
+          .trim()
+          .toLowerCase() ===
+        selectedCategory.toLowerCase()
+      );
   }
 
   if (search) {
 
-    list = list.filter(product => {
+    list =
+      list.filter(product => {
 
-      const text =
-        (
-          product.name +
-          " " +
-          (product.description || "") +
-          " " +
-          (product.short_description || "")
-        ).toLowerCase();
+        const text =
+          (
+            product.name +
+            " " +
+            (product.description || "") +
+            " " +
+            (product.short_description || "")
+          ).toLowerCase();
 
-      return text.includes(search);
-    });
+        return text.includes(search);
+      });
   }
 
   if (!list.length) {
@@ -613,7 +732,10 @@ function renderProducts() {
 
       const image =
         product.image_url
-          ? `<img src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}">`
+          ? `<img
+              src="${escapeHtml(product.image_url)}"
+              alt="${escapeHtml(product.name)}"
+            >`
           : `<div class="product-placeholder">🌿</div>`;
 
       return `
@@ -650,7 +772,11 @@ function renderProducts() {
               ${canBuy ? "" : "disabled"}
               onclick="addToCart(${product.id})"
             >
-              ${canBuy ? "In den Warenkorb" : status.text}
+              ${
+                canBuy
+                  ? "In den Warenkorb"
+                  : status.text
+              }
             </button>
 
           </div>
@@ -676,15 +802,76 @@ function escapeHtml(value) {
 function filterCategory(category) {
 
   selectedCategory =
-    selectedCategory === category
-      ? null
-      : category;
+    category;
 
-  document
-    .getElementById("produkte")
-    .scrollIntoView({
-      behavior: "smooth"
-    });
+  document.getElementById(
+    "productTitle"
+  ).textContent =
+    category;
+
+  document.getElementById(
+    "productSubtitle"
+  ).textContent =
+    "Produkte aus der Kategorie " +
+    category +
+    ".";
+
+  document.getElementById(
+    "resetCategory"
+  ).style.display =
+    "block";
+
+  document.querySelectorAll(
+    ".category"
+  ).forEach(card => {
+
+    card.classList.toggle(
+      "category-active",
+      card.dataset.category === category
+    );
+
+  });
+
+  document.getElementById(
+    "produkte"
+  ).scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+  renderProducts();
+}
+
+
+function clearCategory() {
+
+  selectedCategory =
+    null;
+
+  document.getElementById(
+    "productTitle"
+  ).textContent =
+    "Unser Sortiment";
+
+  document.getElementById(
+    "productSubtitle"
+  ).textContent =
+    "Alle verfügbaren Katalogartikel auf einen Blick.";
+
+  document.getElementById(
+    "resetCategory"
+  ).style.display =
+    "none";
+
+  document.querySelectorAll(
+    ".category"
+  ).forEach(card => {
+
+    card.classList.remove(
+      "category-active"
+    );
+
+  });
 
   renderProducts();
 }
@@ -694,14 +881,18 @@ function addToCart(productId) {
 
   const product =
     products.find(
-      item => Number(item.id) === Number(productId)
+      item =>
+        Number(item.id) ===
+        Number(productId)
     );
 
   if (!product) return;
 
   const existing =
     cart.find(
-      item => Number(item.id) === Number(productId)
+      item =>
+        Number(item.id) ===
+        Number(productId)
     );
 
   if (existing) {
@@ -711,12 +902,21 @@ function addToCart(productId) {
   } else {
 
     cart.push({
+
       id: product.id,
+
       name: product.name,
+
       price_cents:
-        Math.round(getProductPrice(product) * 100),
-      image_url: product.image_url || "",
+        Math.round(
+          getProductPrice(product) * 100
+        ),
+
+      image_url:
+        product.image_url || "",
+
       quantity: 1
+
     });
 
   }
@@ -750,14 +950,15 @@ function updateCartCount() {
       0
     );
 
-  document.getElementById("cartCount")
-    .textContent = count;
+  document.getElementById(
+    "cartCount"
+  ).textContent =
+    count;
 }
 
-document.getElementById("cartCount")
-    .textContent = count;
 
-loadProducts();
+loadShopData();
+
 updateCartCount();
 
 </script>
