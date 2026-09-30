@@ -1,4 +1,4 @@
- html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -653,28 +653,52 @@
 
 
         <div class="full">
+
+          <label>
+            Häufig zusammen gekauft
+          </label>
+
+          <div
+            id="productRecommendations"
+            style="border:1px solid #d8e1e3;border-radius:12px;padding:12px;background:#f8faf9;max-height:280px;overflow:auto;"
+          ></div>
+
+          <div
+            style="margin-top:7px;font-size:13px;color:#718085;"
+          >
+            Wähle Produkte aus, die auf der Produktseite unter „Häufig zusammen gekauft“ erscheinen sollen.
+          </div>
+
+        </div>
+
+
+        <div class="full">
           <label for="productImageFile">
-            Produktbild
+            Produktbilder
           </label>
 
           <input
             id="productImageFile"
             type="file"
             accept="image/*"
-            onchange="previewProductImage(event)"
+            multiple
+            onchange="previewProductImages(event)"
           >
 
           <div
             id="productImagePreview"
             style="margin-top:10px;display:none;"
           >
-            <img
-              id="productImagePreviewImg"
-              src=""
-              alt="Produktbild Vorschau"
-              style="max-width:220px;max-height:180px;border-radius:12px;object-fit:cover;border:1px solid #d8e1e3;"
-            >
+            <div
+              id="productImagePreviewGrid"
+              style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;"
+            ></div>
           </div>
+
+          <div
+            id="existingProductImages"
+            style="margin-top:14px;"
+          ></div>
 
           <input
             id="productImage"
@@ -683,7 +707,7 @@
           >
 
           <small style="display:block;margin-top:7px;color:#718085;">
-            Bild direkt vom Handy auswählen. Die URL wird beim Speichern automatisch eingetragen.
+            Mehrere Bilder direkt vom Handy auswählen. Das erste Bild wird als Hauptbild verwendet.
           </small>
         </div>
 
@@ -917,6 +941,87 @@
 
     </section>
 
+
+
+    <!-- WEBSITE VERWALTEN -->
+
+    <section class="card">
+
+      <h2>🌐 Webseite verwalten</h2>
+
+      <p class="muted">
+        Inhalte der Startseite und die Hauptnavigation können hier
+        geändert werden. Änderungen werden direkt im Shop übernommen.
+      </p>
+
+      <div id="websiteMessage" class="message hidden"></div>
+
+      <h3>Startseite</h3>
+
+      <div class="grid">
+
+        <div class="full">
+          <label for="homeTitleAdmin">Hauptüberschrift</label>
+          <input id="homeTitleAdmin">
+        </div>
+
+        <div class="full">
+          <label for="homeSubtitleAdmin">Unterüberschrift</label>
+          <textarea id="homeSubtitleAdmin"></textarea>
+        </div>
+
+        <div>
+          <label for="catalogTitleAdmin">Sortiment – Überschrift</label>
+          <input id="catalogTitleAdmin">
+        </div>
+
+        <div>
+          <label for="catalogSubtitleAdmin">Sortiment – Untertitel</label>
+          <input id="catalogSubtitleAdmin">
+        </div>
+
+        <div class="full">
+          <label for="footerTextAdmin">Footer-Text</label>
+          <input id="footerTextAdmin">
+        </div>
+
+      </div>
+
+      <div class="button-row">
+        <button class="primary" onclick="saveWebsiteContent()">
+          💾 Startseite speichern
+        </button>
+      </div>
+
+      <hr class="divider">
+
+      <h3>Hauptnavigation</h3>
+
+      <div class="grid">
+
+        <div>
+          <label for="newNavName">Neuer Menüpunkt</label>
+          <input id="newNavName" placeholder="z. B. Pflanzen">
+        </div>
+
+        <div>
+          <label for="newNavUrl">Ziel</label>
+          <input id="newNavUrl" placeholder="z. B. pflanzen.html">
+        </div>
+
+      </div>
+
+      <div class="button-row">
+        <button class="success" onclick="addNavigationItem()">
+          + Menüpunkt hinzufügen
+        </button>
+      </div>
+
+      <div id="navigationList" style="margin-top:15px;">
+        Lade Navigation...
+      </div>
+
+    </section>
 
     <!-- SHOP EINSTELLUNGEN -->
 
@@ -1586,7 +1691,145 @@
   }
 
 
-  function editProduct(id) {
+
+  async function loadProductRecommendations(productId) {
+
+    if (!productId) return [];
+
+    return await api(
+      "product_recommendations?select=*&product_id=eq." +
+      encodeURIComponent(productId) +
+      "&order=sort_order.asc,created_at.asc"
+    );
+  }
+
+
+  function renderProductRecommendations(selectedIds = []) {
+
+    const container =
+      document.getElementById("productRecommendations");
+
+    if (!container) return;
+
+    const selected =
+      new Set(
+        selectedIds.map(id => String(id))
+      );
+
+    const currentId =
+      String(
+        document.getElementById("productId")?.value || ""
+      );
+
+    const candidates =
+      allProducts
+        .filter(product =>
+          String(product.id) !== currentId
+        )
+        .sort((a,b) =>
+          String(a.name || "").localeCompare(
+            String(b.name || ""),
+            "de"
+          )
+        );
+
+    if (!candidates.length) {
+      container.innerHTML =
+        '<div style="color:#718085;">Noch keine anderen Produkte vorhanden.</div>';
+      return;
+    }
+
+    container.innerHTML =
+      candidates.map(product => `
+        <label
+          style="display:flex;align-items:center;gap:9px;padding:8px 4px;border-bottom:1px solid #e7ecec;cursor:pointer;"
+        >
+          <input
+            type="checkbox"
+            class="product-recommendation-checkbox"
+            value="${product.id}"
+            ${selected.has(String(product.id)) ? "checked" : ""}
+            style="width:18px;height:18px;"
+          >
+          <span style="font-weight:700;">
+            ${escapeHtml(product.name || "")}
+          </span>
+          <span style="margin-left:auto;color:#718085;font-size:13px;">
+            ${formatAdminProductPrice(product)}
+          </span>
+        </label>
+      `).join("");
+  }
+
+
+  function formatAdminProductPrice(product) {
+
+    const cents =
+      product.price_cents != null
+        ? Number(product.price_cents)
+        : Math.round(
+            parseOldPrice(product.price) * 100
+          );
+
+    return (
+      (cents / 100)
+        .toFixed(2)
+        .replace(".", ",") +
+      " €"
+    );
+  }
+
+
+  async function saveProductRecommendations(productId) {
+
+    if (!productId) return;
+
+    const checkboxes =
+      Array.from(
+        document.querySelectorAll(
+          ".product-recommendation-checkbox:checked"
+        )
+      );
+
+    const selectedIds =
+      checkboxes
+        .map(input => Number(input.value))
+        .filter(id =>
+          Number.isFinite(id) &&
+          id !== Number(productId)
+        );
+
+    await api(
+      "product_recommendations?product_id=eq." +
+      encodeURIComponent(productId),
+      {
+        method: "DELETE"
+      }
+    );
+
+    if (!selectedIds.length) return;
+
+    const rows =
+      selectedIds.map((recommendedProductId, index) => ({
+        product_id: Number(productId),
+        recommended_product_id: recommendedProductId,
+        sort_order: index
+      }));
+
+    await api(
+      "product_recommendations",
+      {
+        method: "POST",
+        headers: {
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(rows)
+      }
+    );
+  }
+
+
+  async function editProduct(id) {
 
     const product =
       allProducts.find(
@@ -1700,25 +1943,57 @@
       "productImageFile"
     ).value = "";
 
+    document.getElementById(
+      "productImage"
+    ).value =
+      product.image_url || "";
+
     const existingPreview =
       document.getElementById(
         "productImagePreview"
       );
 
-    const existingPreviewImg =
+    const existingPreviewGrid =
       document.getElementById(
-        "productImagePreviewImg"
+        "productImagePreviewGrid"
       );
 
-    if (product.image_url) {
-      existingPreviewImg.src =
-        product.image_url;
-      existingPreview.style.display =
-        "block";
-    } else {
-      existingPreviewImg.src = "";
-      existingPreview.style.display =
-        "none";
+    existingPreviewGrid.innerHTML = "";
+    existingPreview.style.display = "none";
+
+    renderSelectedImagePreviews([]);
+
+    try {
+      const images =
+        await loadProductImages(product.id);
+
+      renderExistingProductImages(images);
+
+      if (images.length) {
+        document.getElementById(
+          "productImage"
+        ).value =
+          images[0].image_url || product.image_url || "";
+      }
+
+    } catch (error) {
+      console.error(error);
+      renderExistingProductImages([]);
+    }
+
+
+    try {
+      const recommendations =
+        await loadProductRecommendations(product.id);
+
+      renderProductRecommendations(
+        recommendations.map(
+          item => item.recommended_product_id
+        )
+      );
+    } catch (error) {
+      console.error(error);
+      renderProductRecommendations([]);
     }
 
 
@@ -1778,6 +2053,8 @@
     document.getElementById(
       "productId"
     ).value = "";
+
+    renderProductRecommendations([]);
 
 
     document.getElementById(
@@ -1847,13 +2124,11 @@
       "productImageFile"
     ).value = "";
 
-    document.getElementById(
-      "productImagePreviewImg"
-    ).src = "";
+    renderSelectedImagePreviews([]);
 
     document.getElementById(
-      "productImagePreview"
-    ).style.display = "none";
+      "existingProductImages"
+    ).innerHTML = "";
 
 
     document.getElementById(
@@ -1875,51 +2150,228 @@
   }
 
 
-  function previewProductImage(event) {
+  function previewProductImages(event) {
 
-    const file =
-      event.target.files &&
-      event.target.files[0];
+    const files =
+      Array.from(
+        event.target.files || []
+      );
+
+    renderSelectedImagePreviews(files);
+  }
+
+
+  function renderSelectedImagePreviews(files) {
 
     const preview =
       document.getElementById(
         "productImagePreview"
       );
 
-    const image =
+    const grid =
       document.getElementById(
-        "productImagePreviewImg"
+        "productImagePreviewGrid"
       );
 
-    if (!file) {
+    if (!preview || !grid) return;
+
+    grid.innerHTML = "";
+
+    if (!files.length) {
       preview.style.display = "none";
-      image.src = "";
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
-      showMessage(
-        "productMessage",
-        "Bitte eine Bilddatei auswählen.",
-        true
-      );
+    preview.style.display = "block";
 
-      event.target.value = "";
-      preview.style.display = "none";
-      image.src = "";
-      return;
-    }
+    files.forEach((file, index) => {
 
-    const reader =
-      new FileReader();
+      const wrapper =
+        document.createElement("div");
 
-    reader.onload = function() {
-      image.src = reader.result;
-      preview.style.display = "block";
-    };
+      wrapper.style.cssText =
+        "border:1px solid #d8e1e3;border-radius:12px;padding:6px;background:#fff;";
 
-    reader.readAsDataURL(file);
+      const img =
+        document.createElement("img");
+
+      img.alt =
+        "Bild Vorschau " + (index + 1);
+
+      img.style.cssText =
+        "width:100%;height:100px;object-fit:cover;border-radius:8px;display:block;";
+
+      const label =
+        document.createElement("div");
+
+      label.textContent =
+        index === 0
+          ? "Hauptbild"
+          : "Bild " + (index + 1);
+
+      label.style.cssText =
+        "font-size:12px;margin-top:5px;color:#52666b;text-align:center;";
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(label);
+      grid.appendChild(wrapper);
+
+      const reader =
+        new FileReader();
+
+      reader.onload = function() {
+        img.src = reader.result;
+      };
+
+      reader.readAsDataURL(file);
+    });
   }
+
+
+  async function loadProductImages(productId) {
+
+    if (!productId) return [];
+
+    return await api(
+      "product_images?select=*&product_id=eq." +
+      encodeURIComponent(productId) +
+      "&order=sort_order.asc,created_at.asc"
+    );
+  }
+
+
+  function renderExistingProductImages(images) {
+
+    const container =
+      document.getElementById(
+        "existingProductImages"
+      );
+
+    if (!container) return;
+
+    if (!images.length) {
+      container.innerHTML =
+        '<div style="padding:12px;border:1px dashed #cfdadc;border-radius:12px;color:#718085;">Noch keine gespeicherten Produktbilder.</div>';
+      return;
+    }
+
+    container.innerHTML =
+      '<div style="font-weight:700;margin-bottom:8px;">Gespeicherte Bilder</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;">' +
+      images.map((image, index) => `
+        <div style="border:1px solid #d8e1e3;border-radius:12px;padding:6px;background:#fff;">
+          <img
+            src="${escapeHtml(image.image_url)}"
+            alt="Produktbild ${index + 1}"
+            style="width:100%;height:100px;object-fit:cover;border-radius:8px;display:block;"
+          >
+          <div style="font-size:12px;margin-top:5px;text-align:center;color:#52666b;">
+            ${index === 0 ? "Hauptbild" : "Bild " + (index + 1)}
+          </div>
+          <button
+            type="button"
+            onclick="deleteProductImage(${Number(image.id)}, ${Number(image.product_id)})"
+            style="width:100%;margin-top:6px;padding:7px;border:0;border-radius:8px;background:#f2e5e5;color:#9a3030;cursor:pointer;"
+          >
+            Bild löschen
+          </button>
+        </div>
+      `).join("") +
+      '</div>';
+  }
+
+
+  async function deleteProductImage(imageId, productId) {
+
+    if (!confirm("Dieses Produktbild wirklich löschen?")) {
+      return;
+    }
+
+    try {
+
+      const images =
+        await loadProductImages(productId);
+
+      const image =
+        images.find(
+          item => Number(item.id) === Number(imageId)
+        );
+
+      if (!image) return;
+
+      if (image.storage_path) {
+
+        const token = getToken();
+
+        if (token) {
+          await fetch(
+            SUPABASE_URL +
+            "/storage/v1/object/product-images/" +
+            image.storage_path
+              .split("/")
+              .map(encodeURIComponent)
+              .join("/"),
+            {
+              method: "DELETE",
+              headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + token
+              }
+            }
+          );
+        }
+      }
+
+      await api(
+        "product_images?id=eq." +
+        encodeURIComponent(imageId),
+        {
+          method: "DELETE"
+        }
+      );
+
+      const remaining =
+        await loadProductImages(productId);
+
+      const mainUrl =
+        remaining.length
+          ? remaining[0].image_url
+          : null;
+
+      await api(
+        "products?id=eq." +
+        encodeURIComponent(productId),
+        {
+          method: "PATCH",
+          headers: {
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            image_url: mainUrl,
+            updated_at: new Date().toISOString()
+          })
+        }
+      );
+
+      renderExistingProductImages(remaining);
+
+      document.getElementById(
+        "productImage"
+      ).value = mainUrl || "";
+
+      await loadProducts();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Bild konnte nicht gelöscht werden:\n" +
+        error.message
+      );
+    }
+  }
+
 
 
   function createImageFileName(file) {
@@ -2025,11 +2477,15 @@
       );
     }
 
-    return (
-      SUPABASE_URL +
-      "/storage/v1/object/public/product-images/" +
-      encodeURIComponent(fileName)
-    );
+    return {
+      url:
+        SUPABASE_URL +
+        "/storage/v1/object/public/product-images/" +
+        encodeURIComponent(fileName),
+
+      path:
+        fileName
+    };
   }
 
 
@@ -2040,22 +2496,20 @@
         "productId"
       ).value;
 
-
     const imageFileInput =
       document.getElementById(
         "productImageFile"
       );
 
-    const imageFile =
-      imageFileInput.files &&
-      imageFileInput.files[0];
-
+    const imageFiles =
+      Array.from(
+        imageFileInput.files || []
+      );
 
     const name =
       document.getElementById(
         "productName"
       ).value.trim();
-
 
     if (!name) {
 
@@ -2068,138 +2522,121 @@
       return;
     }
 
-
     const price =
       document.getElementById(
         "productPrice"
       ).value;
 
-
     const priceCents =
       euroToCents(price);
-
 
     let imageUrl =
       document.getElementById(
         "productImage"
       ).value.trim() || null;
 
+    try {
 
-    if (imageFile) {
+      const payload = {
 
-      showMessage(
-        "productMessage",
-        "Produktbild wird hochgeladen..."
-      );
+        name,
 
-      imageUrl =
-        await uploadProductImage(
-          imageFile
-        );
-    }
+        price_cents:
+          priceCents,
 
+        price:
+          Number(priceCents / 100)
+            .toFixed(2)
+            .replace(".", ","),
 
-    const payload = {
+        sale_status:
+          document.getElementById(
+            "productStatus"
+          ).value,
 
-      name,
+        stock:
+          Math.max(
+            0,
+            parseInt(
+              document.getElementById(
+                "productStock"
+              ).value || "0",
+              10
+            )
+          ),
 
-      price_cents:
-        priceCents,
+        category_id:
+          toNullableNumber(
+            document.getElementById(
+              "productCategory"
+            ).value
+          ),
 
-      price:
-        Number(priceCents / 100)
-          .toFixed(2)
-          .replace(".", ","),
+        subcategory_id:
+          toNullableNumber(
+            document.getElementById(
+              "productSubcategory"
+            ).value
+          ),
 
-      sale_status:
-        document.getElementById(
-          "productStatus"
-        ).value,
+        plant_subcategory_id:
+          toNullableNumber(
+            document.getElementById(
+              "productPlantSubcategory"
+            ).value
+          ),
 
-      stock:
-        Math.max(
-          0,
+        slug:
+          document.getElementById(
+            "productSlug"
+          ).value.trim() || null,
+
+        placement:
+          document.getElementById(
+            "productPlacement"
+          ).value.trim() || null,
+
+        short_description:
+          document.getElementById(
+            "productShortDescription"
+          ).value.trim() || null,
+
+        description:
+          document.getElementById(
+            "productDescription"
+          ).value.trim() || null,
+
+        requirements:
+          document.getElementById(
+            "productRequirements"
+          ).value.trim() || null,
+
+        image_url:
+          imageUrl,
+
+        availability:
+          document.getElementById(
+            "productAvailability"
+          ).value.trim() || null,
+
+        sort_order:
           parseInt(
             document.getElementById(
-              "productStock"
+              "productSortOrder"
             ).value || "0",
             10
-          )
-        ),
+          ),
 
-      category_id:
-        toNullableNumber(
+        active:
           document.getElementById(
-            "productCategory"
-          ).value
-        ),
+            "productActive"
+          ).value === "true",
 
-      subcategory_id:
-        toNullableNumber(
-          document.getElementById(
-            "productSubcategory"
-          ).value
-        ),
+        updated_at:
+          new Date().toISOString()
+      };
 
-      plant_subcategory_id:
-        toNullableNumber(
-          document.getElementById(
-            "productPlantSubcategory"
-          ).value
-        ),
-
-      slug:
-        document.getElementById(
-          "productSlug"
-        ).value.trim() || null,
-
-      placement:
-        document.getElementById(
-          "productPlacement"
-        ).value.trim() || null,
-
-      short_description:
-        document.getElementById(
-          "productShortDescription"
-        ).value.trim() || null,
-
-      description:
-        document.getElementById(
-          "productDescription"
-        ).value.trim() || null,
-
-      requirements:
-        document.getElementById(
-          "productRequirements"
-        ).value.trim() || null,
-
-      image_url:
-        imageUrl,
-
-      availability:
-        document.getElementById(
-          "productAvailability"
-        ).value.trim() || null,
-
-      sort_order:
-        parseInt(
-          document.getElementById(
-            "productSortOrder"
-          ).value || "0",
-          10
-        ),
-
-      active:
-        document.getElementById(
-          "productActive"
-        ).value === "true",
-
-      updated_at:
-        new Date().toISOString()
-    };
-
-
-    try {
+      let productId = id;
 
       if (id) {
 
@@ -2218,15 +2655,88 @@
           }
         );
 
-        showMessage(
-          "productMessage",
-          "Produkt wurde aktualisiert."
-        );
-
       } else {
 
+        const created =
+          await api(
+            "products",
+            {
+              method: "POST",
+
+              headers: {
+                "Prefer": "return=representation"
+              },
+
+              body:
+                JSON.stringify(payload)
+            }
+          );
+
+        productId =
+          created &&
+          created[0] &&
+          created[0].id;
+
+        if (!productId) {
+          throw new Error(
+            "Produkt wurde angelegt, aber die Produkt-ID konnte nicht gelesen werden."
+          );
+        }
+      }
+
+      if (imageFiles.length) {
+
+        showMessage(
+          "productMessage",
+          imageFiles.length === 1
+            ? "Produktbild wird hochgeladen..."
+            : imageFiles.length + " Produktbilder werden hochgeladen..."
+        );
+
+        let nextSortOrder = 0;
+
+        const existing =
+          await loadProductImages(productId);
+
+        if (existing.length) {
+          nextSortOrder =
+            Math.max(
+              ...existing.map(
+                item => Number(item.sort_order || 0)
+              )
+            ) + 1;
+        }
+
+        const uploaded = [];
+
+        for (const file of imageFiles) {
+
+          if (!file.type.startsWith("image/")) {
+            throw new Error(
+              "Eine ausgewählte Datei ist kein Bild."
+            );
+          }
+
+          const result =
+            await uploadProductImage(file);
+
+          uploaded.push({
+            product_id:
+              productId,
+
+            image_url:
+              result.url,
+
+            storage_path:
+              result.path,
+
+            sort_order:
+              nextSortOrder++
+          });
+        }
+
         await api(
-          "products",
+          "product_images",
           {
             method: "POST",
 
@@ -2235,16 +2745,80 @@
             },
 
             body:
-              JSON.stringify(payload)
+              JSON.stringify(uploaded)
           }
         );
 
-        showMessage(
-          "productMessage",
-          "Produkt wurde angelegt."
+        const allImages =
+          await loadProductImages(productId);
+
+        const mainUrl =
+          allImages.length
+            ? allImages[0].image_url
+            : imageUrl;
+
+        await api(
+          "products?id=eq." +
+          encodeURIComponent(productId),
+          {
+            method: "PATCH",
+
+            headers: {
+              "Prefer": "return=minimal"
+            },
+
+            body: JSON.stringify({
+              image_url:
+                mainUrl || null,
+
+              updated_at:
+                new Date().toISOString()
+            })
+          }
         );
+      } else if (productId && imageUrl) {
+
+        const existing =
+          await loadProductImages(productId);
+
+        if (!existing.length) {
+
+          await api(
+            "product_images",
+            {
+              method: "POST",
+
+              headers: {
+                "Prefer": "return=minimal"
+              },
+
+              body:
+                JSON.stringify({
+                  product_id:
+                    productId,
+
+                  image_url:
+                    imageUrl,
+
+                  storage_path:
+                    null,
+
+                  sort_order:
+                    0
+                })
+            }
+          );
+        }
       }
 
+      await saveProductRecommendations(productId);
+
+      showMessage(
+        "productMessage",
+        id
+          ? "Produkt wurde aktualisiert."
+          : "Produkt wurde angelegt."
+      );
 
       clearProductForm();
 
@@ -3483,6 +4057,260 @@
      ALLES LADEN
   ===================================================== */
 
+
+  /* =====================================================
+     WEBSEITE / STARTSEITE / NAVIGATION
+  ===================================================== */
+
+  async function loadWebsiteContent() {
+
+    const rows = await api(
+      "shop_content?select=content_key,content_value&order=content_key.asc"
+    );
+
+    const values = {};
+
+    rows.forEach(row => {
+      values[row.content_key] = row.content_value || "";
+    });
+
+    const fields = {
+      homeTitleAdmin: values.home_title || "",
+      homeSubtitleAdmin: values.home_subtitle || "",
+      catalogTitleAdmin: values.catalog_title || "",
+      catalogSubtitleAdmin: values.catalog_subtitle || "",
+      footerTextAdmin: values.footer_text || ""
+    };
+
+    Object.entries(fields).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.value = value;
+    });
+  }
+
+
+  async function saveWebsiteContent() {
+
+    const message = document.getElementById("websiteMessage");
+
+    try {
+
+      const values = {
+        home_title: document.getElementById("homeTitleAdmin").value.trim(),
+        home_subtitle: document.getElementById("homeSubtitleAdmin").value.trim(),
+        catalog_title: document.getElementById("catalogTitleAdmin").value.trim(),
+        catalog_subtitle: document.getElementById("catalogSubtitleAdmin").value.trim(),
+        footer_text: document.getElementById("footerTextAdmin").value.trim()
+      };
+
+      for (const [key, value] of Object.entries(values)) {
+
+        await api(
+          "shop_content?content_key=eq." + encodeURIComponent(key),
+          {
+            method: "PATCH",
+            headers: {
+              "Prefer": "return=minimal"
+            },
+            body: JSON.stringify({
+              content_value: value,
+              updated_at: new Date().toISOString()
+            })
+          }
+        );
+      }
+
+      showMessage(
+        "websiteMessage",
+        "Startseiten-Inhalte wurden gespeichert.",
+        false
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "websiteMessage",
+        "Fehler beim Speichern: " + error.message,
+        true
+      );
+    }
+  }
+
+
+  async function loadNavigation() {
+
+    const items = await api(
+      "navigation_items?select=*&order=sort_order.asc,id.asc"
+    );
+
+    const container =
+      document.getElementById("navigationList");
+
+    if (!items.length) {
+      container.innerHTML =
+        '<div class="empty">Noch keine Menüpunkte vorhanden.</div>';
+      return;
+    }
+
+    container.innerHTML = items.map(item => `
+      <div
+        style="
+          display:flex;
+          gap:10px;
+          align-items:center;
+          justify-content:space-between;
+          flex-wrap:wrap;
+          padding:12px;
+          border:1px solid #e0e7ea;
+          border-radius:12px;
+          background:#fbfdfe;
+          margin-bottom:8px;
+        "
+      >
+
+        <div>
+          <strong>${escapeHtml(item.name)}</strong>
+          <div class="muted small">
+            ${escapeHtml(item.url || "#")}
+          </div>
+        </div>
+
+        <div class="button-row" style="margin-top:0">
+
+          <button
+            class="${item.active ? "success" : "secondary"}"
+            onclick="toggleNavigation(${item.id}, ${item.active})"
+          >
+            ${item.active ? "Sichtbar" : "Versteckt"}
+          </button>
+
+          <button
+            class="danger"
+            onclick="deleteNavigation(${item.id})"
+          >
+            Löschen
+          </button>
+
+        </div>
+
+      </div>
+    `).join("");
+  }
+
+
+  async function addNavigationItem() {
+
+    const name =
+      document.getElementById("newNavName").value.trim();
+
+    const url =
+      document.getElementById("newNavUrl").value.trim();
+
+    if (!name) {
+      alert("Bitte einen Namen eingeben.");
+      return;
+    }
+
+    try {
+
+      const existing = await api(
+        "navigation_items?select=sort_order&order=sort_order.desc&limit=1"
+      );
+
+      const nextOrder =
+        existing.length
+          ? Number(existing[0].sort_order || 0) + 10
+          : 10;
+
+      await api(
+        "navigation_items",
+        {
+          method: "POST",
+          headers: {
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            name,
+            url: url || "#",
+            sort_order: nextOrder,
+            active: true
+          })
+        }
+      );
+
+      document.getElementById("newNavName").value = "";
+      document.getElementById("newNavUrl").value = "";
+
+      await loadNavigation();
+
+    } catch (error) {
+
+      alert(
+        "Menüpunkt konnte nicht angelegt werden:\n\n" +
+        error.message
+      );
+    }
+  }
+
+
+  async function toggleNavigation(id, currentState) {
+
+    try {
+
+      await api(
+        "navigation_items?id=eq." + encodeURIComponent(id),
+        {
+          method: "PATCH",
+          headers: {
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            active: !currentState
+          })
+        }
+      );
+
+      await loadNavigation();
+
+    } catch (error) {
+
+      alert(
+        "Navigation konnte nicht geändert werden:\n\n" +
+        error.message
+      );
+    }
+  }
+
+
+  async function deleteNavigation(id) {
+
+    if (!confirm("Diesen Menüpunkt wirklich löschen?")) {
+      return;
+    }
+
+    try {
+
+      await api(
+        "navigation_items?id=eq." + encodeURIComponent(id),
+        {
+          method: "DELETE"
+        }
+      );
+
+      await loadNavigation();
+
+    } catch (error) {
+
+      alert(
+        "Menüpunkt konnte nicht gelöscht werden:\n\n" +
+        error.message
+      );
+    }
+  }
+
+
   async function loadEverything() {
 
     try {
@@ -3493,7 +4321,9 @@
         loadPlantSubcategories(),
         loadProducts(),
         loadSettings(),
-        loadOrders()
+        loadOrders(),
+        loadWebsiteContent(),
+        loadNavigation()
       ]);
 
     } catch (error) {
@@ -3585,4 +4415,4 @@
 </script>
 
 </body>
-</html>
+</html> 
