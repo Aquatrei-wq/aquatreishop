@@ -3,649 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Warenkorb – AquaTreishop</title>
-
+<title>AquaTreishop – Warenkorb</title>
 <style>
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f5f7f8;
-  color: #172126;
-}
-
-header {
-  background: #071f26;
-  color: white;
-}
-
-.header-inner {
-  max-width: 1100px;
-  margin: auto;
-  padding: 18px 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  color: white;
-  text-decoration: none;
-  font-size: 24px;
-  font-weight: 800;
-}
-
-.logo span {
-  color: #4ed7c0;
-}
-
-.back {
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-main {
-  max-width: 1100px;
-  margin: auto;
-  padding: 45px 20px;
-}
-
-h1 {
-  margin: 0 0 30px;
-  font-size: 36px;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 25px;
-  align-items: start;
-}
-
-.card {
-  background: white;
-  border: 1px solid #e0e7e9;
-  border-radius: 18px;
-  padding: 20px;
-}
-
-.cart-item {
-  display: grid;
-  grid-template-columns: 90px 1fr auto;
-  gap: 18px;
-  padding: 18px 0;
-  border-bottom: 1px solid #e7edef;
-  align-items: center;
-}
-
-.cart-item:first-child {
-  padding-top: 0;
-}
-
-.cart-item:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-
-.image {
-  width: 90px;
-  height: 90px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #e8f0f1;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.placeholder {
-  font-size: 30px;
-}
-
-.name {
-  font-weight: 750;
-  margin-bottom: 7px;
-}
-
-.price {
-  color: #617176;
-  font-size: 14px;
-}
-
-.quantity {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.quantity button {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #ccd7da;
-  background: white;
-  border-radius: 7px;
-  cursor: pointer;
-  font-size: 17px;
-}
-
-.quantity span {
-  min-width: 25px;
-  text-align: center;
-}
-
-.item-total {
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.remove {
-  border: 0;
-  background: none;
-  color: #a33;
-  cursor: pointer;
-  padding: 5px 0;
-  font-size: 13px;
-}
-
-.summary h2 {
-  margin-top: 0;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 10px 0;
-}
-
-.total {
-  border-top: 1px solid #dfe7e9;
-  margin-top: 10px;
-  padding-top: 18px;
-  font-size: 21px;
-  font-weight: 800;
-}
-
-.free {
-  color: #08775d;
-  font-weight: 700;
-}
-
-.shipping-info {
-  background: #eef9f6;
-  color: #176b59;
-  padding: 12px;
-  border-radius: 10px;
-  margin: 15px 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.checkout {
-  display: block;
-  width: 100%;
-  margin-top: 20px;
-  padding: 15px;
-  border: 0;
-  border-radius: 12px;
-  background: #082a32;
-  color: white;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-}
-
-.continue {
-  display: block;
-  text-align: center;
-  margin-top: 14px;
-  color: #52666b;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.empty {
-  text-align: center;
-  padding: 70px 20px;
-}
-
-.empty-icon {
-  font-size: 55px;
-  margin-bottom: 15px;
-}
-
-.empty h2 {
-  margin-bottom: 10px;
-}
-
-.empty p {
-  color: #6d7b80;
-}
-
-.empty a {
-  display: inline-block;
-  margin-top: 15px;
-  padding: 13px 18px;
-  border-radius: 10px;
-  background: #082a32;
-  color: white;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-@media (max-width: 750px) {
-
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
-  h1 {
-    font-size: 30px;
-  }
-
-  .cart-item {
-    grid-template-columns: 70px 1fr;
-  }
-
-  .image {
-    width: 70px;
-    height: 70px;
-  }
-
-  .item-total {
-    grid-column: 2;
-  }
-
-}
-
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f8;color:#17242b}
+header{background:#071f26;color:#fff}
+.header-inner{max-width:1100px;margin:auto;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-size:24px;font-weight:800}
+.logo span{color:#4ed7c0}
+.header-link{color:#fff;text-decoration:none;background:rgba(255,255,255,.09);padding:10px 13px;border-radius:10px;font-weight:700}
+main{max-width:1100px;margin:auto;padding:24px 15px 50px}
+h1{margin:0 0 20px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px}
+.card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 5px 22px rgba(0,0,0,.05)}
+.item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #e4eaec}
+.item:last-child{border-bottom:0}
+.item img,.placeholder{width:82px;height:82px;border-radius:11px;object-fit:cover;background:#edf2f3;flex:none}
+.placeholder{display:flex;align-items:center;justify-content:center;font-size:28px}
+.item-main{min-width:0;flex:1}
+.item-name{font-weight:800;font-size:17px}
+.item-price{font-weight:800;margin-top:5px}
+.controls{display:flex;align-items:center;gap:8px;margin-top:10px}
+.controls button{border:0;background:#e8eef0;border-radius:8px;padding:7px 11px;font-weight:800}
+.remove{color:#9d2933;background:#fde8ea!important}
+.qty{min-width:28px;text-align:center;font-weight:800}
+.summary-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0}
+.total{font-size:21px;font-weight:800;border-top:1px solid #e0e7e9;margin-top:10px;padding-top:13px}
+.shipping-note{background:#edf8f5;border-radius:11px;padding:11px;margin:12px 0;color:#165d50;font-size:14px}
+.primary{display:block;width:100%;border:0;border-radius:11px;padding:13px;background:#082a32;color:#fff;font-weight:800;text-align:center;text-decoration:none;margin-top:15px}
+.empty{text-align:center;padding:40px 15px;color:#718085}
+.error{background:#fdebed;color:#982732;border-radius:10px;padding:11px;margin-bottom:12px}
+.muted{color:#718085;font-size:14px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.header-inner{padding:14px}.card{padding:15px}.item{align-items:flex-start}}
 </style>
 </head>
-
 <body>
-
 <header>
-
   <div class="header-inner">
-
-    <a class="logo" href="index.html">
-      Aqua<span>Treishop</span>
-    </a>
-
-    <a class="back" href="index.html">
-      ← Weiter einkaufen
-    </a>
-
+    <div class="logo">Aqua<span>Treishop</span></div>
+    <a class="header-link" href="index.html">← Sortiment</a>
   </div>
-
 </header>
 
-
 <main>
+  <h1>🛒 Warenkorb</h1>
+  <div id="error" class="error" style="display:none"></div>
 
-  <h1>Dein Warenkorb</h1>
+  <div class="layout">
+    <section class="card">
+      <div id="cartList"></div>
+    </section>
 
-  <div id="cartArea"></div>
-
+    <aside class="card">
+      <h2>Zusammenfassung</h2>
+      <div class="summary-row"><span>Zwischensumme</span><strong id="subtotal">0,00 €</strong></div>
+      <div class="summary-row"><span>Versand</span><strong id="shipping">–</strong></div>
+      <div id="shippingNote" class="shipping-note">Versand wird berechnet …</div>
+      <div class="summary-row total"><span>Gesamt</span><strong id="total">0,00 €</strong></div>
+      <a class="primary" href="checkout.html">Zur Kasse</a>
+      <div class="muted" style="margin-top:10px">
+        Die Versandkosten werden automatisch aus den aktuellen Shop-Einstellungen übernommen.
+      </div>
+    </aside>
+  </div>
 </main>
 
-
 <script>
+const SUPABASE_URL="https://hzrqwgrszfpyqeibszno.supabase.co";
+const SUPABASE_KEY="sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
 
-let cart =
-  JSON.parse(
-    localStorage.getItem("aquatreishop_cart") || "[]"
-  );
+let cart=JSON.parse(localStorage.getItem("aquatreishop_cart")||"[]");
+let settings={free_shipping_threshold_cents:7000,shipping_cost_cents:699,currency:"EUR"};
 
-
-function formatPrice(value) {
-
-  return new Intl.NumberFormat(
-    "de-DE",
-    {
-      style: "currency",
-      currency: "EUR"
-    }
-  ).format(value);
-
+function money(cents){
+  return new Intl.NumberFormat("de-DE",{style:"currency",currency:settings.currency||"EUR"}).format((Number(cents)||0)/100);
 }
 
-
-function saveCart() {
-
-  localStorage.setItem(
-    "aquatreishop_cart",
-    JSON.stringify(cart)
-  );
-
+function productId(item){return item.product_id ?? item.id ?? null}
+function quantity(item){return Math.max(1,Number(item.quantity??item.qty??1))}
+function setQuantity(item,q){if("quantity" in item)item.quantity=q;else item.qty=q}
+function unitCents(item){
+  if(item.price_cents!=null)return Number(item.price_cents)||0;
+  const n=Number(String(item.price??"0").replace(",","."));
+  return Math.round((Number.isFinite(n)?n:0)*100);
 }
 
+async function loadSettings(){
+  const res=await fetch(SUPABASE_URL+"/rest/v1/shop_settings?select=free_shipping_threshold_cents,shipping_cost_cents,currency&limit=1",
+    {headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
+  if(!res.ok)throw new Error("Shop-Einstellungen konnten nicht geladen werden.");
+  const data=await res.json();
+  if(data[0])settings={...settings,...data[0]};
+}
 
-function renderCart() {
+function save(){localStorage.setItem("aquatreishop_cart",JSON.stringify(cart))}
 
-  const area =
-    document.getElementById("cartArea");
+function removeItem(index){
+  cart.splice(index,1);save();render();
+}
 
+function changeQty(index,delta){
+  const item=cart[index];
+  if(!item)return;
+  const q=quantity(item)+delta;
+  if(q<=0){removeItem(index);return}
+  setQuantity(item,q);save();render();
+}
 
-  if (!cart.length) {
-
-    area.innerHTML = `
-
-      <div class="card empty">
-
-        <div class="empty-icon">
-          🛒
-        </div>
-
-        <h2>
-          Dein Warenkorb ist leer
-        </h2>
-
-        <p>
-          Entdecke unser Sortiment und
-          füge deine ersten Produkte hinzu.
-        </p>
-
-        <a href="index.html">
-          Zum Sortiment
-        </a>
-
-      </div>
-
-    `;
-
+function render(){
+  const list=document.getElementById("cartList");
+  if(!cart.length){
+    list.innerHTML='<div class="empty"><div style="font-size:40px">🛒</div><h2>Dein Warenkorb ist leer</h2><p>Füge Produkte aus dem Sortiment hinzu.</p><a class="primary" href="index.html">Zum Sortiment</a></div>';
+    document.getElementById("subtotal").textContent=money(0);
+    document.getElementById("shipping").textContent="–";
+    document.getElementById("total").textContent=money(0);
+    document.getElementById("shippingNote").textContent=`Kostenloser Versand ab ${money(settings.free_shipping_threshold_cents)}.`;
     return;
   }
 
-
-  let subtotal = 0;
-
-
-  let itemsHtml =
-    cart.map((item, index) => {
-
-      const price =
-        Number(item.price_cents) / 100;
-
-      const total =
-        price * Number(item.quantity);
-
-      subtotal += total;
-
-
-      const image =
-        item.image_url
-
-          ? `
-            <img
-              src="${escapeHtml(item.image_url)}"
-              alt="${escapeHtml(item.name)}"
-            >
-          `
-
-          : `
-            <div class="placeholder">
-              🌿
-            </div>
-          `;
-
-
-      return `
-
-        <div class="cart-item">
-
-          <div class="image">
-            ${image}
-          </div>
-
-
-          <div>
-
-            <div class="name">
-              ${escapeHtml(item.name)}
-            </div>
-
-            <div class="price">
-              ${formatPrice(price)}
-            </div>
-
-
-            <div class="quantity">
-
-              <button
-                onclick="changeQuantity(${index}, -1)"
-              >
-                −
-              </button>
-
-              <span>
-                ${item.quantity}
-              </span>
-
-              <button
-                onclick="changeQuantity(${index}, 1)"
-              >
-                +
-              </button>
-
-            </div>
-
-
-            <button
-              class="remove"
-              onclick="removeItem(${index})"
-            >
-              Entfernen
-            </button>
-
-          </div>
-
-
-          <div class="item-total">
-
-            ${formatPrice(total)}
-
-          </div>
-
+  let subtotal=0;
+  list.innerHTML=cart.map((item,i)=>{
+    const q=quantity(item);
+    const line=unitCents(item)*q;
+    subtotal+=line;
+    const image=item.image_url||item.image||"";
+    return `<div class="item">
+      ${image?`<img src="${escapeHtml(image)}" alt="">`:`<div class="placeholder">🌿</div>`}
+      <div class="item-main">
+        <div class="item-name">${escapeHtml(item.name||"Produkt")}</div>
+        <div class="item-price">${money(unitCents(item))}</div>
+        <div class="controls">
+          <button onclick="changeQty(${i},-1)">−</button>
+          <span class="qty">${q}</span>
+          <button onclick="changeQty(${i},1)">+</button>
+          <button class="remove" onclick="removeItem(${i})">Entfernen</button>
         </div>
-
-      `;
-
-    }).join("");
-
-
-  const shipping =
-    subtotal >= 70
-      ? 0
-      : 6.99;
-
-
-  const total =
-    subtotal + shipping;
-
-
-  let shippingMessage;
-
-
-  if (shipping === 0) {
-
-    shippingMessage = `
-      <div class="shipping-info">
-        🎉 Glückwunsch! Deine Bestellung
-        ist versandkostenfrei.
       </div>
-    `;
+      <strong>${money(line)}</strong>
+    </div>`;
+  }).join("");
 
-  } else {
+  const freeAt=Number(settings.free_shipping_threshold_cents)||0;
+  const shipCost=Number(settings.shipping_cost_cents)||0;
+  const shipping=freeAt>0 && subtotal<freeAt?shipCost:0;
+  document.getElementById("subtotal").textContent=money(subtotal);
+  document.getElementById("shipping").textContent=shipping===0?"Kostenlos":money(shipping);
+  document.getElementById("total").textContent=money(subtotal+shipping);
 
-    const missing =
-      70 - subtotal;
-
-    shippingMessage = `
-      <div class="shipping-info">
-        Noch ${formatPrice(missing)}
-        bis zum kostenlosen Versand
-        ab 70 €.
-      </div>
-    `;
-
+  const note=document.getElementById("shippingNote");
+  if(freeAt<=0){
+    note.textContent="Kostenloser Versand ist derzeit unabhängig vom Warenwert aktiviert.";
+  }else if(subtotal>=freeAt){
+    note.textContent=`🎁 Kostenloser Versand erreicht – ab ${money(freeAt)}.`;
+  }else{
+    note.textContent=`Noch ${money(freeAt-subtotal)} bis zum kostenlosen Versand.`;
   }
-
-
-  area.innerHTML = `
-
-    <div class="layout">
-
-
-      <div class="card">
-
-        ${itemsHtml}
-
-      </div>
-
-
-      <div class="card summary">
-
-        <h2>
-          Zusammenfassung
-        </h2>
-
-
-        <div class="row">
-
-          <span>
-            Zwischensumme
-          </span>
-
-          <strong>
-            ${formatPrice(subtotal)}
-          </strong>
-
-        </div>
-
-
-        <div class="row">
-
-          <span>
-            Versand
-          </span>
-
-          <strong class="${
-            shipping === 0 ? "free" : ""
-          }">
-
-            ${
-              shipping === 0
-                ? "Kostenlos"
-                : formatPrice(shipping)
-            }
-
-          </strong>
-
-        </div>
-
-
-        ${shippingMessage}
-
-
-        <div class="row total">
-
-          <span>
-            Gesamt
-          </span>
-
-          <strong>
-            ${formatPrice(total)}
-          </strong>
-
-        </div>
-
-
-        <a
-          class="checkout"
-          href="checkout.html"
-        >
-          Zur Kasse
-        </a>
-
-
-        <a
-          class="continue"
-          href="index.html"
-        >
-          ← Weiter einkaufen
-        </a>
-
-      </div>
-
-    </div>
-
-  `;
-
 }
 
+function escapeHtml(v){
+  return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
 
-function changeQuantity(index, change) {
-
-  cart[index].quantity += change;
-
-
-  if (cart[index].quantity <= 0) {
-
-    cart.splice(index, 1);
-
+async function start(){
+  try{await loadSettings();render();}
+  catch(e){
+    document.getElementById("error").textContent=e.message;
+    document.getElementById("error").style.display="block";
+    render();
   }
-
-
-  saveCart();
-
-  renderCart();
-
 }
-
-
-function removeItem(index) {
-
-  cart.splice(index, 1);
-
-  saveCart();
-
-  renderCart();
-
-}
-
-
-function escapeHtml(value) {
-
-  return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
-}
-
-
-renderCart();
-
+start();
 </script>
-
 </body>
 </html>
