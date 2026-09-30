@@ -207,6 +207,8 @@ header {
   flex-direction: column;
 }
 
+a { -webkit-tap-highlight-color: transparent; }
+.product { touch-action: manipulation; }
 .product-image {
   height: 220px;
 
@@ -552,6 +554,43 @@ let cart =
       "aquatreishop_cart"
     ) || "[]"
   );
+
+let favorites =
+  JSON.parse(
+    localStorage.getItem(
+      "aquatreishop_favorites"
+    ) || "[]"
+  ).map(Number);
+
+function updateFavoriteCount() {
+  const el = document.getElementById("favoriteCount");
+  if (el) el.textContent = favorites.length;
+}
+
+function isFavorite(id) {
+  return favorites.includes(Number(id));
+}
+
+function toggleFavorite(event, productId) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const id = Number(productId);
+
+  if (isFavorite(id)) {
+    favorites = favorites.filter(x => x !== id);
+  } else {
+    favorites.push(id);
+  }
+
+  localStorage.setItem(
+    "aquatreishop_favorites",
+    JSON.stringify(favorites)
+  );
+
+  updateFavoriteCount();
+  renderProducts();
+}
 
 
 function getHeaders() {
@@ -976,89 +1015,75 @@ function renderProducts() {
 
         const image =
           product.image_url
+            ? `
+              <img
+                src="${escapeHtml(product.image_url)}"
+                alt="${escapeHtml(product.name)}"
+              >
+            `
+            : `
+              <div class="placeholder">🌿</div>
+            `;
 
-          ?
-
-          `
-          <img
-            src="${escapeHtml(
-              product.image_url
-            )}"
-            alt="${escapeHtml(
-              product.name
-            )}"
-          >
-          `
-
-          :
-
-          `
-          <div class="placeholder">
-            🌿
-          </div>
-          `;
-
+        const favoriteIcon =
+          isFavorite(product.id) ? "♥" : "♡";
 
         return `
+          <article class="product"
+            data-product-id="${product.id}"
+            onclick="openProduct(event, ${product.id})"
+            ontouchend="openProduct(event, ${product.id})"
+            style="cursor:pointer;">
+            <a
+              href="./product.html?id=${encodeURIComponent(product.id)}&v=3"
+              onclick="event.stopPropagation();"
+              style="display:block;text-decoration:none;color:inherit;">
+              <div class="product-image">
+                ${image}
+              </div>
 
-          <article class="product">
+              <div class="product-body">
+                <div class="product-name">
+                  ${escapeHtml(product.name)}
+                </div>
 
-            <div class="product-image">
-              ${image}
+                <span class="status ${status.className}">
+                  ${status.text}
+                </span>
+
+                <div class="product-description">
+                  ${escapeHtml(
+                    product.short_description ||
+                    product.description ||
+                    "Aquarienpflanze"
+                  )}
+                </div>
+
+                <div class="price">
+                  ${formatPrice(price)}
+                </div>
+              </div>
+            </a>
+
+            <div class="product-body" style="padding-top:0;">
+              <div style="display:flex;gap:10px;align-items:center;">
+                <button
+                  type="button"
+                  aria-label="Favorit"
+                  onclick="event.stopPropagation(); toggleFavorite(event, ${product.id})"
+                  style="border:0;background:#edf7f5;color:#08775d;border-radius:50%;width:42px;height:42px;font-size:24px;cursor:pointer;flex:0 0 auto;"
+                >${favoriteIcon}</button>
+
+                <button
+                  class="add"
+                  style="flex:1;"
+                  ${canBuy ? "" : "disabled"}
+                  onclick="event.stopPropagation(); addToCart(event, ${product.id})"
+                >
+                  ${canBuy ? "In den Warenkorb" : status.text}
+                </button>
+              </div>
             </div>
-
-
-            <div class="product-body">
-
-              <div class="product-name">
-                ${escapeHtml(
-                  product.name
-                )}
-              </div>
-
-
-              <span
-                class="status
-                ${status.className}"
-              >
-                ${status.text}
-              </span>
-
-
-              <div
-                class="product-description"
-              >
-                ${escapeHtml(
-                  product.short_description ||
-                  product.description ||
-                  "Aquarienpflanze"
-                )}
-              </div>
-
-
-              <div class="price">
-                ${formatPrice(price)}
-              </div>
-
-
-              <button
-                class="add"
-                ${canBuy ? "" : "disabled"}
-                onclick="
-                  addToCart(
-                    ${product.id}
-                  )
-                "
-              >
-                ${
-                  canBuy
-                    ? "In den Warenkorb"
-                    : status.text
-                }
-              </button>
-
-            </div>
-
           </article>
 
         `;
@@ -1069,9 +1094,15 @@ function renderProducts() {
 }
 
 
+
 /* IN DEN WARENKORB */
 
-function addToCart(productId) {
+function addToCart(event, productId) {
+
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
   const product =
     products.find(
@@ -1207,6 +1238,7 @@ function escapeHtml(value) {
 
 updateCartCount();
 
+updateFavoriteCount();
 loadShop();
 
 </script>
