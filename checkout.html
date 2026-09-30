@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaTreishop – Kasse</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f8;color:#17242b}
+header{background:#071f26;color:#fff}
+.header-inner{max-width:1100px;margin:auto;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-size:24px;font-weight:800}.logo span{color:#4ed7c0}
+.header-link{color:#fff;text-decoration:none;background:rgba(255,255,255,.09);padding:10px 13px;border-radius:10px;font-weight:700}
+main{max-width:1100px;margin:auto;padding:25px 15px 55px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px}
+.card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 5px 22px rgba(0,0,0,.05);margin-bottom:18px}
+h1,h2{margin-top:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.full{grid-column:1/-1}
+label{display:block;font-weight:700;margin:4px 0 6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d5dfe2;border-radius:10px;font:inherit}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#1687a5}
+.payment{border:1px solid #d9e2e4;border-radius:12px;padding:13px;margin-top:9px}
+.payment label{display:flex;gap:10px;align-items:center;margin:0;cursor:pointer}
+.payment input{width:auto}
+.summary-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0}
+.total{border-top:1px solid #dfe6e8;margin-top:10px;padding-top:13px;font-size:21px;font-weight:800}
+.shipping-note{background:#edf8f5;color:#165d50;padding:11px;border-radius:10px;font-size:14px;margin:12px 0}
+.primary{width:100%;border:0;border-radius:11px;padding:14px;background:#082a32;color:#fff;font-weight:800;font-size:16px;cursor:pointer}
+.primary:disabled{opacity:.5;cursor:not-allowed}
+.error{background:#fdebed;color:#982732;padding:11px;border-radius:10px;margin-bottom:14px}
+.success{background:#e9f7ef;color:#16663d;padding:16px;border-radius:12px}
+.muted{color:#718085;font-size:14px}
+.item{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #e4eaec;padding:10px 0}
+.item:last-child{border-bottom:0}
+.empty{text-align:center;padding:35px;color:#718085}
+@media(max-width:760px){.layout,.grid{grid-template-columns:1fr}.full{grid-column:auto}.card{padding:15px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="logo">Aqua<span>Treishop</span></div>
+    <a class="header-link" href="cart.html">← Warenkorb</a>
+  </div>
+</header>
+
+<main>
+  <h1>🧾 Kasse</h1>
+  <div id="message" class="error" style="display:none"></div>
+
+  <div id="successBox" class="success" style="display:none"></div>
+
+  <div id="checkoutLayout" class="layout">
+    <section>
+      <div class="card">
+        <h2>Deine Daten</h2>
+        <div class="grid">
+          <div>
+            <label for="customerName">Vor- und Nachname *</label>
+            <input id="customerName" autocomplete="name" required>
+          </div>
+          <div>
+            <label for="customerEmail">E-Mail *</label>
+            <input id="customerEmail" type="email" autocomplete="email" required>
+          </div>
+          <div>
+            <label for="street">Straße *</label>
+            <input id="street" autocomplete="street-address" required>
+          </div>
+          <div>
+            <label for="houseNumber">Hausnummer *</label>
+            <input id="houseNumber" required>
+          </div>
+          <div>
+            <label for="postalCode">PLZ *</label>
+            <input id="postalCode" autocomplete="postal-code" required>
+          </div>
+          <div>
+            <label for="city">Ort *</label>
+            <input id="city" autocomplete="address-level2" required>
+          </div>
+          <div>
+            <label for="country">Land *</label>
+            <select id="country">
+              <option>Deutschland</option>
+              <option>Österreich</option>
+              <option>Schweiz</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="notes">Anmerkung zur Bestellung</label>
+            <textarea id="notes" placeholder="Optional"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Zahlungsart</h2>
+        <div class="payment">
+          <label><input type="radio" name="payment" value="paypal" checked> PayPal</label>
+        </div>
+        <div class="payment">
+          <label><input type="radio" name="payment" value="bank_transfer"> Vorkasse / Überweisung</label>
+        </div>
+        <div class="payment">
+          <label><input type="radio" name="payment" value="cash_on_delivery"> Nachnahme</label>
+        </div>
+        <p class="muted" style="margin-bottom:0">
+          Die tatsächliche Zahlungsabwicklung wird erst aktiviert, wenn der jeweilige Zahlungsanbieter technisch angebunden ist.
+        </p>
+      </div>
+    </section>
+
+    <aside class="card">
+      <h2>Bestellung</h2>
+      <div id="orderItems"></div>
+      <div class="summary-row"><span>Zwischensumme</span><strong id="subtotal">0,00 €</strong></div>
+      <div class="summary-row"><span>Versand</span><strong id="shipping">–</strong></div>
+      <div id="shippingNote" class="shipping-note"></div>
+      <div class="summary-row total"><span>Gesamt</span><strong id="total">0,00 €</strong></div>
+      <button id="placeOrder" class="primary" onclick="placeOrder()">Kostenpflichtig bestellen</button>
+      <p class="muted">Mit dem Absenden wird eine Bestellung im Shop angelegt.</p>
+    </aside>
+  </div>
+</main>
+
+<script>
+const SUPABASE_URL="https://hzrqwgrszfpyqeibszno.supabase.co";
+const SUPABASE_KEY="sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
+
+let cart=JSON.parse(localStorage.getItem("aquatreishop_cart")||"[]");
+let settings={free_shipping_threshold_cents:7000,shipping_cost_cents:699,currency:"EUR"};
+let totals={subtotal:0,shipping:0,total:0};
+
+function headers(){
+  return {apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
+}
+async function api(path,options={}){
+  const r=await fetch(SUPABASE_URL+"/rest/v1/"+path,{...options,headers:{...headers(),...(options.headers||{})}});
+  const text=await r.text();
+  let data=null;try{data=text?JSON.parse(text):null}catch{data=text}
+  if(!r.ok)throw new Error(data?.message||data?.hint||("Supabase-Fehler "+r.status));
+  return data;
+}
+function money(cents){
+  return new Intl.NumberFormat("de-DE",{style:"currency",currency:settings.currency||"EUR"}).format((Number(cents)||0)/100);
+}
+function escapeHtml(v){
+  return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function qty(item){return Math.max(1,Number(item.quantity??item.qty??1))}
+function priceCents(item){
+  if(item.price_cents!=null)return Number(item.price_cents)||0;
+  const n=Number(String(item.price??"0").replace(",","."));
+  return Math.round((Number.isFinite(n)?n:0)*100);
+}
+function showError(text){
+  const el=document.getElementById("message");
+  el.textContent=text;el.style.display="block";
+}
+function render(){
+  const box=document.getElementById("orderItems");
+  if(!cart.length){
+    box.innerHTML='<div class="empty">Dein Warenkorb ist leer.<br><br><a href="index.html">Zum Sortiment</a></div>';
+    document.getElementById("placeOrder").disabled=true;
+    return;
+  }
+  let subtotal=0;
+  box.innerHTML=cart.map(item=>{
+    const line=priceCents(item)*qty(item);subtotal+=line;
+    return `<div class="item"><span>${escapeHtml(item.name||"Produkt")} × ${qty(item)}</span><strong>${money(line)}</strong></div>`;
+  }).join("");
+  const free=Number(settings.free_shipping_threshold_cents)||0;
+  const cost=Number(settings.shipping_cost_cents)||0;
+  const shipping=(free>0&&subtotal<free)?cost:0;
+  totals={subtotal,shipping,total:subtotal+shipping};
+  document.getElementById("subtotal").textContent=money(subtotal);
+  document.getElementById("shipping").textContent=shipping?money(shipping):"Kostenlos";
+  document.getElementById("total").textContent=money(totals.total);
+  document.getElementById("shippingNote").textContent=
+    free<=0?"Kostenloser Versand ist aktiviert.":
+    subtotal>=free?`🎁 Kostenloser Versand ab ${money(free)} erreicht.`:
+    `Noch ${money(free-subtotal)} bis zum kostenlosen Versand.`;
+}
+async function load(){
+  if(!cart.length){render();return}
+  try{
+    const data=await api("shop_settings?select=free_shipping_threshold_cents,shipping_cost_cents,currency&limit=1");
+    if(data[0])settings={...settings,...data[0]};
+    render();
+  }catch(e){showError(e.message);render()}
+}
+function getPayment(){
+  return document.querySelector('input[name="payment"]:checked')?.value||"bank_transfer";
+}
+function makeOrderNumber(){
+  const d=new Date();
+  const stamp=d.toISOString().replace(/\D/g,"").slice(0,14);
+  const rand=Math.floor(100+Math.random()*900);
+  return "AT-"+stamp+"-"+rand;
+}
+async function placeOrder(){
+  document.getElementById("message").style.display="none";
+  const required=["customerName","customerEmail","street","houseNumber","postalCode","city","country"];
+  for(const id of required){
+    const el=document.getElementById(id);
+    if(!el.value.trim()){
+      showError("Bitte fülle alle Pflichtfelder (*) aus.");
+      el.focus();return;
+    }
+  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById("customerEmail").value.trim())){
+    showError("Bitte gib eine gültige E-Mail-Adresse ein.");return;
+  }
+  if(!cart.length){showError("Der Warenkorb ist leer.");return}
+
+  const button=document.getElementById("placeOrder");
+  button.disabled=true;button.textContent="Bestellung wird gespeichert …";
+
+  try{
+    const orderPayload={
+      order_number:makeOrderNumber(),
+      customer_name:document.getElementById("customerName").value.trim(),
+      customer_email:document.getElementById("customerEmail").value.trim(),
+      street:document.getElementById("street").value.trim(),
+      house_number:document.getElementById("houseNumber").value.trim(),
+      postal_code:document.getElementById("postalCode").value.trim(),
+      city:document.getElementById("city").value.trim(),
+      country:document.getElementById("country").value,
+      subtotal_cents:totals.subtotal,
+      shipping_cents:totals.shipping,
+      total_cents:totals.total,
+      payment_method:getPayment(),
+      payment_status:"pending",
+      order_status:"new",
+      notes:document.getElementById("notes").value.trim()||null
+    };
+
+    const created=await api("orders",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify(orderPayload)});
+    const order=Array.isArray(created)?created[0]:created;
+    if(!order?.id)throw new Error("Die Bestellung konnte nicht angelegt werden.");
+
+    const items=cart.map(item=>({
+      order_id:order.id,
+      product_id:item.product_id??item.id??null,
+      product_name:String(item.name||"Produkt"),
+      unit_price_cents:priceCents(item),
+      quantity:qty(item),
+      total_cents:priceCents(item)*qty(item)
+    }));
+
+    await api("order_items",{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(items)});
+
+    localStorage.removeItem("aquatreishop_cart");
+    document.getElementById("checkoutLayout").style.display="none";
+    const success=document.getElementById("successBox");
+    success.innerHTML=`<h2>Vielen Dank für deine Bestellung!</h2>
+      <p>Deine Bestellung wurde erfolgreich gespeichert.</p>
+      <p><strong>Bestellnummer: ${escapeHtml(order.order_number)}</strong></p>
+      <p>Gesamt: <strong>${money(totals.total)}</strong></p>
+      <a href="index.html" style="color:#165d50;font-weight:800">Zurück zum Shop</a>`;
+    success.style.display="block";
+  }catch(e){
+    showError("Bestellung konnte nicht gespeichert werden: "+e.message);
+    button.disabled=false;button.textContent="Kostenpflichtig bestellen";
+  }
+}
+load();
+</script>
+</body>
+</html>
