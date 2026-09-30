@@ -782,7 +782,57 @@
 
     <section class="card">
 
-      <h2>Produkte</h2>
+      <h2>Produkte verwalten</h2>
+
+      <p class="muted">
+        Alle Katalogprodukte werden hier zentral verwaltet. Der Verkaufsstatus
+        entscheidet, ob ein Produkt gekauft werden kann.
+      </p>
+
+      <div class="grid">
+        <div>
+          <label for="productSearch">Produkte suchen</label>
+          <input
+            id="productSearch"
+            type="search"
+            placeholder="Name, Kategorie oder Beschreibung …"
+            oninput="renderProducts()"
+          >
+        </div>
+
+        <div>
+          <label for="productFilterCategory">Kategorie filtern</label>
+          <select id="productFilterCategory" onchange="renderProducts()">
+            <option value="">Alle Kategorien</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="productFilterStatus">Verkaufsstatus filtern</label>
+          <select id="productFilterStatus" onchange="renderProducts()">
+            <option value="">Alle Status</option>
+            <option value="sale">🟢 Zum Verkauf</option>
+            <option value="catalog">👁️ Nur Katalog</option>
+            <option value="soon">🟠 Bald verfügbar</option>
+            <option value="out">🔴 Ausverkauft</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="productFilterVisibility">Sichtbarkeit</label>
+          <select id="productFilterVisibility" onchange="renderProducts()">
+            <option value="">Alle</option>
+            <option value="visible">Öffentlich sichtbar</option>
+            <option value="hidden">Ausgeblendet</option>
+          </select>
+        </div>
+      </div>
+
+      <div
+        id="productFilterInfo"
+        class="message"
+        style="margin-top:15px;"
+      ></div>
 
       <div id="productList">
         Lade Produkte...
@@ -1505,191 +1555,409 @@
       "products?select=*&order=sort_order.asc,created_at.desc"
     );
 
+    populateProductFilters();
     renderProducts();
     updateStats();
+  }
+
+
+  function populateProductFilters() {
+
+    const categoryFilter =
+      document.getElementById("productFilterCategory");
+
+    if (categoryFilter) {
+
+      const current =
+        categoryFilter.value;
+
+      categoryFilter.innerHTML =
+        '<option value="">Alle Kategorien</option>' +
+        allCategories.map(category => `
+          <option value="${escapeHtml(String(category.id))}">
+            ${escapeHtml(category.name)}
+          </option>
+        `).join("");
+
+      if (
+        current &&
+        allCategories.some(
+          category =>
+            String(category.id) === String(current)
+        )
+      ) {
+        categoryFilter.value = current;
+      }
+    }
   }
 
 
   function renderProducts() {
 
     const container =
-      document.getElementById(
-        "productList"
-      );
+      document.getElementById("productList");
 
-    if (!allProducts.length) {
+    const search =
+      (
+        document.getElementById("productSearch")?.value ||
+        ""
+      ).trim().toLowerCase();
+
+    const categoryFilter =
+      document.getElementById("productFilterCategory")?.value ||
+      "";
+
+    const statusFilter =
+      document.getElementById("productFilterStatus")?.value ||
+      "";
+
+    const visibilityFilter =
+      document.getElementById("productFilterVisibility")?.value ||
+      "";
+
+    const filtered =
+      allProducts.filter(product => {
+
+        const status =
+          product.sale_status || "catalog";
+
+        if (
+          categoryFilter &&
+          String(product.category_id) !== String(categoryFilter)
+        ) {
+          return false;
+        }
+
+        if (
+          statusFilter &&
+          status !== statusFilter
+        ) {
+          return false;
+        }
+
+        if (
+          visibilityFilter === "visible" &&
+          !product.active
+        ) {
+          return false;
+        }
+
+        if (
+          visibilityFilter === "hidden" &&
+          product.active
+        ) {
+          return false;
+        }
+
+        if (!search) {
+          return true;
+        }
+
+        const category =
+          allCategories.find(
+            item =>
+              String(item.id) ===
+              String(product.category_id)
+          );
+
+        const plantSubcategory =
+          allPlantSubcategories.find(
+            item =>
+              String(item.id) ===
+              String(product.plant_subcategory_id)
+          );
+
+        const haystack = [
+          product.name,
+          product.description,
+          product.short_description,
+          category?.name,
+          plantSubcategory?.name,
+          product.placement,
+          product.requirements
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        return haystack.includes(search);
+      });
+
+
+    const info =
+      document.getElementById("productFilterInfo");
+
+    if (info) {
+      info.textContent =
+        `${filtered.length} von ${allProducts.length} Produkten angezeigt`;
+    }
+
+
+    if (!filtered.length) {
 
       container.innerHTML =
-        '<div class="empty">Noch keine Produkte vorhanden.</div>';
+        '<div class="empty">Keine Produkte passen zu den aktuellen Filtern.</div>';
 
       return;
     }
 
+
     container.innerHTML =
       '<div class="product-list">' +
-      allProducts.map(
-        product => {
+      filtered.map(product => {
 
-          const status =
-            product.sale_status || "catalog";
+        const status =
+          product.sale_status || "catalog";
 
-          const statusText = {
+        const statusText = {
+          sale: "🟢 Zum Verkauf",
+          catalog: "👁️ Nur Katalog",
+          soon: "🟠 Bald verfügbar",
+          out: "🔴 Ausverkauft"
+        }[status] || "👁️ Nur Katalog";
 
-            sale:
-              "🟢 Zum Verkauf",
+        const statusClass = {
+          sale: "status-sale",
+          catalog: "status-catalog",
+          soon: "status-soon",
+          out: "status-out"
+        }[status] || "status-catalog";
 
-            catalog:
-              "👁️ Nur Katalog",
+        const price =
+          product.price_cents != null
+            ? centsToEuro(product.price_cents)
+            : escapeHtml(product.price || "0");
 
-            soon:
-              "🟠 Bald verfügbar",
+        const category =
+          allCategories.find(
+            item =>
+              String(item.id) ===
+              String(product.category_id)
+          );
 
-            out:
-              "🔴 Ausverkauft"
+        const subcategory =
+          allSubcategories.find(
+            item =>
+              String(item.id) ===
+              String(product.subcategory_id)
+          );
 
-          }[status] || "👁️ Nur Katalog";
+        const plantSubcategory =
+          allPlantSubcategories.find(
+            item =>
+              String(item.id) ===
+              String(product.plant_subcategory_id)
+          );
 
+        return `
+          <div class="product-item">
 
-          const statusClass = {
+            <div class="product-top">
 
-            sale:
-              "status-sale",
+              <div class="product-info">
 
-            catalog:
-              "status-catalog",
+                ${
+                  product.image_url
+                    ? `
+                      <img
+                        class="product-image"
+                        src="${escapeHtml(product.image_url)}"
+                        alt=""
+                      >
+                    `
+                    : `
+                      <div class="product-image"></div>
+                    `
+                }
 
-            soon:
-              "status-soon",
+                <div>
 
-            out:
-              "status-out"
-
-          }[status] || "status-catalog";
-
-
-          const price =
-            product.price_cents != null
-              ? centsToEuro(
-                  product.price_cents
-                )
-              : escapeHtml(
-                  product.price || "0"
-                );
-
-
-          const category =
-            allCategories.find(
-              category =>
-                String(category.id) ===
-                String(product.category_id)
-            );
-
-          const plantSubcategory =
-            allPlantSubcategories.find(
-              item =>
-                String(item.id) ===
-                String(product.plant_subcategory_id)
-            );
-
-
-          return `
-            <div class="product-item">
-
-              <div class="product-top">
-
-                <div class="product-info">
-
-                  ${
-                    product.image_url
-                      ? `
-                        <img
-                          class="product-image"
-                          src="${escapeHtml(product.image_url)}"
-                          alt=""
-                        >
-                      `
-                      : `
-                        <div class="product-image"></div>
-                      `
-                  }
-
-                  <div>
-
-                    <div class="product-name">
-                      ${escapeHtml(product.name)}
-                    </div>
-
-                    <div class="muted">
-                      ${
-                        category
-                          ? escapeHtml(category.name)
-                          : "Keine Kategorie"
-                      }
-                    </div>
-
-                    ${
-                      plantSubcategory
-                        ? `<div class="muted small">
-                            Pflanzen: ${escapeHtml(plantSubcategory.name)}
-                          </div>`
-                        : ""
-                    }
-
-                    <span class="status ${statusClass}">
-                      ${statusText}
-                    </span>
-
+                  <div class="product-name">
+                    ${escapeHtml(product.name || "Ohne Namen")}
                   </div>
 
-                </div>
+                  <div class="muted">
+                    ${
+                      category
+                        ? escapeHtml(category.name)
+                        : "Keine Kategorie"
+                    }
+                  </div>
 
-                <div class="price">
-                  ${price}
+                  ${
+                    subcategory
+                      ? `<div class="muted small">
+                          Unterkategorie: ${escapeHtml(subcategory.name)}
+                        </div>`
+                      : ""
+                  }
+
+                  ${
+                    plantSubcategory
+                      ? `<div class="muted small">
+                          Pflanzen: ${escapeHtml(plantSubcategory.name)}
+                        </div>`
+                      : ""
+                  }
+
+                  <span class="status ${statusClass}">
+                    ${statusText}
+                  </span>
+
                 </div>
 
               </div>
 
-              <div
-                class="small muted"
-                style="margin-top:12px;"
-              >
-                Bestand:
-                <strong>
-                  ${Number(product.stock || 0)}
-                </strong>
-                &nbsp; · &nbsp;
-                ${
-                  product.active
-                    ? "öffentlich sichtbar"
-                    : "ausgeblendet"
-                }
-              </div>
-
-              <div class="button-row">
-
-                <button
-                  class="primary"
-                  onclick="editProduct(${product.id})"
-                >
-                  Bearbeiten
-                </button>
-
-                <button
-                  class="danger"
-                  onclick="deleteProduct(${product.id})"
-                >
-                  Löschen
-                </button>
-
+              <div class="price">
+                ${price}
               </div>
 
             </div>
-          `;
-        }
-      ).join("") +
+
+            <div
+              class="small muted"
+              style="margin-top:12px;"
+            >
+              Bestand:
+              <strong>${Number(product.stock || 0)}</strong>
+              &nbsp; · &nbsp;
+              ${product.active ? "öffentlich sichtbar" : "ausgeblendet"}
+              &nbsp; · &nbsp;
+              ID ${escapeHtml(String(product.id))}
+            </div>
+
+            ${
+              product.short_description
+                ? `<div
+                    class="small"
+                    style="margin-top:8px;"
+                  >
+                    ${escapeHtml(product.short_description)}
+                  </div>`
+                : ""
+            }
+
+            <div class="button-row">
+
+              <button
+                class="primary"
+                onclick="editProduct(${product.id})"
+              >
+                ✏️ Bearbeiten
+              </button>
+
+              <button
+                class="secondary"
+                onclick="duplicateProduct(${product.id})"
+              >
+                📋 Duplizieren
+              </button>
+
+              <button
+                class="danger"
+                onclick="deleteProduct(${product.id})"
+              >
+                🗑️ Löschen
+              </button>
+
+            </div>
+
+          </div>
+        `;
+      }).join("") +
       "</div>";
   }
 
+
+  async function duplicateProduct(id) {
+
+    const source =
+      allProducts.find(
+        product =>
+          String(product.id) === String(id)
+      );
+
+    if (!source) {
+      return;
+    }
+
+    const copy = {
+      ...source
+    };
+
+    delete copy.id;
+    delete copy.created_at;
+    delete copy.updated_at;
+
+    copy.name =
+      (source.name || "Produkt") + " – Kopie";
+
+    copy.slug = null;
+    copy.active = false;
+    copy.sale_status = "catalog";
+    copy.stock = 0;
+
+    try {
+
+      const created =
+        await api(
+          "products",
+          {
+            method: "POST",
+            body: JSON.stringify(copy)
+          }
+        );
+
+      const createdProduct =
+        Array.isArray(created)
+          ? created[0]
+          : created;
+
+      if (createdProduct?.id) {
+
+        const images =
+          await api(
+            "product_images?select=*&product_id=eq." +
+            encodeURIComponent(id) +
+            "&order=sort_order.asc"
+          );
+
+        for (const image of images) {
+
+          await api(
+            "product_images",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                product_id: createdProduct.id,
+                image_url: image.image_url,
+                storage_path: image.storage_path || null,
+                sort_order: image.sort_order || 0
+              })
+            }
+          );
+        }
+      }
+
+      await loadProducts();
+
+      showMessage(
+        "productMessage",
+        "Produkt wurde als Kopie angelegt. Es ist zunächst ausgeblendet und nicht zum Verkauf.",
+        false
+      );
+
+      editProduct(createdProduct.id);
+
+    } catch (error) {
+
+      showMessage(
+        "productMessage",
+        "Duplizieren fehlgeschlagen: " + error.message,
+        true
+      );
+    }
+  }
 
 
   async function loadProductRecommendations(productId) {
