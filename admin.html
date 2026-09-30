@@ -573,6 +573,18 @@
           </select>
         </div>
 
+        <div>
+          <label for="productPlantSubcategory">
+            Pflanzen-Unterkategorie
+          </label>
+
+          <select id="productPlantSubcategory">
+            <option value="">
+              Keine Pflanzen-Unterkategorie
+            </option>
+          </select>
+        </div>
+
 
         <div>
           <label for="productSlug">
@@ -829,6 +841,54 @@
 
       <div id="subcategoryList">
         Lade Unterkategorien...
+      </div>
+
+    </section>
+
+
+    <!-- PFLANZEN-UNTERKATEGORIEN -->
+
+    <section class="card">
+
+      <h2>Pflanzen-Unterkategorien</h2>
+
+      <p class="muted">
+        Diese Unterkategorien werden auf der Pflanzen-Seite angezeigt.
+        Produkte können oben im Produktformular zugeordnet werden.
+      </p>
+
+      <div class="grid">
+
+        <div>
+
+          <label for="newPlantSubcategory">
+            Neue Pflanzen-Unterkategorie
+          </label>
+
+          <input
+            id="newPlantSubcategory"
+            placeholder="z. B. Vordergrundpflanzen"
+          >
+
+        </div>
+
+      </div>
+
+      <div class="button-row">
+
+        <button
+          class="success"
+          onclick="addPlantSubcategory()"
+        >
+          + Pflanzen-Unterkategorie hinzufügen
+        </button>
+
+      </div>
+
+      <hr class="divider">
+
+      <div id="plantSubcategoryList">
+        Lade Pflanzen-Unterkategorien...
       </div>
 
     </section>
@@ -1307,6 +1367,7 @@
   let allProducts = [];
   let allCategories = [];
   let allSubcategories = [];
+  let allPlantSubcategories = [];
 
 
   async function loadProducts() {
@@ -1394,6 +1455,13 @@
                 String(product.category_id)
             );
 
+          const plantSubcategory =
+            allPlantSubcategories.find(
+              item =>
+                String(item.id) ===
+                String(product.plant_subcategory_id)
+            );
+
 
           return `
             <div class="product-item">
@@ -1429,6 +1497,14 @@
                           : "Keine Kategorie"
                       }
                     </div>
+
+                    ${
+                      plantSubcategory
+                        ? `<div class="muted small">
+                            Pflanzen: ${escapeHtml(plantSubcategory.name)}
+                          </div>`
+                        : ""
+                    }
 
                     <span class="status ${statusClass}">
                       ${statusText}
@@ -1555,6 +1631,11 @@
     ).value =
       product.subcategory_id || "";
 
+    document.getElementById(
+      "productPlantSubcategory"
+    ).value =
+      product.plant_subcategory_id || "";
+
 
     document.getElementById(
       "productSlug"
@@ -1676,6 +1757,12 @@
 
 
     updateSubcategoryOptions("");
+    updatePlantSubcategoryOptions("");
+
+
+    document.getElementById(
+      "productPlantSubcategory"
+    ).value = "";
 
 
     document.getElementById(
@@ -1802,6 +1889,13 @@
         toNullableNumber(
           document.getElementById(
             "productSubcategory"
+          ).value
+        ),
+
+      plant_subcategory_id:
+        toNullableNumber(
+          document.getElementById(
+            "productPlantSubcategory"
           ).value
         ),
 
@@ -2156,6 +2250,202 @@
 
       alert(
         "Kategorie konnte nicht gelöscht werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  /* =====================================================
+     PFLANZEN-UNTERKATEGORIEN
+  ===================================================== */
+
+  async function loadPlantSubcategories() {
+
+    allPlantSubcategories =
+      await api(
+        "plant_subcategories?select=*&order=sort_order.asc,name.asc"
+      );
+
+    renderPlantSubcategories();
+
+    updatePlantSubcategoryOptions(
+      document.getElementById(
+        "productPlantSubcategory"
+      ).value
+    );
+  }
+
+
+  function renderPlantSubcategories() {
+
+    const container =
+      document.getElementById(
+        "plantSubcategoryList"
+      );
+
+    if (!container) return;
+
+    if (!allPlantSubcategories.length) {
+
+      container.innerHTML =
+        '<div class="empty">Noch keine Pflanzen-Unterkategorien vorhanden.</div>';
+
+      return;
+    }
+
+    container.innerHTML =
+      allPlantSubcategories.map(
+        item => `
+
+          <div
+            class="product-item"
+            style="margin-bottom:10px;"
+          >
+
+            <div class="product-top">
+
+              <div>
+
+                <strong>
+                  ${escapeHtml(item.name)}
+                </strong>
+
+                <div class="muted small">
+                  ${escapeHtml(item.slug || "")}
+                </div>
+
+              </div>
+
+              <button
+                class="danger"
+                onclick="deletePlantSubcategory(${item.id})"
+              >
+                Löschen
+              </button>
+
+            </div>
+
+          </div>
+
+        `
+      ).join("");
+  }
+
+
+  function updatePlantSubcategoryOptions(current = "") {
+
+    const select =
+      document.getElementById(
+        "productPlantSubcategory"
+      );
+
+    if (!select) return;
+
+    select.innerHTML =
+      '<option value="">Keine Pflanzen-Unterkategorie</option>' +
+      allPlantSubcategories.map(
+        item =>
+          `<option value="${item.id}">
+            ${escapeHtml(item.name)}
+          </option>`
+      ).join("");
+
+    select.value = String(current || "");
+  }
+
+
+  async function addPlantSubcategory() {
+
+    const input =
+      document.getElementById(
+        "newPlantSubcategory"
+      );
+
+    const name =
+      input.value.trim();
+
+    if (!name) {
+
+      alert(
+        "Bitte einen Namen eingeben."
+      );
+
+      return;
+    }
+
+    const slug =
+      name
+        .toLowerCase()
+        .replace(/ä/g, "ae")
+        .replace(/ö/g, "oe")
+        .replace(/ü/g, "ue")
+        .replace(/ß/g, "ss")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    try {
+
+      await api(
+        "plant_subcategories",
+        {
+          method: "POST",
+
+          headers: {
+            "Prefer": "return=minimal"
+          },
+
+          body:
+            JSON.stringify({
+              name,
+              slug,
+              sort_order:
+                allPlantSubcategories.length + 1,
+              active: true
+            })
+        }
+      );
+
+      input.value = "";
+
+      await loadPlantSubcategories();
+
+    } catch (error) {
+
+      alert(
+        "Pflanzen-Unterkategorie konnte nicht angelegt werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  async function deletePlantSubcategory(id) {
+
+    if (
+      !confirm(
+        "Pflanzen-Unterkategorie wirklich löschen?"
+      )
+    ) {
+      return;
+    }
+
+    try {
+
+      await api(
+        "plant_subcategories?id=eq." +
+        encodeURIComponent(id),
+        {
+          method: "DELETE"
+        }
+      );
+
+      await loadPlantSubcategories();
+
+    } catch (error) {
+
+      alert(
+        "Pflanzen-Unterkategorie konnte nicht gelöscht werden:\n" +
         error.message
       );
     }
@@ -2953,6 +3243,7 @@
       await Promise.all([
         loadCategories(),
         loadSubcategories(),
+        loadPlantSubcategories(),
         loadProducts(),
         loadSettings(),
         loadOrders()
