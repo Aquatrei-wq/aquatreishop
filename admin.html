@@ -302,6 +302,29 @@
       padding: 5px 0;
     }
 
+    .shipping-box {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #dfe7ea;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .shipping-address {
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    .tracking-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .tracking-row { grid-template-columns: 1fr; }
+    }
+
     .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -653,52 +676,28 @@
 
 
         <div class="full">
-
-          <label>
-            Häufig zusammen gekauft
-          </label>
-
-          <div
-            id="productRecommendations"
-            style="border:1px solid #d8e1e3;border-radius:12px;padding:12px;background:#f8faf9;max-height:280px;overflow:auto;"
-          ></div>
-
-          <div
-            style="margin-top:7px;font-size:13px;color:#718085;"
-          >
-            Wähle Produkte aus, die auf der Produktseite unter „Häufig zusammen gekauft“ erscheinen sollen.
-          </div>
-
-        </div>
-
-
-        <div class="full">
           <label for="productImageFile">
-            Produktbilder
+            Produktbild
           </label>
 
           <input
             id="productImageFile"
             type="file"
             accept="image/*"
-            multiple
-            onchange="previewProductImages(event)"
+            onchange="previewProductImage(event)"
           >
 
           <div
             id="productImagePreview"
             style="margin-top:10px;display:none;"
           >
-            <div
-              id="productImagePreviewGrid"
-              style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;"
-            ></div>
+            <img
+              id="productImagePreviewImg"
+              src=""
+              alt="Produktbild Vorschau"
+              style="max-width:220px;max-height:180px;border-radius:12px;object-fit:cover;border:1px solid #d8e1e3;"
+            >
           </div>
-
-          <div
-            id="existingProductImages"
-            style="margin-top:14px;"
-          ></div>
 
           <input
             id="productImage"
@@ -707,7 +706,7 @@
           >
 
           <small style="display:block;margin-top:7px;color:#718085;">
-            Mehrere Bilder direkt vom Handy auswählen. Das erste Bild wird als Hauptbild verwendet.
+            Bild direkt vom Handy auswählen. Die URL wird beim Speichern automatisch eingetragen.
           </small>
         </div>
 
@@ -782,57 +781,7 @@
 
     <section class="card">
 
-      <h2>Produkte verwalten</h2>
-
-      <p class="muted">
-        Alle Katalogprodukte werden hier zentral verwaltet. Der Verkaufsstatus
-        entscheidet, ob ein Produkt gekauft werden kann.
-      </p>
-
-      <div class="grid">
-        <div>
-          <label for="productSearch">Produkte suchen</label>
-          <input
-            id="productSearch"
-            type="search"
-            placeholder="Name, Kategorie oder Beschreibung …"
-            oninput="renderProducts()"
-          >
-        </div>
-
-        <div>
-          <label for="productFilterCategory">Kategorie filtern</label>
-          <select id="productFilterCategory" onchange="renderProducts()">
-            <option value="">Alle Kategorien</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="productFilterStatus">Verkaufsstatus filtern</label>
-          <select id="productFilterStatus" onchange="renderProducts()">
-            <option value="">Alle Status</option>
-            <option value="sale">🟢 Zum Verkauf</option>
-            <option value="catalog">👁️ Nur Katalog</option>
-            <option value="soon">🟠 Bald verfügbar</option>
-            <option value="out">🔴 Ausverkauft</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="productFilterVisibility">Sichtbarkeit</label>
-          <select id="productFilterVisibility" onchange="renderProducts()">
-            <option value="">Alle</option>
-            <option value="visible">Öffentlich sichtbar</option>
-            <option value="hidden">Ausgeblendet</option>
-          </select>
-        </div>
-      </div>
-
-      <div
-        id="productFilterInfo"
-        class="message"
-        style="margin-top:15px;"
-      ></div>
+      <h2>Produkte</h2>
 
       <div id="productList">
         Lade Produkte...
@@ -992,87 +941,6 @@
     </section>
 
 
-
-    <!-- WEBSITE VERWALTEN -->
-
-    <section class="card">
-
-      <h2>🌐 Webseite verwalten</h2>
-
-      <p class="muted">
-        Inhalte der Startseite und die Hauptnavigation können hier
-        geändert werden. Änderungen werden direkt im Shop übernommen.
-      </p>
-
-      <div id="websiteMessage" class="message hidden"></div>
-
-      <h3>Startseite</h3>
-
-      <div class="grid">
-
-        <div class="full">
-          <label for="homeTitleAdmin">Hauptüberschrift</label>
-          <input id="homeTitleAdmin">
-        </div>
-
-        <div class="full">
-          <label for="homeSubtitleAdmin">Unterüberschrift</label>
-          <textarea id="homeSubtitleAdmin"></textarea>
-        </div>
-
-        <div>
-          <label for="catalogTitleAdmin">Sortiment – Überschrift</label>
-          <input id="catalogTitleAdmin">
-        </div>
-
-        <div>
-          <label for="catalogSubtitleAdmin">Sortiment – Untertitel</label>
-          <input id="catalogSubtitleAdmin">
-        </div>
-
-        <div class="full">
-          <label for="footerTextAdmin">Footer-Text</label>
-          <input id="footerTextAdmin">
-        </div>
-
-      </div>
-
-      <div class="button-row">
-        <button class="primary" onclick="saveWebsiteContent()">
-          💾 Startseite speichern
-        </button>
-      </div>
-
-      <hr class="divider">
-
-      <h3>Hauptnavigation</h3>
-
-      <div class="grid">
-
-        <div>
-          <label for="newNavName">Neuer Menüpunkt</label>
-          <input id="newNavName" placeholder="z. B. Pflanzen">
-        </div>
-
-        <div>
-          <label for="newNavUrl">Ziel</label>
-          <input id="newNavUrl" placeholder="z. B. pflanzen.html">
-        </div>
-
-      </div>
-
-      <div class="button-row">
-        <button class="success" onclick="addNavigationItem()">
-          + Menüpunkt hinzufügen
-        </button>
-      </div>
-
-      <div id="navigationList" style="margin-top:15px;">
-        Lade Navigation...
-      </div>
-
-    </section>
-
     <!-- SHOP EINSTELLUNGEN -->
 
     <section class="card">
@@ -1160,26 +1028,6 @@
     <section class="card">
 
       <h2>Bestellungen</h2>
-
-      <div class="grid" style="margin-bottom:14px;">
-        <div>
-          <label for="orderSearch">Bestellung suchen</label>
-          <input id="orderSearch" placeholder="Bestellnummer, Name oder E-Mail" oninput="renderOrders()">
-        </div>
-        <div>
-          <label for="orderFilter">Status filtern</label>
-          <select id="orderFilter" onchange="renderOrders()">
-            <option value="all">Alle Bestellungen</option>
-            <option value="new">Neu</option>
-            <option value="processing">In Bearbeitung</option>
-            <option value="shipped">Versendet</option>
-            <option value="completed">Abgeschlossen</option>
-            <option value="cancelled">Storniert</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="orderCount" class="muted" style="margin-bottom:10px;"></div>
 
       <div id="orderList">
         Lade Bestellungen...
@@ -1575,549 +1423,193 @@
       "products?select=*&order=sort_order.asc,created_at.desc"
     );
 
-    populateProductFilters();
     renderProducts();
     updateStats();
-  }
-
-
-  function populateProductFilters() {
-
-    const categoryFilter =
-      document.getElementById("productFilterCategory");
-
-    if (categoryFilter) {
-
-      const current =
-        categoryFilter.value;
-
-      categoryFilter.innerHTML =
-        '<option value="">Alle Kategorien</option>' +
-        allCategories.map(category => `
-          <option value="${escapeHtml(String(category.id))}">
-            ${escapeHtml(category.name)}
-          </option>
-        `).join("");
-
-      if (
-        current &&
-        allCategories.some(
-          category =>
-            String(category.id) === String(current)
-        )
-      ) {
-        categoryFilter.value = current;
-      }
-    }
   }
 
 
   function renderProducts() {
 
     const container =
-      document.getElementById("productList");
+      document.getElementById(
+        "productList"
+      );
 
-    const search =
-      (
-        document.getElementById("productSearch")?.value ||
-        ""
-      ).trim().toLowerCase();
-
-    const categoryFilter =
-      document.getElementById("productFilterCategory")?.value ||
-      "";
-
-    const statusFilter =
-      document.getElementById("productFilterStatus")?.value ||
-      "";
-
-    const visibilityFilter =
-      document.getElementById("productFilterVisibility")?.value ||
-      "";
-
-    const filtered =
-      allProducts.filter(product => {
-
-        const status =
-          product.sale_status || "catalog";
-
-        if (
-          categoryFilter &&
-          String(product.category_id) !== String(categoryFilter)
-        ) {
-          return false;
-        }
-
-        if (
-          statusFilter &&
-          status !== statusFilter
-        ) {
-          return false;
-        }
-
-        if (
-          visibilityFilter === "visible" &&
-          !product.active
-        ) {
-          return false;
-        }
-
-        if (
-          visibilityFilter === "hidden" &&
-          product.active
-        ) {
-          return false;
-        }
-
-        if (!search) {
-          return true;
-        }
-
-        const category =
-          allCategories.find(
-            item =>
-              String(item.id) ===
-              String(product.category_id)
-          );
-
-        const plantSubcategory =
-          allPlantSubcategories.find(
-            item =>
-              String(item.id) ===
-              String(product.plant_subcategory_id)
-          );
-
-        const haystack = [
-          product.name,
-          product.description,
-          product.short_description,
-          category?.name,
-          plantSubcategory?.name,
-          product.placement,
-          product.requirements
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-
-        return haystack.includes(search);
-      });
-
-
-    const info =
-      document.getElementById("productFilterInfo");
-
-    if (info) {
-      info.textContent =
-        `${filtered.length} von ${allProducts.length} Produkten angezeigt`;
-    }
-
-
-    if (!filtered.length) {
+    if (!allProducts.length) {
 
       container.innerHTML =
-        '<div class="empty">Keine Produkte passen zu den aktuellen Filtern.</div>';
+        '<div class="empty">Noch keine Produkte vorhanden.</div>';
 
       return;
     }
 
-
     container.innerHTML =
       '<div class="product-list">' +
-      filtered.map(product => {
+      allProducts.map(
+        product => {
 
-        const status =
-          product.sale_status || "catalog";
+          const status =
+            product.sale_status || "catalog";
 
-        const statusText = {
-          sale: "🟢 Zum Verkauf",
-          catalog: "👁️ Nur Katalog",
-          soon: "🟠 Bald verfügbar",
-          out: "🔴 Ausverkauft"
-        }[status] || "👁️ Nur Katalog";
+          const statusText = {
 
-        const statusClass = {
-          sale: "status-sale",
-          catalog: "status-catalog",
-          soon: "status-soon",
-          out: "status-out"
-        }[status] || "status-catalog";
+            sale:
+              "🟢 Zum Verkauf",
 
-        const price =
-          product.price_cents != null
-            ? centsToEuro(product.price_cents)
-            : escapeHtml(product.price || "0");
+            catalog:
+              "👁️ Nur Katalog",
 
-        const category =
-          allCategories.find(
-            item =>
-              String(item.id) ===
-              String(product.category_id)
-          );
+            soon:
+              "🟠 Bald verfügbar",
 
-        const subcategory =
-          allSubcategories.find(
-            item =>
-              String(item.id) ===
-              String(product.subcategory_id)
-          );
+            out:
+              "🔴 Ausverkauft"
 
-        const plantSubcategory =
-          allPlantSubcategories.find(
-            item =>
-              String(item.id) ===
-              String(product.plant_subcategory_id)
-          );
+          }[status] || "👁️ Nur Katalog";
 
-        return `
-          <div class="product-item">
 
-            <div class="product-top">
+          const statusClass = {
 
-              <div class="product-info">
+            sale:
+              "status-sale",
 
-                ${
-                  product.image_url
-                    ? `
-                      <img
-                        class="product-image"
-                        src="${escapeHtml(product.image_url)}"
-                        alt=""
-                      >
-                    `
-                    : `
-                      <div class="product-image"></div>
-                    `
-                }
+            catalog:
+              "status-catalog",
 
-                <div>
+            soon:
+              "status-soon",
 
-                  <div class="product-name">
-                    ${escapeHtml(product.name || "Ohne Namen")}
-                  </div>
+            out:
+              "status-out"
 
-                  <div class="muted">
+          }[status] || "status-catalog";
+
+
+          const price =
+            product.price_cents != null
+              ? centsToEuro(
+                  product.price_cents
+                )
+              : escapeHtml(
+                  product.price || "0"
+                );
+
+
+          const category =
+            allCategories.find(
+              category =>
+                String(category.id) ===
+                String(product.category_id)
+            );
+
+          const plantSubcategory =
+            allPlantSubcategories.find(
+              item =>
+                String(item.id) ===
+                String(product.plant_subcategory_id)
+            );
+
+
+          return `
+            <div class="product-item">
+
+              <div class="product-top">
+
+                <div class="product-info">
+
+                  ${
+                    product.image_url
+                      ? `
+                        <img
+                          class="product-image"
+                          src="${escapeHtml(product.image_url)}"
+                          alt=""
+                        >
+                      `
+                      : `
+                        <div class="product-image"></div>
+                      `
+                  }
+
+                  <div>
+
+                    <div class="product-name">
+                      ${escapeHtml(product.name)}
+                    </div>
+
+                    <div class="muted">
+                      ${
+                        category
+                          ? escapeHtml(category.name)
+                          : "Keine Kategorie"
+                      }
+                    </div>
+
                     ${
-                      category
-                        ? escapeHtml(category.name)
-                        : "Keine Kategorie"
+                      plantSubcategory
+                        ? `<div class="muted small">
+                            Pflanzen: ${escapeHtml(plantSubcategory.name)}
+                          </div>`
+                        : ""
                     }
+
+                    <span class="status ${statusClass}">
+                      ${statusText}
+                    </span>
+
                   </div>
 
-                  ${
-                    subcategory
-                      ? `<div class="muted small">
-                          Unterkategorie: ${escapeHtml(subcategory.name)}
-                        </div>`
-                      : ""
-                  }
+                </div>
 
-                  ${
-                    plantSubcategory
-                      ? `<div class="muted small">
-                          Pflanzen: ${escapeHtml(plantSubcategory.name)}
-                        </div>`
-                      : ""
-                  }
-
-                  <span class="status ${statusClass}">
-                    ${statusText}
-                  </span>
-
+                <div class="price">
+                  ${price}
                 </div>
 
               </div>
 
-              <div class="price">
-                ${price}
+              <div
+                class="small muted"
+                style="margin-top:12px;"
+              >
+                Bestand:
+                <strong>
+                  ${Number(product.stock || 0)}
+                </strong>
+                &nbsp; · &nbsp;
+                ${
+                  product.active
+                    ? "öffentlich sichtbar"
+                    : "ausgeblendet"
+                }
+              </div>
+
+              <div class="button-row">
+
+                <button
+                  class="primary"
+                  onclick="editProduct(${product.id})"
+                >
+                  Bearbeiten
+                </button>
+
+                <button
+                  class="danger"
+                  onclick="deleteProduct(${product.id})"
+                >
+                  Löschen
+                </button>
+
               </div>
 
             </div>
-
-            <div
-              class="small muted"
-              style="margin-top:12px;"
-            >
-              Bestand:
-              <strong>${Number(product.stock || 0)}</strong>
-              &nbsp; · &nbsp;
-              ${product.active ? "öffentlich sichtbar" : "ausgeblendet"}
-              &nbsp; · &nbsp;
-              ID ${escapeHtml(String(product.id))}
-            </div>
-
-            ${
-              product.short_description
-                ? `<div
-                    class="small"
-                    style="margin-top:8px;"
-                  >
-                    ${escapeHtml(product.short_description)}
-                  </div>`
-                : ""
-            }
-
-            <div class="button-row">
-
-              <button
-                class="primary"
-                onclick="editProduct(${product.id})"
-              >
-                ✏️ Bearbeiten
-              </button>
-
-              <button
-                class="secondary"
-                onclick="duplicateProduct(${product.id})"
-              >
-                📋 Duplizieren
-              </button>
-
-              <button
-                class="danger"
-                onclick="deleteProduct(${product.id})"
-              >
-                🗑️ Löschen
-              </button>
-
-            </div>
-
-          </div>
-        `;
-      }).join("") +
+          `;
+        }
+      ).join("") +
       "</div>";
   }
 
 
-  async function duplicateProduct(id) {
-
-    const source =
-      allProducts.find(
-        product =>
-          String(product.id) === String(id)
-      );
-
-    if (!source) {
-      return;
-    }
-
-    const copy = {
-      ...source
-    };
-
-    delete copy.id;
-    delete copy.created_at;
-    delete copy.updated_at;
-
-    copy.name =
-      (source.name || "Produkt") + " – Kopie";
-
-    copy.slug = null;
-    copy.active = false;
-    copy.sale_status = "catalog";
-    copy.stock = 0;
-
-    try {
-
-      const created =
-        await api(
-          "products",
-          {
-            method: "POST",
-            body: JSON.stringify(copy)
-          }
-        );
-
-      const createdProduct =
-        Array.isArray(created)
-          ? created[0]
-          : created;
-
-      if (createdProduct?.id) {
-
-        const images =
-          await api(
-            "product_images?select=*&product_id=eq." +
-            encodeURIComponent(id) +
-            "&order=sort_order.asc"
-          );
-
-        for (const image of images) {
-
-          await api(
-            "product_images",
-            {
-              method: "POST",
-              body: JSON.stringify({
-                product_id: createdProduct.id,
-                image_url: image.image_url,
-                storage_path: image.storage_path || null,
-                sort_order: image.sort_order || 0
-              })
-            }
-          );
-        }
-      }
-
-      await loadProducts();
-
-      showMessage(
-        "productMessage",
-        "Produkt wurde als Kopie angelegt. Es ist zunächst ausgeblendet und nicht zum Verkauf.",
-        false
-      );
-
-      editProduct(createdProduct.id);
-
-    } catch (error) {
-
-      showMessage(
-        "productMessage",
-        "Duplizieren fehlgeschlagen: " + error.message,
-        true
-      );
-    }
-  }
-
-
-  async function loadProductRecommendations(productId) {
-
-    if (!productId) return [];
-
-    return await api(
-      "product_recommendations?select=*&product_id=eq." +
-      encodeURIComponent(productId) +
-      "&order=sort_order.asc,created_at.asc"
-    );
-  }
-
-
-  function renderProductRecommendations(selectedIds = []) {
-
-    const container =
-      document.getElementById("productRecommendations");
-
-    if (!container) return;
-
-    const selected =
-      new Set(
-        selectedIds.map(id => String(id))
-      );
-
-    const currentId =
-      String(
-        document.getElementById("productId")?.value || ""
-      );
-
-    const candidates =
-      allProducts
-        .filter(product =>
-          String(product.id) !== currentId
-        )
-        .sort((a,b) =>
-          String(a.name || "").localeCompare(
-            String(b.name || ""),
-            "de"
-          )
-        );
-
-    if (!candidates.length) {
-      container.innerHTML =
-        '<div style="color:#718085;">Noch keine anderen Produkte vorhanden.</div>';
-      return;
-    }
-
-    container.innerHTML =
-      candidates.map(product => `
-        <label
-          style="display:flex;align-items:center;gap:9px;padding:8px 4px;border-bottom:1px solid #e7ecec;cursor:pointer;"
-        >
-          <input
-            type="checkbox"
-            class="product-recommendation-checkbox"
-            value="${product.id}"
-            ${selected.has(String(product.id)) ? "checked" : ""}
-            style="width:18px;height:18px;"
-          >
-          <span style="font-weight:700;">
-            ${escapeHtml(product.name || "")}
-          </span>
-          <span style="margin-left:auto;color:#718085;font-size:13px;">
-            ${formatAdminProductPrice(product)}
-          </span>
-        </label>
-      `).join("");
-  }
-
-
-  function formatAdminProductPrice(product) {
-
-    const cents =
-      product.price_cents != null
-        ? Number(product.price_cents)
-        : Math.round(
-            parseOldPrice(product.price) * 100
-          );
-
-    return (
-      (cents / 100)
-        .toFixed(2)
-        .replace(".", ",") +
-      " €"
-    );
-  }
-
-
-  async function saveProductRecommendations(productId) {
-
-    if (!productId) return;
-
-    const checkboxes =
-      Array.from(
-        document.querySelectorAll(
-          ".product-recommendation-checkbox:checked"
-        )
-      );
-
-    const selectedIds =
-      checkboxes
-        .map(input => Number(input.value))
-        .filter(id =>
-          Number.isFinite(id) &&
-          id !== Number(productId)
-        );
-
-    await api(
-      "product_recommendations?product_id=eq." +
-      encodeURIComponent(productId),
-      {
-        method: "DELETE"
-      }
-    );
-
-    if (!selectedIds.length) return;
-
-    const rows =
-      selectedIds.map((recommendedProductId, index) => ({
-        product_id: Number(productId),
-        recommended_product_id: recommendedProductId,
-        sort_order: index
-      }));
-
-    await api(
-      "product_recommendations",
-      {
-        method: "POST",
-        headers: {
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify(rows)
-      }
-    );
-  }
-
-
-  async function editProduct(id) {
+  function editProduct(id) {
 
     const product =
       allProducts.find(
@@ -2231,57 +1723,25 @@
       "productImageFile"
     ).value = "";
 
-    document.getElementById(
-      "productImage"
-    ).value =
-      product.image_url || "";
-
     const existingPreview =
       document.getElementById(
         "productImagePreview"
       );
 
-    const existingPreviewGrid =
+    const existingPreviewImg =
       document.getElementById(
-        "productImagePreviewGrid"
+        "productImagePreviewImg"
       );
 
-    existingPreviewGrid.innerHTML = "";
-    existingPreview.style.display = "none";
-
-    renderSelectedImagePreviews([]);
-
-    try {
-      const images =
-        await loadProductImages(product.id);
-
-      renderExistingProductImages(images);
-
-      if (images.length) {
-        document.getElementById(
-          "productImage"
-        ).value =
-          images[0].image_url || product.image_url || "";
-      }
-
-    } catch (error) {
-      console.error(error);
-      renderExistingProductImages([]);
-    }
-
-
-    try {
-      const recommendations =
-        await loadProductRecommendations(product.id);
-
-      renderProductRecommendations(
-        recommendations.map(
-          item => item.recommended_product_id
-        )
-      );
-    } catch (error) {
-      console.error(error);
-      renderProductRecommendations([]);
+    if (product.image_url) {
+      existingPreviewImg.src =
+        product.image_url;
+      existingPreview.style.display =
+        "block";
+    } else {
+      existingPreviewImg.src = "";
+      existingPreview.style.display =
+        "none";
     }
 
 
@@ -2341,8 +1801,6 @@
     document.getElementById(
       "productId"
     ).value = "";
-
-    renderProductRecommendations([]);
 
 
     document.getElementById(
@@ -2412,11 +1870,13 @@
       "productImageFile"
     ).value = "";
 
-    renderSelectedImagePreviews([]);
+    document.getElementById(
+      "productImagePreviewImg"
+    ).src = "";
 
     document.getElementById(
-      "existingProductImages"
-    ).innerHTML = "";
+      "productImagePreview"
+    ).style.display = "none";
 
 
     document.getElementById(
@@ -2438,228 +1898,51 @@
   }
 
 
-  function previewProductImages(event) {
+  function previewProductImage(event) {
 
-    const files =
-      Array.from(
-        event.target.files || []
-      );
-
-    renderSelectedImagePreviews(files);
-  }
-
-
-  function renderSelectedImagePreviews(files) {
+    const file =
+      event.target.files &&
+      event.target.files[0];
 
     const preview =
       document.getElementById(
         "productImagePreview"
       );
 
-    const grid =
+    const image =
       document.getElementById(
-        "productImagePreviewGrid"
+        "productImagePreviewImg"
       );
 
-    if (!preview || !grid) return;
-
-    grid.innerHTML = "";
-
-    if (!files.length) {
+    if (!file) {
       preview.style.display = "none";
+      image.src = "";
       return;
     }
 
-    preview.style.display = "block";
-
-    files.forEach((file, index) => {
-
-      const wrapper =
-        document.createElement("div");
-
-      wrapper.style.cssText =
-        "border:1px solid #d8e1e3;border-radius:12px;padding:6px;background:#fff;";
-
-      const img =
-        document.createElement("img");
-
-      img.alt =
-        "Bild Vorschau " + (index + 1);
-
-      img.style.cssText =
-        "width:100%;height:100px;object-fit:cover;border-radius:8px;display:block;";
-
-      const label =
-        document.createElement("div");
-
-      label.textContent =
-        index === 0
-          ? "Hauptbild"
-          : "Bild " + (index + 1);
-
-      label.style.cssText =
-        "font-size:12px;margin-top:5px;color:#52666b;text-align:center;";
-
-      wrapper.appendChild(img);
-      wrapper.appendChild(label);
-      grid.appendChild(wrapper);
-
-      const reader =
-        new FileReader();
-
-      reader.onload = function() {
-        img.src = reader.result;
-      };
-
-      reader.readAsDataURL(file);
-    });
-  }
-
-
-  async function loadProductImages(productId) {
-
-    if (!productId) return [];
-
-    return await api(
-      "product_images?select=*&product_id=eq." +
-      encodeURIComponent(productId) +
-      "&order=sort_order.asc,created_at.asc"
-    );
-  }
-
-
-  function renderExistingProductImages(images) {
-
-    const container =
-      document.getElementById(
-        "existingProductImages"
+    if (!file.type.startsWith("image/")) {
+      showMessage(
+        "productMessage",
+        "Bitte eine Bilddatei auswählen.",
+        true
       );
 
-    if (!container) return;
-
-    if (!images.length) {
-      container.innerHTML =
-        '<div style="padding:12px;border:1px dashed #cfdadc;border-radius:12px;color:#718085;">Noch keine gespeicherten Produktbilder.</div>';
+      event.target.value = "";
+      preview.style.display = "none";
+      image.src = "";
       return;
     }
 
-    container.innerHTML =
-      '<div style="font-weight:700;margin-bottom:8px;">Gespeicherte Bilder</div>' +
-      '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;">' +
-      images.map((image, index) => `
-        <div style="border:1px solid #d8e1e3;border-radius:12px;padding:6px;background:#fff;">
-          <img
-            src="${escapeHtml(image.image_url)}"
-            alt="Produktbild ${index + 1}"
-            style="width:100%;height:100px;object-fit:cover;border-radius:8px;display:block;"
-          >
-          <div style="font-size:12px;margin-top:5px;text-align:center;color:#52666b;">
-            ${index === 0 ? "Hauptbild" : "Bild " + (index + 1)}
-          </div>
-          <button
-            type="button"
-            onclick="deleteProductImage(${Number(image.id)}, ${Number(image.product_id)})"
-            style="width:100%;margin-top:6px;padding:7px;border:0;border-radius:8px;background:#f2e5e5;color:#9a3030;cursor:pointer;"
-          >
-            Bild löschen
-          </button>
-        </div>
-      `).join("") +
-      '</div>';
+    const reader =
+      new FileReader();
+
+    reader.onload = function() {
+      image.src = reader.result;
+      preview.style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
   }
-
-
-  async function deleteProductImage(imageId, productId) {
-
-    if (!confirm("Dieses Produktbild wirklich löschen?")) {
-      return;
-    }
-
-    try {
-
-      const images =
-        await loadProductImages(productId);
-
-      const image =
-        images.find(
-          item => Number(item.id) === Number(imageId)
-        );
-
-      if (!image) return;
-
-      if (image.storage_path) {
-
-        const token = getToken();
-
-        if (token) {
-          await fetch(
-            SUPABASE_URL +
-            "/storage/v1/object/product-images/" +
-            image.storage_path
-              .split("/")
-              .map(encodeURIComponent)
-              .join("/"),
-            {
-              method: "DELETE",
-              headers: {
-                "apikey": SUPABASE_KEY,
-                "Authorization": "Bearer " + token
-              }
-            }
-          );
-        }
-      }
-
-      await api(
-        "product_images?id=eq." +
-        encodeURIComponent(imageId),
-        {
-          method: "DELETE"
-        }
-      );
-
-      const remaining =
-        await loadProductImages(productId);
-
-      const mainUrl =
-        remaining.length
-          ? remaining[0].image_url
-          : null;
-
-      await api(
-        "products?id=eq." +
-        encodeURIComponent(productId),
-        {
-          method: "PATCH",
-          headers: {
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify({
-            image_url: mainUrl,
-            updated_at: new Date().toISOString()
-          })
-        }
-      );
-
-      renderExistingProductImages(remaining);
-
-      document.getElementById(
-        "productImage"
-      ).value = mainUrl || "";
-
-      await loadProducts();
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Bild konnte nicht gelöscht werden:\n" +
-        error.message
-      );
-    }
-  }
-
 
 
   function createImageFileName(file) {
@@ -2765,15 +2048,11 @@
       );
     }
 
-    return {
-      url:
-        SUPABASE_URL +
-        "/storage/v1/object/public/product-images/" +
-        encodeURIComponent(fileName),
-
-      path:
-        fileName
-    };
+    return (
+      SUPABASE_URL +
+      "/storage/v1/object/public/product-images/" +
+      encodeURIComponent(fileName)
+    );
   }
 
 
@@ -2784,20 +2063,22 @@
         "productId"
       ).value;
 
+
     const imageFileInput =
       document.getElementById(
         "productImageFile"
       );
 
-    const imageFiles =
-      Array.from(
-        imageFileInput.files || []
-      );
+    const imageFile =
+      imageFileInput.files &&
+      imageFileInput.files[0];
+
 
     const name =
       document.getElementById(
         "productName"
       ).value.trim();
+
 
     if (!name) {
 
@@ -2810,121 +2091,138 @@
       return;
     }
 
+
     const price =
       document.getElementById(
         "productPrice"
       ).value;
 
+
     const priceCents =
       euroToCents(price);
+
 
     let imageUrl =
       document.getElementById(
         "productImage"
       ).value.trim() || null;
 
-    try {
 
-      const payload = {
+    if (imageFile) {
 
-        name,
+      showMessage(
+        "productMessage",
+        "Produktbild wird hochgeladen..."
+      );
 
-        price_cents:
-          priceCents,
+      imageUrl =
+        await uploadProductImage(
+          imageFile
+        );
+    }
 
-        price:
-          Number(priceCents / 100)
-            .toFixed(2)
-            .replace(".", ","),
 
-        sale_status:
-          document.getElementById(
-            "productStatus"
-          ).value,
+    const payload = {
 
-        stock:
-          Math.max(
-            0,
-            parseInt(
-              document.getElementById(
-                "productStock"
-              ).value || "0",
-              10
-            )
-          ),
+      name,
 
-        category_id:
-          toNullableNumber(
-            document.getElementById(
-              "productCategory"
-            ).value
-          ),
+      price_cents:
+        priceCents,
 
-        subcategory_id:
-          toNullableNumber(
-            document.getElementById(
-              "productSubcategory"
-            ).value
-          ),
+      price:
+        Number(priceCents / 100)
+          .toFixed(2)
+          .replace(".", ","),
 
-        plant_subcategory_id:
-          toNullableNumber(
-            document.getElementById(
-              "productPlantSubcategory"
-            ).value
-          ),
+      sale_status:
+        document.getElementById(
+          "productStatus"
+        ).value,
 
-        slug:
-          document.getElementById(
-            "productSlug"
-          ).value.trim() || null,
-
-        placement:
-          document.getElementById(
-            "productPlacement"
-          ).value.trim() || null,
-
-        short_description:
-          document.getElementById(
-            "productShortDescription"
-          ).value.trim() || null,
-
-        description:
-          document.getElementById(
-            "productDescription"
-          ).value.trim() || null,
-
-        requirements:
-          document.getElementById(
-            "productRequirements"
-          ).value.trim() || null,
-
-        image_url:
-          imageUrl,
-
-        availability:
-          document.getElementById(
-            "productAvailability"
-          ).value.trim() || null,
-
-        sort_order:
+      stock:
+        Math.max(
+          0,
           parseInt(
             document.getElementById(
-              "productSortOrder"
+              "productStock"
             ).value || "0",
             10
-          ),
+          )
+        ),
 
-        active:
+      category_id:
+        toNullableNumber(
           document.getElementById(
-            "productActive"
-          ).value === "true",
+            "productCategory"
+          ).value
+        ),
 
-        updated_at:
-          new Date().toISOString()
-      };
+      subcategory_id:
+        toNullableNumber(
+          document.getElementById(
+            "productSubcategory"
+          ).value
+        ),
 
-      let productId = id;
+      plant_subcategory_id:
+        toNullableNumber(
+          document.getElementById(
+            "productPlantSubcategory"
+          ).value
+        ),
+
+      slug:
+        document.getElementById(
+          "productSlug"
+        ).value.trim() || null,
+
+      placement:
+        document.getElementById(
+          "productPlacement"
+        ).value.trim() || null,
+
+      short_description:
+        document.getElementById(
+          "productShortDescription"
+        ).value.trim() || null,
+
+      description:
+        document.getElementById(
+          "productDescription"
+        ).value.trim() || null,
+
+      requirements:
+        document.getElementById(
+          "productRequirements"
+        ).value.trim() || null,
+
+      image_url:
+        imageUrl,
+
+      availability:
+        document.getElementById(
+          "productAvailability"
+        ).value.trim() || null,
+
+      sort_order:
+        parseInt(
+          document.getElementById(
+            "productSortOrder"
+          ).value || "0",
+          10
+        ),
+
+      active:
+        document.getElementById(
+          "productActive"
+        ).value === "true",
+
+      updated_at:
+        new Date().toISOString()
+    };
+
+
+    try {
 
       if (id) {
 
@@ -2943,88 +2241,15 @@
           }
         );
 
-      } else {
-
-        const created =
-          await api(
-            "products",
-            {
-              method: "POST",
-
-              headers: {
-                "Prefer": "return=representation"
-              },
-
-              body:
-                JSON.stringify(payload)
-            }
-          );
-
-        productId =
-          created &&
-          created[0] &&
-          created[0].id;
-
-        if (!productId) {
-          throw new Error(
-            "Produkt wurde angelegt, aber die Produkt-ID konnte nicht gelesen werden."
-          );
-        }
-      }
-
-      if (imageFiles.length) {
-
         showMessage(
           "productMessage",
-          imageFiles.length === 1
-            ? "Produktbild wird hochgeladen..."
-            : imageFiles.length + " Produktbilder werden hochgeladen..."
+          "Produkt wurde aktualisiert."
         );
 
-        let nextSortOrder = 0;
-
-        const existing =
-          await loadProductImages(productId);
-
-        if (existing.length) {
-          nextSortOrder =
-            Math.max(
-              ...existing.map(
-                item => Number(item.sort_order || 0)
-              )
-            ) + 1;
-        }
-
-        const uploaded = [];
-
-        for (const file of imageFiles) {
-
-          if (!file.type.startsWith("image/")) {
-            throw new Error(
-              "Eine ausgewählte Datei ist kein Bild."
-            );
-          }
-
-          const result =
-            await uploadProductImage(file);
-
-          uploaded.push({
-            product_id:
-              productId,
-
-            image_url:
-              result.url,
-
-            storage_path:
-              result.path,
-
-            sort_order:
-              nextSortOrder++
-          });
-        }
+      } else {
 
         await api(
-          "product_images",
+          "products",
           {
             method: "POST",
 
@@ -3033,80 +2258,16 @@
             },
 
             body:
-              JSON.stringify(uploaded)
+              JSON.stringify(payload)
           }
         );
 
-        const allImages =
-          await loadProductImages(productId);
-
-        const mainUrl =
-          allImages.length
-            ? allImages[0].image_url
-            : imageUrl;
-
-        await api(
-          "products?id=eq." +
-          encodeURIComponent(productId),
-          {
-            method: "PATCH",
-
-            headers: {
-              "Prefer": "return=minimal"
-            },
-
-            body: JSON.stringify({
-              image_url:
-                mainUrl || null,
-
-              updated_at:
-                new Date().toISOString()
-            })
-          }
+        showMessage(
+          "productMessage",
+          "Produkt wurde angelegt."
         );
-      } else if (productId && imageUrl) {
-
-        const existing =
-          await loadProductImages(productId);
-
-        if (!existing.length) {
-
-          await api(
-            "product_images",
-            {
-              method: "POST",
-
-              headers: {
-                "Prefer": "return=minimal"
-              },
-
-              body:
-                JSON.stringify({
-                  product_id:
-                    productId,
-
-                  image_url:
-                    imageUrl,
-
-                  storage_path:
-                    null,
-
-                  sort_order:
-                    0
-                })
-            }
-          );
-        }
       }
 
-      await saveProductRecommendations(productId);
-
-      showMessage(
-        "productMessage",
-        id
-          ? "Produkt wurde aktualisiert."
-          : "Produkt wurde angelegt."
-      );
 
       clearProductForm();
 
@@ -3962,94 +3123,208 @@
 
   function renderOrders() {
 
-    const container = document.getElementById("orderList");
-    const search = (document.getElementById("orderSearch")?.value || "").trim().toLowerCase();
-    const filter = document.getElementById("orderFilter")?.value || "all";
+    const container =
+      document.getElementById(
+        "orderList"
+      );
 
-    const filteredOrders = allOrders.filter(order => {
-      const haystack = [
-        order.order_number,
-        order.customer_name,
-        order.customer_email,
-        order.city
-      ].join(" ").toLowerCase();
 
-      const matchesSearch = !search || haystack.includes(search);
-      const matchesStatus = filter === "all" || String(order.order_status) === filter;
-      return matchesSearch && matchesStatus;
-    });
+    if (!allOrders.length) {
 
-    const count = document.getElementById("orderCount");
-    if (count) {
-      count.textContent = `${filteredOrders.length} von ${allOrders.length} Bestellungen`;
-    }
+      container.innerHTML =
+        '<div class="empty">Noch keine Bestellungen vorhanden.</div>';
 
-    if (!filteredOrders.length) {
-      container.innerHTML = '<div class="empty">Keine passenden Bestellungen vorhanden.</div>';
       return;
     }
 
+
     container.innerHTML =
       '<div class="order-list">' +
-      filteredOrders.map(order => `
-        <div class="order-item">
-          <div class="order-top">
-            <div>
-              <div class="order-number">Bestellung ${escapeHtml(order.order_number)}</div>
-              <div class="muted">${formatDate(order.created_at)}</div>
-            </div>
-            <div class="price">${centsToEuro(order.total_cents)}</div>
-          </div>
+      allOrders.map(
+        order => `
 
-          <div class="small" style="margin-top:12px;line-height:1.55;">
-            <strong>Kunde:</strong> ${escapeHtml(order.customer_name)}<br>
-            ${escapeHtml(order.customer_email)}<br>
-            ${escapeHtml(order.street)} ${escapeHtml(order.house_number)},
-            ${escapeHtml(order.postal_code)} ${escapeHtml(order.city)},
-            ${escapeHtml(order.country || "Deutschland")}
-            ${order.notes ? `<br><strong>Hinweis:</strong> ${escapeHtml(order.notes)}` : ""}
-          </div>
+          <div class="order-item">
 
-          <div class="grid" style="margin-top:12px;">
-            <div>
-              <label>Zahlungsstatus</label>
-              <select onchange="updateOrderField('${escapeHtml(order.id)}','payment_status',this.value)">
-                ${option("pending","Ausstehend",order.payment_status)}
-                ${option("paid","Bezahlt",order.payment_status)}
-                ${option("failed","Fehlgeschlagen",order.payment_status)}
-                ${option("refunded","Erstattet",order.payment_status)}
-              </select>
+            <div class="order-top">
+
+              <div>
+
+                <div class="order-number">
+                  Bestellung
+                  ${escapeHtml(order.order_number)}
+                </div>
+
+                <div class="muted">
+                  ${formatDate(order.created_at)}
+                </div>
+
+              </div>
+
+              <div class="price">
+                ${centsToEuro(order.total_cents)}
+              </div>
+
             </div>
 
-            <div>
-              <label>Bestellstatus</label>
-              <select onchange="updateOrderField('${escapeHtml(order.id)}','order_status',this.value)">
-                ${option("new","Neu",order.order_status)}
-                ${option("processing","In Bearbeitung",order.order_status)}
-                ${option("shipped","Versendet",order.order_status)}
-                ${option("completed","Abgeschlossen",order.order_status)}
-                ${option("cancelled","Storniert",order.order_status)}
-              </select>
+
+            <div
+              class="small"
+              style="margin-top:12px;"
+            >
+
+              <strong>
+                Kunde:
+              </strong>
+
+              ${escapeHtml(order.customer_name)}
+
+              <br>
+
+              ${escapeHtml(order.customer_email)}
+
+              <br>
+
+              ${escapeHtml(order.street)}
+              ${escapeHtml(order.house_number)},
+              ${escapeHtml(order.postal_code)}
+              ${escapeHtml(order.city)}
+
             </div>
+
+
+            <div
+              class="grid"
+              style="margin-top:12px;"
+            >
+
+              <div>
+
+                <label>
+                  Zahlungsstatus
+                </label>
+
+                <select
+                  onchange="updateOrderField(
+                    '${escapeHtml(order.id)}',
+                    'payment_status',
+                    this.value
+                  )"
+                >
+
+                  ${option("pending", "Ausstehend", order.payment_status)}
+                  ${option("paid", "Bezahlt", order.payment_status)}
+                  ${option("failed", "Fehlgeschlagen", order.payment_status)}
+                  ${option("refunded", "Erstattet", order.payment_status)}
+
+                </select>
+
+              </div>
+
+              <div>
+
+                <label>
+                  Bestellstatus
+                </label>
+
+                <select
+                  onchange="updateOrderField(
+                    '${escapeHtml(order.id)}',
+                    'order_status',
+                    this.value
+                  )"
+                >
+
+                  ${option("new", "Neu", order.order_status)}
+                  ${option("processing", "In Bearbeitung", order.order_status)}
+                  ${option("shipped", "Versendet", order.order_status)}
+                  ${option("completed", "Abgeschlossen", order.order_status)}
+                  ${option("cancelled", "Storniert", order.order_status)}
+
+                </select>
+
+              </div>
+
+            </div>
+
+            <div class="shipping-box">
+
+              <strong>🚚 Versandverwaltung</strong>
+
+              <div class="shipping-address small" style="margin-top:8px;">
+                <strong>Lieferadresse</strong><br>
+                ${escapeHtml(order.customer_name)}<br>
+                ${escapeHtml(order.street)} ${escapeHtml(order.house_number)}<br>
+                ${escapeHtml(order.postal_code)} ${escapeHtml(order.city)}<br>
+                ${escapeHtml(order.country || "Deutschland")}
+              </div>
+
+              <div class="tracking-row">
+
+                <div>
+                  <label>Versandstatus</label>
+                  <select id="shipping-status-${escapeHtml(order.id)}">
+                    ${option("not_shipped", "Noch nicht versendet", order.shipping_status)}
+                    ${option("ready", "Versandbereit", order.shipping_status)}
+                    ${option("shipped", "Versendet", order.shipping_status)}
+                    ${option("delivered", "Zugestellt", order.shipping_status)}
+                  </select>
+                </div>
+
+                <div>
+                  <label>Sendungsnummer</label>
+                  <input
+                    id="tracking-${escapeHtml(order.id)}"
+                    value="${escapeHtml(order.tracking_number || "")}"
+                    placeholder="z. B. DHL / Hermes Sendungsnummer"
+                  >
+                </div>
+
+              </div>
+
+              <div style="margin-top:12px;">
+                <label>Interne Notiz</label>
+                <textarea
+                  id="note-${escapeHtml(order.id)}"
+                  rows="3"
+                  placeholder="Nur für dich sichtbar..."
+                >${escapeHtml(order.internal_note || "")}</textarea>
+              </div>
+
+              <div class="button-row" style="margin-top:10px;">
+                <button
+                  class="primary"
+                  onclick="saveShippingData('${escapeHtml(order.id)}')"
+                >
+                  💾 Versanddaten speichern
+                </button>
+              </div>
+
+            </div>
+
+            <div class="order-items">
+
+              <strong>
+                Artikel
+              </strong>
+
+              <div
+                id="items-${escapeHtml(order.id)}"
+              >
+                Artikel werden geladen...
+              </div>
+
+            </div>
+
           </div>
 
-          <div class="button-row">
-            ${order.payment_status !== "paid" ? `<button class="success" onclick="quickOrderUpdate('${escapeHtml(order.id)}','payment_status','paid')">✓ Zahlung erhalten</button>` : ""}
-            ${order.order_status !== "processing" && order.order_status !== "completed" && order.order_status !== "cancelled" ? `<button class="primary" onclick="quickOrderUpdate('${escapeHtml(order.id)}','order_status','processing')">📦 In Bearbeitung</button>` : ""}
-            ${order.order_status !== "shipped" && order.order_status !== "completed" && order.order_status !== "cancelled" ? `<button class="warning" onclick="quickOrderUpdate('${escapeHtml(order.id)}','order_status','shipped')">🚚 Als versendet markieren</button>` : ""}
-            ${order.order_status !== "completed" && order.order_status !== "cancelled" ? `<button class="success" onclick="quickOrderUpdate('${escapeHtml(order.id)}','order_status','completed')">✓ Bestellung abschließen</button>` : ""}
-          </div>
-
-          <div class="order-items">
-            <strong>Artikel</strong>
-            <div id="items-${escapeHtml(order.id)}">Artikel werden geladen...</div>
-          </div>
-        </div>
-      `).join("") +
+        `
+      ).join("") +
       "</div>";
 
-    loadAllOrderItems(filteredOrders);
+
+    loadAllOrderItems();
   }
+
 
   function option(
     value,
@@ -4070,7 +3345,7 @@
   }
 
 
-  async function loadAllOrderItems(ordersToRender = allOrders) {
+  async function loadAllOrderItems() {
 
     try {
 
@@ -4080,7 +3355,7 @@
         );
 
 
-      for (const order of ordersToRender) {
+      for (const order of allOrders) {
 
         const container =
           document.getElementById(
@@ -4139,15 +3414,6 @@
   }
 
 
-  async function quickOrderUpdate(orderId, field, value) {
-    try {
-      await updateOrderField(orderId, field, value);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-
   async function updateOrderField(
     orderId,
     field,
@@ -4156,7 +3422,8 @@
 
     const allowedFields = [
       "payment_status",
-      "order_status"
+      "order_status",
+      "shipping_status"
     ];
 
 
@@ -4197,6 +3464,60 @@
 
       alert(
         "Bestellung konnte nicht aktualisiert werden:\n" +
+        error.message
+      );
+    }
+  }
+
+
+  async function saveShippingData(orderId) {
+
+    const shippingStatus =
+      document.getElementById(
+        "shipping-status-" + orderId
+      ).value;
+
+    const trackingNumber =
+      document.getElementById(
+        "tracking-" + orderId
+      ).value.trim();
+
+    const internalNote =
+      document.getElementById(
+        "note-" + orderId
+      ).value.trim();
+
+    try {
+
+      await api(
+        "orders?id=eq." +
+        encodeURIComponent(orderId),
+        {
+          method: "PATCH",
+          headers: {
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            shipping_status: shippingStatus,
+            tracking_number: trackingNumber || null,
+            internal_note: internalNote || null,
+            updated_at: new Date().toISOString(),
+            shipped_at:
+              shippingStatus === "shipped" || shippingStatus === "delivered"
+                ? new Date().toISOString()
+                : null
+          })
+        }
+      );
+
+      await loadOrders();
+
+      alert("Versanddaten gespeichert.");
+
+    } catch (error) {
+
+      alert(
+        "Versanddaten konnten nicht gespeichert werden:\n" +
         error.message
       );
     }
@@ -4250,260 +3571,6 @@
      ALLES LADEN
   ===================================================== */
 
-
-  /* =====================================================
-     WEBSEITE / STARTSEITE / NAVIGATION
-  ===================================================== */
-
-  async function loadWebsiteContent() {
-
-    const rows = await api(
-      "shop_content?select=content_key,content_value&order=content_key.asc"
-    );
-
-    const values = {};
-
-    rows.forEach(row => {
-      values[row.content_key] = row.content_value || "";
-    });
-
-    const fields = {
-      homeTitleAdmin: values.home_title || "",
-      homeSubtitleAdmin: values.home_subtitle || "",
-      catalogTitleAdmin: values.catalog_title || "",
-      catalogSubtitleAdmin: values.catalog_subtitle || "",
-      footerTextAdmin: values.footer_text || ""
-    };
-
-    Object.entries(fields).forEach(([id, value]) => {
-      const element = document.getElementById(id);
-      if (element) element.value = value;
-    });
-  }
-
-
-  async function saveWebsiteContent() {
-
-    const message = document.getElementById("websiteMessage");
-
-    try {
-
-      const values = {
-        home_title: document.getElementById("homeTitleAdmin").value.trim(),
-        home_subtitle: document.getElementById("homeSubtitleAdmin").value.trim(),
-        catalog_title: document.getElementById("catalogTitleAdmin").value.trim(),
-        catalog_subtitle: document.getElementById("catalogSubtitleAdmin").value.trim(),
-        footer_text: document.getElementById("footerTextAdmin").value.trim()
-      };
-
-      for (const [key, value] of Object.entries(values)) {
-
-        await api(
-          "shop_content?content_key=eq." + encodeURIComponent(key),
-          {
-            method: "PATCH",
-            headers: {
-              "Prefer": "return=minimal"
-            },
-            body: JSON.stringify({
-              content_value: value,
-              updated_at: new Date().toISOString()
-            })
-          }
-        );
-      }
-
-      showMessage(
-        "websiteMessage",
-        "Startseiten-Inhalte wurden gespeichert.",
-        false
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      showMessage(
-        "websiteMessage",
-        "Fehler beim Speichern: " + error.message,
-        true
-      );
-    }
-  }
-
-
-  async function loadNavigation() {
-
-    const items = await api(
-      "navigation_items?select=*&order=sort_order.asc,id.asc"
-    );
-
-    const container =
-      document.getElementById("navigationList");
-
-    if (!items.length) {
-      container.innerHTML =
-        '<div class="empty">Noch keine Menüpunkte vorhanden.</div>';
-      return;
-    }
-
-    container.innerHTML = items.map(item => `
-      <div
-        style="
-          display:flex;
-          gap:10px;
-          align-items:center;
-          justify-content:space-between;
-          flex-wrap:wrap;
-          padding:12px;
-          border:1px solid #e0e7ea;
-          border-radius:12px;
-          background:#fbfdfe;
-          margin-bottom:8px;
-        "
-      >
-
-        <div>
-          <strong>${escapeHtml(item.name)}</strong>
-          <div class="muted small">
-            ${escapeHtml(item.url || "#")}
-          </div>
-        </div>
-
-        <div class="button-row" style="margin-top:0">
-
-          <button
-            class="${item.active ? "success" : "secondary"}"
-            onclick="toggleNavigation(${item.id}, ${item.active})"
-          >
-            ${item.active ? "Sichtbar" : "Versteckt"}
-          </button>
-
-          <button
-            class="danger"
-            onclick="deleteNavigation(${item.id})"
-          >
-            Löschen
-          </button>
-
-        </div>
-
-      </div>
-    `).join("");
-  }
-
-
-  async function addNavigationItem() {
-
-    const name =
-      document.getElementById("newNavName").value.trim();
-
-    const url =
-      document.getElementById("newNavUrl").value.trim();
-
-    if (!name) {
-      alert("Bitte einen Namen eingeben.");
-      return;
-    }
-
-    try {
-
-      const existing = await api(
-        "navigation_items?select=sort_order&order=sort_order.desc&limit=1"
-      );
-
-      const nextOrder =
-        existing.length
-          ? Number(existing[0].sort_order || 0) + 10
-          : 10;
-
-      await api(
-        "navigation_items",
-        {
-          method: "POST",
-          headers: {
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify({
-            name,
-            url: url || "#",
-            sort_order: nextOrder,
-            active: true
-          })
-        }
-      );
-
-      document.getElementById("newNavName").value = "";
-      document.getElementById("newNavUrl").value = "";
-
-      await loadNavigation();
-
-    } catch (error) {
-
-      alert(
-        "Menüpunkt konnte nicht angelegt werden:\n\n" +
-        error.message
-      );
-    }
-  }
-
-
-  async function toggleNavigation(id, currentState) {
-
-    try {
-
-      await api(
-        "navigation_items?id=eq." + encodeURIComponent(id),
-        {
-          method: "PATCH",
-          headers: {
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify({
-            active: !currentState
-          })
-        }
-      );
-
-      await loadNavigation();
-
-    } catch (error) {
-
-      alert(
-        "Navigation konnte nicht geändert werden:\n\n" +
-        error.message
-      );
-    }
-  }
-
-
-  async function deleteNavigation(id) {
-
-    if (!confirm("Diesen Menüpunkt wirklich löschen?")) {
-      return;
-    }
-
-    try {
-
-      await api(
-        "navigation_items?id=eq." + encodeURIComponent(id),
-        {
-          method: "DELETE"
-        }
-      );
-
-      await loadNavigation();
-
-    } catch (error) {
-
-      alert(
-        "Menüpunkt konnte nicht gelöscht werden:\n\n" +
-        error.message
-      );
-    }
-  }
-
-
   async function loadEverything() {
 
     try {
@@ -4514,9 +3581,7 @@
         loadPlantSubcategories(),
         loadProducts(),
         loadSettings(),
-        loadOrders(),
-        loadWebsiteContent(),
-        loadNavigation()
+        loadOrders()
       ]);
 
     } catch (error) {
