@@ -1161,6 +1161,26 @@
 
       <h2>Bestellungen</h2>
 
+      <div class="grid" style="margin-bottom:14px;">
+        <div>
+          <label for="orderSearch">Bestellung suchen</label>
+          <input id="orderSearch" placeholder="Bestellnummer, Name oder E-Mail" oninput="renderOrders()">
+        </div>
+        <div>
+          <label for="orderFilter">Status filtern</label>
+          <select id="orderFilter" onchange="renderOrders()">
+            <option value="all">Alle Bestellungen</option>
+            <option value="new">Neu</option>
+            <option value="processing">In Bearbeitung</option>
+            <option value="shipped">Versendet</option>
+            <option value="completed">Abgeschlossen</option>
+            <option value="cancelled">Storniert</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="orderCount" class="muted" style="margin-bottom:10px;"></div>
+
       <div id="orderList">
         Lade Bestellungen...
       </div>
@@ -3942,198 +3962,94 @@
 
   function renderOrders() {
 
-    const container =
-      document.getElementById(
-        "orderList"
-      );
+    const container = document.getElementById("orderList");
+    const search = (document.getElementById("orderSearch")?.value || "").trim().toLowerCase();
+    const filter = document.getElementById("orderFilter")?.value || "all";
 
+    const filteredOrders = allOrders.filter(order => {
+      const haystack = [
+        order.order_number,
+        order.customer_name,
+        order.customer_email,
+        order.city
+      ].join(" ").toLowerCase();
 
-    if (!allOrders.length) {
+      const matchesSearch = !search || haystack.includes(search);
+      const matchesStatus = filter === "all" || String(order.order_status) === filter;
+      return matchesSearch && matchesStatus;
+    });
 
-      container.innerHTML =
-        '<div class="empty">Noch keine Bestellungen vorhanden.</div>';
+    const count = document.getElementById("orderCount");
+    if (count) {
+      count.textContent = `${filteredOrders.length} von ${allOrders.length} Bestellungen`;
+    }
 
+    if (!filteredOrders.length) {
+      container.innerHTML = '<div class="empty">Keine passenden Bestellungen vorhanden.</div>';
       return;
     }
 
-
     container.innerHTML =
       '<div class="order-list">' +
-      allOrders.map(
-        order => `
-
-          <div class="order-item">
-
-            <div class="order-top">
-
-              <div>
-
-                <div class="order-number">
-                  Bestellung
-                  ${escapeHtml(order.order_number)}
-                </div>
-
-                <div class="muted">
-                  ${formatDate(order.created_at)}
-                </div>
-
-              </div>
-
-              <div class="price">
-                ${centsToEuro(order.total_cents)}
-              </div>
-
+      filteredOrders.map(order => `
+        <div class="order-item">
+          <div class="order-top">
+            <div>
+              <div class="order-number">Bestellung ${escapeHtml(order.order_number)}</div>
+              <div class="muted">${formatDate(order.created_at)}</div>
             </div>
-
-
-            <div
-              class="small"
-              style="margin-top:12px;"
-            >
-
-              <strong>
-                Kunde:
-              </strong>
-
-              ${escapeHtml(order.customer_name)}
-
-              <br>
-
-              ${escapeHtml(order.customer_email)}
-
-              <br>
-
-              ${escapeHtml(order.street)}
-              ${escapeHtml(order.house_number)},
-              ${escapeHtml(order.postal_code)}
-              ${escapeHtml(order.city)}
-
-            </div>
-
-
-            <div
-              class="grid"
-              style="margin-top:12px;"
-            >
-
-              <div>
-
-                <label>
-                  Zahlungsstatus
-                </label>
-
-                <select
-                  onchange="updateOrderField(
-                    '${escapeHtml(order.id)}',
-                    'payment_status',
-                    this.value
-                  )"
-                >
-
-                  ${option(
-                    "pending",
-                    "Ausstehend",
-                    order.payment_status
-                  )}
-
-                  ${option(
-                    "paid",
-                    "Bezahlt",
-                    order.payment_status
-                  )}
-
-                  ${option(
-                    "failed",
-                    "Fehlgeschlagen",
-                    order.payment_status
-                  )}
-
-                  ${option(
-                    "refunded",
-                    "Erstattet",
-                    order.payment_status
-                  )}
-
-                </select>
-
-              </div>
-
-
-              <div>
-
-                <label>
-                  Bestellstatus
-                </label>
-
-                <select
-                  onchange="updateOrderField(
-                    '${escapeHtml(order.id)}',
-                    'order_status',
-                    this.value
-                  )"
-                >
-
-                  ${option(
-                    "new",
-                    "Neu",
-                    order.order_status
-                  )}
-
-                  ${option(
-                    "processing",
-                    "In Bearbeitung",
-                    order.order_status
-                  )}
-
-                  ${option(
-                    "shipped",
-                    "Versendet",
-                    order.order_status
-                  )}
-
-                  ${option(
-                    "completed",
-                    "Abgeschlossen",
-                    order.order_status
-                  )}
-
-                  ${option(
-                    "cancelled",
-                    "Storniert",
-                    order.order_status
-                  )}
-
-                </select>
-
-              </div>
-
-            </div>
-
-
-            <div class="order-items">
-
-              <strong>
-                Artikel
-              </strong>
-
-              <div
-                id="items-${escapeHtml(order.id)}"
-              >
-                Artikel werden geladen...
-              </div>
-
-            </div>
-
+            <div class="price">${centsToEuro(order.total_cents)}</div>
           </div>
 
-        `
-      ).join("") +
+          <div class="small" style="margin-top:12px;line-height:1.55;">
+            <strong>Kunde:</strong> ${escapeHtml(order.customer_name)}<br>
+            ${escapeHtml(order.customer_email)}<br>
+            ${escapeHtml(order.street)} ${escapeHtml(order.house_number)},
+            ${escapeHtml(order.postal_code)} ${escapeHtml(order.city)},
+            ${escapeHtml(order.country || "Deutschland")}
+            ${order.notes ? `<br><strong>Hinweis:</strong> ${escapeHtml(order.notes)}` : ""}
+          </div>
+
+          <div class="grid" style="margin-top:12px;">
+            <div>
+              <label>Zahlungsstatus</label>
+              <select onchange="updateOrderField('${escapeHtml(order.id)}','payment_status',this.value)">
+                ${option("pending","Ausstehend",order.payment_status)}
+                ${option("paid","Bezahlt",order.payment_status)}
+                ${option("failed","Fehlgeschlagen",order.payment_status)}
+                ${option("refunded","Erstattet",order.payment_status)}
+              </select>
+            </div>
+
+            <div>
+              <label>Bestellstatus</label>
+              <select onchange="updateOrderField('${escapeHtml(order.id)}','order_status',this.value)">
+                ${option("new","Neu",order.order_status)}
+                ${option("processing","In Bearbeitung",order.order_status)}
+                ${option("shipped","Versendet",order.order_status)}
+                ${option("completed","Abgeschlossen",order.order_status)}
+                ${option("cancelled","Storniert",order.order_status)}
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            ${order.payment_status !== "paid" ? `<button class="success" onclick="quickOrderUpdate('${escapeHtml(order.id)}','payment_status','paid')">✓ Zahlung erhalten</button>` : ""}
+            ${order.order_status !== "processing" && order.order_status !== "completed" && order.order_status !== "cancelled" ? `<button class="primary" onclick="quickOrderUpdate('${escapeHtml(order.id)}','order_status','processing')">📦 In Bearbeitung</button>` : ""}
+            ${order.order_status !== "shipped" && order.order_status !== "completed" && order.order_status !== "cancelled" ? `<button class="warning" onclick="quickOrderUpdate('${escapeHtml(order.id)}','order_status','shipped')">🚚 Als versendet markieren</button>` : ""}
+            ${order.order_status !== "completed" && order.order_status !== "cancelled" ? `<button class="success" onclick="quickOrderUpdate('${escapeHtml(order.id)}','order_status','completed')">✓ Bestellung abschließen</button>` : ""}
+          </div>
+
+          <div class="order-items">
+            <strong>Artikel</strong>
+            <div id="items-${escapeHtml(order.id)}">Artikel werden geladen...</div>
+          </div>
+        </div>
+      `).join("") +
       "</div>";
 
-
-    loadAllOrderItems();
+    loadAllOrderItems(filteredOrders);
   }
-
 
   function option(
     value,
@@ -4154,7 +4070,7 @@
   }
 
 
-  async function loadAllOrderItems() {
+  async function loadAllOrderItems(ordersToRender = allOrders) {
 
     try {
 
@@ -4164,7 +4080,7 @@
         );
 
 
-      for (const order of allOrders) {
+      for (const order of ordersToRender) {
 
         const container =
           document.getElementById(
@@ -4219,6 +4135,15 @@
         "Order items:",
         error
       );
+    }
+  }
+
+
+  async function quickOrderUpdate(orderId, field, value) {
+    try {
+      await updateOrderField(orderId, field, value);
+    } catch (error) {
+      console.error(error);
     }
   }
 
