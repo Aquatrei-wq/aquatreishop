@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -49,7 +50,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1687a5}
 <main>
   <h1>🧾 Kasse</h1>
   <div id="message" class="error" style="display:none"></div>
-
   <div id="successBox" class="success" style="display:none"></div>
 
   <div id="checkoutLayout" class="layout">
@@ -99,16 +99,21 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1687a5}
       <div class="card">
         <h2>Zahlungsart</h2>
         <div class="payment">
-          <label><input type="radio" name="payment" value="paypal" checked> PayPal</label>
-        </div>
-        <div class="payment">
-          <label><input type="radio" name="payment" value="bank_transfer"> Vorkasse / Überweisung</label>
-        </div>
-        <div class="payment">
-          <label><input type="radio" name="payment" value="cash_on_delivery"> Nachnahme</label>
+          <label>
+            <input type="radio" name="payment" value="invoice" checked>
+            Kauf auf Rechnung
+          </label>
+          <p class="muted" style="margin:10px 0 0 26px">
+            Du erhältst die Rechnung nach der Bestellung.
+            Bitte überweise den Rechnungsbetrag innerhalb
+            von 7 Tagen nach Rechnungserhalt.
+          </p>
         </div>
         <p class="muted" style="margin-bottom:0">
-          Die tatsächliche Zahlungsabwicklung wird erst aktiviert, wenn der jeweilige Zahlungsanbieter technisch angebunden ist.
+          Hinweis: Der Shop erstellt derzeit noch keine automatische
+          PDF-Rechnung und versendet sie nicht automatisch.
+          Die Rechnung muss vom Shopbetreiber erstellt
+          und an den Kunden gesendet werden.
         </p>
       </div>
     </section>
@@ -116,12 +121,25 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1687a5}
     <aside class="card">
       <h2>Bestellung</h2>
       <div id="orderItems"></div>
-      <div class="summary-row"><span>Zwischensumme</span><strong id="subtotal">0,00 €</strong></div>
-      <div class="summary-row"><span>Versand</span><strong id="shipping">–</strong></div>
+      <div class="summary-row">
+        <span>Zwischensumme</span>
+        <strong id="subtotal">0,00 €</strong>
+      </div>
+      <div class="summary-row">
+        <span>Versand</span>
+        <strong id="shipping">–</strong>
+      </div>
       <div id="shippingNote" class="shipping-note"></div>
-      <div class="summary-row total"><span>Gesamt</span><strong id="total">0,00 €</strong></div>
-      <button id="placeOrder" class="primary" onclick="placeOrder()">Kostenpflichtig bestellen</button>
-      <p class="muted">Mit dem Absenden wird eine Bestellung im Shop angelegt.</p>
+      <div class="summary-row total">
+        <span>Gesamt</span>
+        <strong id="total">0,00 €</strong>
+      </div>
+      <button id="placeOrder" class="primary" onclick="placeOrder()">
+        Kostenpflichtig bestellen
+      </button>
+      <p class="muted">
+        Mit dem Absenden wird eine Bestellung im Shop angelegt.
+      </p>
     </aside>
   </div>
 </main>
@@ -131,35 +149,67 @@ const SUPABASE_URL="https://hzrqwgrszfpyqeibszno.supabase.co";
 const SUPABASE_KEY="sb_publishable_6JoU7dyavrRBFdoBU8mpTg_tfGPo2q3";
 
 let cart=JSON.parse(localStorage.getItem("aquatreishop_cart")||"[]");
-let settings={free_shipping_threshold_cents:7000,shipping_cost_cents:699,currency:"EUR"};
+let settings={
+  free_shipping_threshold_cents:7000,
+  shipping_cost_cents:699,
+  currency:"EUR"
+};
 let totals={subtotal:0,shipping:0,total:0};
 
 function headers(){
-  return {apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
+  return {
+    apikey:SUPABASE_KEY,
+    Authorization:"Bearer "+SUPABASE_KEY,
+    "Content-Type":"application/json"
+  };
 }
+
 async function api(path,options={}){
-  const r=await fetch(SUPABASE_URL+"/rest/v1/"+path,{...options,headers:{...headers(),...(options.headers||{})}});
+  const r=await fetch(SUPABASE_URL+"/rest/v1/"+path,{
+    ...options,
+    headers:{...headers(),...(options.headers||{})}
+  });
   const text=await r.text();
-  let data=null;try{data=text?JSON.parse(text):null}catch{data=text}
-  if(!r.ok)throw new Error(data?.message||data?.hint||("Supabase-Fehler "+r.status));
+  let data=null;
+  try{data=text?JSON.parse(text):null}catch{data=text}
+  if(!r.ok){
+    throw new Error(data?.message||data?.hint||("Supabase-Fehler "+r.status));
+  }
   return data;
 }
+
 function money(cents){
-  return new Intl.NumberFormat("de-DE",{style:"currency",currency:settings.currency||"EUR"}).format((Number(cents)||0)/100);
+  return new Intl.NumberFormat("de-DE",{
+    style:"currency",
+    currency:settings.currency||"EUR"
+  }).format((Number(cents)||0)/100);
 }
+
 function escapeHtml(v){
-  return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+  return String(v??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
-function qty(item){return Math.max(1,Number(item.quantity??item.qty??1))}
+
+function qty(item){
+  return Math.max(1,Number(item.quantity??item.qty??1));
+}
+
 function priceCents(item){
   if(item.price_cents!=null)return Number(item.price_cents)||0;
   const n=Number(String(item.price??"0").replace(",","."));
   return Math.round((Number.isFinite(n)?n:0)*100);
 }
+
 function showError(text){
   const el=document.getElementById("message");
-  el.textContent=text;el.style.display="block";
+  el.textContent=text;
+  el.style.display="block";
 }
+
 function render(){
   const box=document.getElementById("orderItems");
   if(!cart.length){
@@ -167,15 +217,22 @@ function render(){
     document.getElementById("placeOrder").disabled=true;
     return;
   }
+
   let subtotal=0;
   box.innerHTML=cart.map(item=>{
-    const line=priceCents(item)*qty(item);subtotal+=line;
-    return `<div class="item"><span>${escapeHtml(item.name||"Produkt")} × ${qty(item)}</span><strong>${money(line)}</strong></div>`;
+    const line=priceCents(item)*qty(item);
+    subtotal+=line;
+    return `<div class="item">
+      <span>${escapeHtml(item.name||"Produkt")} × ${qty(item)}</span>
+      <strong>${money(line)}</strong>
+    </div>`;
   }).join("");
+
   const free=Number(settings.free_shipping_threshold_cents)||0;
   const cost=Number(settings.shipping_cost_cents)||0;
   const shipping=(free>0&&subtotal<free)?cost:0;
   totals={subtotal,shipping,total:subtotal+shipping};
+
   document.getElementById("subtotal").textContent=money(subtotal);
   document.getElementById("shipping").textContent=shipping?money(shipping):"Kostenlos";
   document.getElementById("total").textContent=money(totals.total);
@@ -184,27 +241,35 @@ function render(){
     subtotal>=free?`🎁 Kostenloser Versand ab ${money(free)} erreicht.`:
     `Noch ${money(free-subtotal)} bis zum kostenlosen Versand.`;
 }
+
 async function load(){
   if(!cart.length){render();return}
   try{
-    const data=await api("shop_settings?select=free_shipping_threshold_cents,shipping_cost_cents,currency&limit=1");
+    const data=await api(
+      "shop_settings?select=free_shipping_threshold_cents,shipping_cost_cents,currency&limit=1"
+    );
     if(data[0])settings={...settings,...data[0]};
     render();
-  }catch(e){showError(e.message);render()}
+  }catch(e){
+    showError(e.message);
+    render();
+  }
 }
+
 function getPayment(){
-  return document.querySelector('input[name="payment"]:checked')?.value||"bank_transfer";
+  // Übergangslösung: Die Datenbankfunktion akzeptiert
+  // aktuell nur bank_transfer, nicht invoice.
+  return "bank_transfer";
 }
-function makeOrderNumber(){
-  const d=new Date();
-  const stamp=d.toISOString().replace(/\D/g,"").slice(0,14);
-  const rand=Math.floor(100+Math.random()*900);
-  return "AT-"+stamp+"-"+rand;
-}
+
 async function placeOrder(){
   document.getElementById("message").style.display="none";
 
-  const required=["customerName","customerEmail","street","houseNumber","postalCode","city","country"];
+  const required=[
+    "customerName","customerEmail","street",
+    "houseNumber","postalCode","city","country"
+  ];
+
   for(const id of required){
     const el=document.getElementById(id);
     if(!el.value.trim()){
@@ -235,7 +300,9 @@ async function placeOrder(){
       quantity:qty(item)
     }));
 
-    if(items.some(item=>!Number.isInteger(item.product_id)||item.product_id<=0)){
+    if(items.some(item=>
+      !Number.isInteger(item.product_id)||item.product_id<=0
+    )){
       throw new Error("Ein Warenkorbartikel hat keine gültige Produkt-ID.");
     }
 
@@ -250,13 +317,16 @@ async function placeOrder(){
         p_city:document.getElementById("city").value.trim(),
         p_country:document.getElementById("country").value,
         p_payment_method:getPayment(),
-        p_notes:document.getElementById("notes").value.trim()||null,
+        p_notes:[
+          "ZAHLUNGSART: Kauf auf Rechnung. Zahlungsziel: 7 Tage nach Rechnungserhalt.",
+          document.getElementById("notes").value.trim()
+        ].filter(Boolean).join("\n\n"),
         p_items:items
       })
     });
 
     const order=Array.isArray(result)?result[0]:result;
-    if(!order?.order_id || !order?.order_number){
+    if(!order?.order_id||!order?.order_number){
       throw new Error("Die Bestellung wurde nicht korrekt bestätigt.");
     }
 
@@ -264,14 +334,23 @@ async function placeOrder(){
     document.getElementById("checkoutLayout").style.display="none";
 
     const success=document.getElementById("successBox");
-    success.innerHTML=`<h2>Vielen Dank für deine Bestellung!</h2>
+    success.innerHTML=`
+      <h2>Vielen Dank für deine Bestellung!</h2>
       <p>Deine Bestellung wurde erfolgreich gespeichert.</p>
       <p><strong>Bestellnummer: ${escapeHtml(order.order_number)}</strong></p>
       <p>Zwischensumme: <strong>${money(order.subtotal_cents)}</strong></p>
       <p>Versand: <strong>${Number(order.shipping_cents)===0?"Kostenlos":money(order.shipping_cents)}</strong></p>
       <p>Gesamt: <strong>${money(order.total_cents)}</strong></p>
-      <p class="muted">Zahlungsstatus: offen. Die weitere Zahlungsabwicklung richtet sich nach der gewählten Zahlungsart.</p>
-      <a href="index.html" style="color:#165d50;font-weight:800">Zurück zum Shop</a>`;
+      <p><strong>Zahlung auf Rechnung</strong></p>
+      <p>
+        Bitte bezahle den Rechnungsbetrag innerhalb von
+        <strong>7 Tagen nach Rechnungserhalt</strong>.
+        Die Rechnung wird derzeit nicht automatisch erstellt oder versendet.
+      </p>
+      <p class="muted">Zahlungsstatus: offen.</p>
+      <a href="index.html" style="color:#165d50;font-weight:800">
+        Zurück zum Shop
+      </a>`;
     success.style.display="block";
 
   }catch(e){
@@ -280,6 +359,7 @@ async function placeOrder(){
     button.textContent="Kostenpflichtig bestellen";
   }
 }
+
 load();
 </script>
 </body>
